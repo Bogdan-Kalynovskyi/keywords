@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
-import {Report} from './../models/report';
+import {Report} from '../models/report';
 
 @Injectable()
 export class ReportService {
@@ -23,7 +23,7 @@ export class ReportService {
         return this.getReports().then(reports => reports.find(report => report.id === id));
     }
 
-    create(name: string, keywords: string[]): Promise<Report> {
+    create(name: string, keywords: string): Promise<Report> {
         return this.http
             .post(this.dataUrl, JSON.stringify({ name: name }), { headers: this.headers })
             .toPromise()

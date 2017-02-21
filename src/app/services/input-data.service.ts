@@ -2,25 +2,36 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
-import {InputDataRow} from './../models/input-data-row';
+import {InputDataRow} from '../models/input-data-row';
 
 @Injectable()
 export class InputDataService {
 
+    private loadDataPromise;
+    private data: InputDataRow[];
     private dataUrl = 'app/inputRows';
     private headers = new Headers({ 'Content-Type': 'application/json' });
 
-    constructor(private http: Http) { }
+    constructor(private http: Http) {
+    }
 
-    getInputDataRows(): Promise<InputDataRow[]> {
-        return this.http.get(this.dataUrl)
+    loadData(report_id: number): Promise<InputDataRow[]> {
+        if (!this.loadDataPromise) {
+            this.loadDataPromise = this.http.get(this.dataUrl);
+        }
+        console.log('id=', report_id);
+        return this.loadDataPromise
             .toPromise()
-            .then(response => response.json().data as InputDataRow[])
+            .then(response => this.data = response.json().data as InputDataRow[])
             .catch(this.handleError);
     }
 
-    getInputDataRow(id: number): Promise<InputDataRow> {
-        return this.getInputDataRows().then(input_data_rows => input_data_rows.find(input_data_row => input_data_row.id === id));
+    getInputDataRows() {
+        return this.data;
+    }
+
+    getInputDataRow(id: number) {
+        return this.getInputDataRows().find(input_data_row => input_data_row.id === id);
     }
 
     create(query: string): Promise<InputDataRow> {
