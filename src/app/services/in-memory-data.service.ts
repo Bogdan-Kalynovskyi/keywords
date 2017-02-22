@@ -8,10 +8,10 @@ export class InMemoryDataService implements InMemoryDbService {
       {id: 3, query: 'stainless steel trolley', click: 65, impression: 552, inputed_ctr: 11.78, position: 2.3}
     ];
     let reports = [
-      {id: 0, name: 'Report1', keywords: 'sdfsdf, sddf, gkghfg'},
-      {id: 1, name: 'Report2 report2', keywords: 'pdf, sddf, gkghfg'},
-      {id: 2, name: 'Report3', keywords: 'sdf, dfg, fgt'},
-      {id: 3, name: 'Report4 report1, report2', keywords: 'asdas, has'}
+      {id: 0, name: 'Report1', keywords: 'trolley,sddf,gkghfg'},
+      {id: 1, name: 'Report2 report2', keywords: 'pdf,sddf,gkghfg'},
+      {id: 2, name: 'Report3', keywords: 'sdf,dfg,fgt'},
+      {id: 3, name: 'Report4 report1, report2', keywords: 'asdas,has'}
     ];
     return {inputRows, reports};
   }

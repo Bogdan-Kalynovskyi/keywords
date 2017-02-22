@@ -3,38 +3,48 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 
+import { Report } from '../models/report';
+import { ReportService } from '../services/report.service';
+
 import { InputDataRow } from '../models/input-data-row';
 import { InputDataService } from '../services/input-data.service';
 
 @Component({
-    selector: 'app-all-queries-data',
-    templateUrl: './all-queries-data.component.html',
-    styleUrls: ['./all-queries-data.component.css'],
-    providers: [InputDataService]
+    selector: 'app-non-branded',
+    templateUrl: './non-branded.component.html',
+    styleUrls: ['./non-branded.component.css'],
+    providers: [ReportService, InputDataService]
 })
-export class AllQueriesDataComponent implements OnInit {
+export class NonBrandedComponent implements OnInit {
     @Input()
+    report: Report;
     report_data: InputDataRow[];
 
     constructor(
+        private reportService: ReportService,
         private inputDataService: InputDataService,
         private route: ActivatedRoute,
         private location: Location
     ) { }
 
-    ngOnInit(): void {
+    ngOnInit() {
+        this.route.params.switchMap((params: Params) =>
+            this.reportService.getReport(+params['id'])).subscribe(report => this.report = report);
+
         this.route.params.switchMap((params: Params) =>
             this.inputDataService.loadData(+params['id'])).subscribe(report_data => {
-                this.report_data = report_data.filter(row_data => row_data.click >= 5);
-                this.dataCalculations();
-            });
+            this.report_data = report_data.filter(row_data => row_data.click >= 5 && this.report.keywords.split(",").indexOf(row_data.query) == -1);
+            this.dataCalculations();
+        });
     }
 
     dataCalculations() {
+
         this.report_data.forEach((row, i , arr) => {
 
             var sum = 0;
             var count = 0;
+
             row.ctr = row.impression ? row.click/row.impression : 0;
             row.instance = arr.reduce(function(total,x){return x.position === row.position ? total+1 : total}, 0);
             for (var item of arr) {

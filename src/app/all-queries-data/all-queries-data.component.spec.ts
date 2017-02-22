@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { FilteredDataComponent } from './filtered-data.component';
+import { AllQueriesDataComponent } from './all-queries-data.component';
 
-describe('InputDataRowsComponent', () => {
-  let component: FilteredDataComponent;
-  let fixture: ComponentFixture<FilteredDataComponent>;
+describe('AllQueriesDataComponent', () => {
+  let component: AllQueriesDataComponent;
+  let fixture: ComponentFixture<AllQueriesDataComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FilteredDataComponent ]
+      declarations: [ AllQueriesDataComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FilteredDataComponent);
+    fixture = TestBed.createComponent(AllQueriesDataComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

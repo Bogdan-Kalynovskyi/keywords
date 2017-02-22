@@ -16,9 +16,9 @@ var FilteredDataComponent = (function () {
 }());
 FilteredDataComponent = __decorate([
     core_1.Component({
-        selector: 'app-filtered-data',
-        templateUrl: 'filtered-data.component.html',
-        styleUrls: ['filtered-data.component.css']
+        selector: 'app-all-queries-data',
+        templateUrl: 'all-queries-data.component.html',
+        styleUrls: ['all-queries-data.component.css']
     })
 ], FilteredDataComponent);
 exports.FilteredDataComponent = FilteredDataComponent;

@@ -19,7 +19,7 @@ export class InputDataService {
         if (!this.loadDataPromise) {
             this.loadDataPromise = this.http.get(this.dataUrl);
         }
-        console.log('id=', report_id);
+        // console.log('id=', report_id);
         return this.loadDataPromise
             .toPromise()
             .then(response => this.data = response.json().data as InputDataRow[])

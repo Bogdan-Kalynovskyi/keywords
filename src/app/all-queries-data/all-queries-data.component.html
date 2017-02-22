@@ -24,29 +24,29 @@
         <th>#10</th>
         <th>#1+</th>
     </tr>
-    <tr *ngFor="let data_row of data_rows">
-        <td>{{ data_row.query }}</td>
-        <td>{{ data_row.click }}</td>
-        <td>{{ data_row.impression }}</td>
-        <td>{{ data_row.inputed_ctr | percent:'1.0-2' }}</td>
-        <td>{{ data_row.position }}</td>
-        <td>{{ data_row.ctr | percent:'1.0-0' }}</td>
-        <td>{{ data_row.instance }}</td>
-        <td>{{ data_row.expected_ctr | percent:'1.0-2' }}</td>
-        <td>{{ data_row.ctr_delta | percent:'1.0-2' }}</td>
-        <td>{{ data_row.expected_clicks }}</td>
-        <td>{{ data_row.traffic_loss }}</td>
-        <td>{{ data_row.traffic_gain }}</td>
-        <td>{{ data_row.nr1 }}</td>
-        <td>{{ data_row.nr2 }}</td>
-        <td>{{ data_row.nr3 }}</td>
-        <td>{{ data_row.nr4 }}</td>
-        <td>{{ data_row.nr5 }}</td>
-        <td>{{ data_row.nr6 }}</td>
-        <td>{{ data_row.nr7 }}</td>
-        <td>{{ data_row.nr8 }}</td>
-        <td>{{ data_row.nr9 }}</td>
-        <td>{{ data_row.nr10 }}</td>
-        <td>{{ data_row.nr11 }}</td>
+    <tr *ngFor="let data of report_data">
+        <td>{{ data.query }}</td>
+        <td>{{ data.click }}</td>
+        <td>{{ data.impression }}</td>
+        <td>{{ data.inputed_ctr | percent:'1.0-2' }}</td>
+        <td>{{ data.position }}</td>
+        <td>{{ data.ctr | percent:'1.0-0' }}</td>
+        <td>{{ data.instance }}</td>
+        <td>{{ data.expected_ctr | percent:'1.0-2' }}</td>
+        <td>{{ data.ctr_delta | percent:'1.0-2' }}</td>
+        <td>{{ data.expected_clicks }}</td>
+        <td>{{ data.traffic_loss }}</td>
+        <td>{{ data.traffic_gain }}</td>
+        <td>{{ data.nr1 }}</td>
+        <td>{{ data.nr2 }}</td>
+        <td>{{ data.nr3 }}</td>
+        <td>{{ data.nr4 }}</td>
+        <td>{{ data.nr5 }}</td>
+        <td>{{ data.nr6 }}</td>
+        <td>{{ data.nr7 }}</td>
+        <td>{{ data.nr8 }}</td>
+        <td>{{ data.nr9 }}</td>
+        <td>{{ data.nr10 }}</td>
+        <td>{{ data.nr11 }}</td>
     </tr>
 </table>

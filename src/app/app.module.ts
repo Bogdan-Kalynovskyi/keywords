@@ -8,6 +8,8 @@ import { MaterialModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { ReportsListComponent, SelectedReportDialog } from './reports-list/reports-list.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+
 import { InputDataComponent} from './input-data/input-data.component';
 import { FilteredDataComponent} from './filtered-data/filtered-data.component';
 import { AllQueriesDataComponent} from './all-queries-data/all-queries-data.component';
@@ -15,17 +17,20 @@ import { AllQueriesDataComponent} from './all-queries-data/all-queries-data.comp
 import { InputDataService } from './services/input-data.service';
 import { ReportService } from './services/report.service';
 import { InMemoryDataService } from './services/in-memory-data.service';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { ReportComponent } from './report/report.component';
+import { NonBrandedComponent } from './non-branded/non-branded.component';
 
 @NgModule({
     declarations: [
         AppComponent,
+        ReportsListComponent,
+        SelectedReportDialog,
+        DashboardComponent,
         InputDataComponent,
         FilteredDataComponent,
         AllQueriesDataComponent,
-        ReportsListComponent,
-        SelectedReportDialog,
-        DashboardComponent
+        ReportComponent,
+        NonBrandedComponent
     ],
     imports: [
         BrowserModule,

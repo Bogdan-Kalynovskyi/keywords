@@ -8,8 +8,8 @@ import { InputDataService } from '../services/input-data.service';
 
 @Component({
     selector: 'app-input-data',
-    templateUrl: 'input-data.component.html',
-    styleUrls: ['input-data.component.css'],
+    templateUrl: './input-data.component.html',
+    styleUrls: ['./input-data.component.css'],
     providers: [InputDataService]
 })
 export class InputDataComponent implements OnInit {

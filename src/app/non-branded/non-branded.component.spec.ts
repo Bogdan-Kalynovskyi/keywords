@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { InputDataComponent } from './input-data.component';
+import { NonBrandedComponent } from './non-branded.component';
 
-describe('InputDataRowsComponent', () => {
-  let component: InputDataComponent;
-  let fixture: ComponentFixture<InputDataComponent>;
+describe('NonBrandedComponent', () => {
+  let component: NonBrandedComponent;
+  let fixture: ComponentFixture<NonBrandedComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InputDataComponent ]
+      declarations: [ NonBrandedComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InputDataComponent);
+    fixture = TestBed.createComponent(NonBrandedComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
