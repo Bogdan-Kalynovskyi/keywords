@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title><?php echo $token ? '+' : '-' ?></title>
+    <title><?php echo $token ? '::' : ':: Log In' ?></title>
     <meta name="google-signin-client_id" content="<?php echo $google_api_id ?>">
     <style>
         #loading {
@@ -17,9 +17,10 @@
             font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
             color: #bbb;
             font-size: 1.25rem;
+            letter-spacing: 0.4px;
             font-weight: 500;
             width: 100%;
-            top: calc(50% - 22px);
+            top: calc(50% - 28px);
             text-align: center;
         }
     </style>
@@ -27,13 +28,11 @@
     <style>
     #login-form {
         position: absolute;
-        width: 480px;
-        left: 50%;
-        top: 50%;
-        margin-left: -240px;
-        margin-top: -100px;
+        width: 460px;
+        left: calc(50% - 230px);
+        top: calc(50% - 40px);
         font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-        font-size: 1.25rem;
+        font-size: 1.3rem;
         font-weight: 400;
     }
     .abcRioButton {
@@ -46,11 +45,10 @@
     #test3dPartyCookies {
         position: absolute;
         width: 436px;
-        left: 50%;
-        margin-left: -220px;
+        left: calc(50% - 220px);
         top: 24px;
         z-index: 1000;
-        box-shadow: 0 0 40px darkred;
+        box-shadow: 0 0 50px darkred, 0 0 0 30px white;
         border-radius: 4px;
         border: 2px dotted darkred;
         padding: 16px;
@@ -59,14 +57,10 @@
     }
     a[target="_blank"] {
         display: block;
-        padding-top: 9px;
-    }
-    a[target="_blank"]:after {
-        content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVklEQVR4Xn3PgQkAMQhDUXfqTu7kTtkpd5RA8AInfArtQ2iRXFWT2QedAfttj2FsPIOE1eCOlEuoWWjgzYaB/IkeGOrxXhqB+uA9Bfcm0lAZuh+YIeAD+cAqSz4kCMUAAAAASUVORK5CYII=");
-        margin: 0 0 0 7px;
-    }
-    #logged-in {
-        display: none;
+        letter-spacing: 0.2px;
+        margin-top: 10px;
+        background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVklEQVR4Xn3PgQkAMQhDUXfqTu7kTtkpd5RA8AInfArtQ2iRXFWT2QedAfttj2FsPIOE1eCOlEuoWWjgzYaB/IkeGOrxXhqB+uA9Bfcm0lAZuh+YIeAD+cAqSz4kCMUAAAAASUVORK5CYII=") right center no-repeat;
+        text-decoration: none;
     }
     </style>
     <?php } ?>
@@ -89,7 +83,7 @@
         if (IEVersion !== -1) {
             document.documentElement.className = 'ie' + IEVersion;
             if (IEVersion < 10) {
-                alert('Sorry, but we are not supporting Internet Explorer 9 and below.');
+                alert('Sorry, but we are not supporting Internet Explorer 9 and lower.');
             }
         }
     })();
@@ -143,7 +137,7 @@
 <?php if (!$token) { ?>
     <div id="logged-out">
         <div id="login-form">
-            <div style="float:left; width:180px">Company Logo</div>
+            <div style="float:left; width:160px">Company Logo</div>
             <div style="float:left; width:300px">
                 Sign in using Google account
                 <br>
@@ -153,7 +147,7 @@
         </div>
         <div id="test3dPartyCookies"><b style="font-size: 1.3em;">Third party cookies are disabled in your browser</b><br><br>
             Sign in using Google won't work unless you enable this feature in browser settings<br>
-            <a target=_blank href="https://www.google.com/search?q=how+do+I+enable+3rd+party+cookies+in+my+browser" style="font-size: 20px">Find solution in the internet (using Google Search)</a>
+            <a target=_blank href="https://www.google.com/search?q=how+do+I+enable+3rd+party+cookies+in+my+browser" style="font-size: 20px">Find solution in the internet (search using Google)</a>
         </div>
         <iframe src="//mindmup.github.io/3rdpartycookiecheck/start.html" style="display:none"></iframe>
     </div>

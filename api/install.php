@@ -42,7 +42,7 @@ if (!mysql_errno()) {
 
     <br>
     <br>
-    <h3>Database tables successfully created!</h3>
+    <h3>Database tables successfully (re)created!</h3>
     <h4>You should now delete install.php form your server.</h4>
     <br>
     <br>
