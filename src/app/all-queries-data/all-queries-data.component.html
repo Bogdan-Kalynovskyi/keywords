@@ -1,0 +1,52 @@
+<table>
+    <tr>
+        <th>Queries</th>
+        <th>Clicks</th>
+        <th>Impressions</th>
+        <th>Inputed CTR</th>
+        <th>Position</th>
+        <th>CTR</th>
+        <th>Instances</th>
+        <th>Expected CTR</th>
+        <th>CTR&#916;</th>
+        <th>Expected Clicks</th>
+        <th>Traffic Loss</th>
+        <th>Traffic Gain</th>
+        <th>#1</th>
+        <th>#2</th>
+        <th>#3</th>
+        <th>#4</th>
+        <th>#5</th>
+        <th>#6</th>
+        <th>#7</th>
+        <th>#8</th>
+        <th>#9</th>
+        <th>#10</th>
+        <th>#1+</th>
+    </tr>
+    <tr *ngFor="let data of report_data">
+        <td>{{ data.query }}</td>
+        <td>{{ data.click }}</td>
+        <td>{{ data.impression }}</td>
+        <td>{{ data.inputed_ctr | percent:'1.0-2' }}</td>
+        <td>{{ data.position }}</td>
+        <td>{{ data.ctr | percent:'1.0-0' }}</td>
+        <td>{{ data.instance }}</td>
+        <td>{{ data.expected_ctr | percent:'1.0-2' }}</td>
+        <td>{{ data.ctr_delta | percent:'1.0-2' }}</td>
+        <td>{{ data.expected_clicks }}</td>
+        <td>{{ data.traffic_loss }}</td>
+        <td>{{ data.traffic_gain }}</td>
+        <td>{{ data.nr1 }}</td>
+        <td>{{ data.nr2 }}</td>
+        <td>{{ data.nr3 }}</td>
+        <td>{{ data.nr4 }}</td>
+        <td>{{ data.nr5 }}</td>
+        <td>{{ data.nr6 }}</td>
+        <td>{{ data.nr7 }}</td>
+        <td>{{ data.nr8 }}</td>
+        <td>{{ data.nr9 }}</td>
+        <td>{{ data.nr10 }}</td>
+        <td>{{ data.nr11 }}</td>
+    </tr>
+</table>

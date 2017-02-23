@@ -7,18 +7,30 @@ import { RoutingModule } from './routing.module';
 import { MaterialModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
-import { ReportsListComponent } from './reports-list/reports-list.component';
-import { InputDataRowsComponent} from './input-data-rows/input-data-rows.component';
+import { ReportsListComponent, SelectedReportDialog } from './reports-list/reports-list.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+
+import { InputDataComponent} from './input-data/input-data.component';
+import { FilteredDataComponent} from './filtered-data/filtered-data.component';
+import { AllQueriesDataComponent} from './all-queries-data/all-queries-data.component';
 
 import { InputDataService } from './services/input-data.service';
 import { ReportService } from './services/report.service';
 import { InMemoryDataService } from './services/in-memory-data.service';
+import { ReportComponent } from './report/report.component';
+import { NonBrandedComponent } from './non-branded/non-branded.component';
 
 @NgModule({
     declarations: [
         AppComponent,
-        InputDataRowsComponent,
-        ReportsListComponent
+        ReportsListComponent,
+        SelectedReportDialog,
+        DashboardComponent,
+        InputDataComponent,
+        FilteredDataComponent,
+        AllQueriesDataComponent,
+        ReportComponent,
+        NonBrandedComponent
     ],
     imports: [
         BrowserModule,
