@@ -19,6 +19,7 @@ import { ReportService } from './services/report.service';
 import { InMemoryDataService } from './services/in-memory-data.service';
 import { ReportComponent } from './report/report.component';
 import { NonBrandedComponent } from './non-branded/non-branded.component';
+import { CtrStatsComponent } from './ctr-stats/ctr-stats.component';
 
 @NgModule({
     declarations: [
@@ -30,7 +31,8 @@ import { NonBrandedComponent } from './non-branded/non-branded.component';
         FilteredDataComponent,
         AllQueriesDataComponent,
         ReportComponent,
-        NonBrandedComponent
+        NonBrandedComponent,
+        CtrStatsComponent
     ],
     imports: [
         BrowserModule,
