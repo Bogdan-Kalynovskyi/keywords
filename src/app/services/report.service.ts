@@ -3,12 +3,14 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
 import {Report} from '../models/report';
+import any = jasmine.any;
 
 @Injectable()
 export class ReportService {
 
     private dataUrl = 'app/reports';
     private headers = new Headers({ 'Content-Type': 'application/json' });
+    reportData: any;
 
     constructor(private http: Http) { }
 
@@ -23,12 +25,27 @@ export class ReportService {
         return this.getReports().then(reports => reports.find(report => report.id === id));
     }
 
-    create(name: string, keywords: string): Promise<Report> {
-        return this.http
-            .post(this.dataUrl, JSON.stringify({ name: name }), { headers: this.headers })
-            .toPromise()
-            .then(res => res.json().data)
-            .catch(this.handleError);
+    create(name: string, keywords: string, file: string) {
+        alert('report service. create');
+        // this.http
+        //     .post(this.dataUrl, JSON.stringify({ name: name, keywords: keywords }), { headers: this.headers })
+            // .toPromise()
+            // .then(() => null
+                // reportId =>
+                //     return reportId
+                //         .toPromise())//{
+                //this.dataParse(reportId.json().data)
+                    //     .then(reportData => {
+                    //         this.dataCalculate(reportData);
+                    //         return this.dataSave(reportId: reportId, reportData: reportData)
+                    //             //.post(this.dataUrl, JSON.stringify({ reportData: reportData,  }), { headers: this.headers })
+                    //             //.toPromise()
+                    //             .then(() => null)
+                    //             .catch(this.handleError);
+                    //
+                    //}
+                // )
+            // .catch(this.handleError);
     }
 
     update(report: Report): Promise<Report> {

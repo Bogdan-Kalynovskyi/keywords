@@ -7,7 +7,7 @@ import { RoutingModule } from './routing.module';
 import { MaterialModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
-import { ReportsListComponent, SelectedReportDialog } from './reports-list/reports-list.component';
+import { ReportsListComponent, NewReportDialog } from './reports-list/reports-list.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
 import { InputDataComponent} from './input-data/input-data.component';
@@ -25,7 +25,7 @@ import { CtrStatsComponent } from './ctr-stats/ctr-stats.component';
     declarations: [
         AppComponent,
         ReportsListComponent,
-        SelectedReportDialog,
+        NewReportDialog,
         DashboardComponent,
         InputDataComponent,
         FilteredDataComponent,
@@ -43,6 +43,7 @@ import { CtrStatsComponent } from './ctr-stats/ctr-stats.component';
         MaterialModule.forRoot()
     ],
     providers: [InputDataService, ReportService],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    entryComponents: [NewReportDialog]
 })
 export class AppModule { }

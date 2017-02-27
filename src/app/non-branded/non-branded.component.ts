@@ -28,14 +28,14 @@ export class NonBrandedComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.route.params.switchMap((params: Params) =>
-            this.reportService.getReport(+params['id'])).subscribe(report => this.report = report);
-
-        this.route.params.switchMap((params: Params) =>
-            this.inputDataService.loadData(+params['id'])).subscribe(report_data => {
-            this.report_data = report_data.filter(row_data => row_data.click >= 5 && this.report.keywords.split(",").indexOf(row_data.query) == -1);
-            this.dataCalculations();
-        });
+        // this.route.params.switchMap((params: Params) =>
+        //     this.reportService.getReport(+params['id'])).subscribe(report => this.report = report);
+        //
+        // this.route.params.switchMap((params: Params) =>
+        //     this.inputDataService.loadData(+params['id'])).subscribe(report_data => {
+        //     this.report_data = report_data.filter(row_data => row_data.click >= 5 && this.report.keywords.split(",").indexOf(row_data.query) == -1);
+        //     this.dataCalculations();
+        // });
     }
 
     dataCalculations() {

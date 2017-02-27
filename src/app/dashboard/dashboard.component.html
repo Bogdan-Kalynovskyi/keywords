@@ -1,14 +1,324 @@
+<!--<div id="donutchart" style="width: 900px; height: 500px;"></div>-->
 <div *ngIf="report" class="report-content">
-    <h4>Name: {{report.name}}</h4>
-    <h6>Keywords: {{report.keywords}}</h6>
+    <md-input-container>
+        <input md-input placeholder="Name" [(ngModel)]="report.name" />
+    </md-input-container>
+    <md-input-container>
+        <input md-input placeholder="Keywords" [(ngModel)]="report.keywords" />
+    </md-input-container>
+    <input class="ng-hide" id="input-file-id" multiple type="file" />
+    <!--<label for="input-file-id" class="md-button md-raised md-primary">File to update data</label>-->
+    <button md-raised-button color="primary" (click)="updateData()">UPDATE</button>
     <div class="scrolling-content">
         <md-tab-group>
-            <md-tab label="CSV_import"><app-input-data></app-input-data></md-tab>
-            <md-tab label="CSV 5+"><app-filtered-data></app-filtered-data></md-tab>
-            <md-tab label="All Queries"><app-all-queries-data></app-all-queries-data></md-tab>
-            <md-tab label="Non-Branded"><app-non-branded></app-non-branded></md-tab>
-            <md-tab label="Report"><app-report></app-report></md-tab>
-            <md-tab label="CTR Stats"><app-ctr-stats></app-ctr-stats></md-tab>
+            <md-tab label="CSV_import">
+                <table>
+                    <tr>
+                        <th>Queries</th>
+                        <th>Clicks</th>
+                        <th>Impressions</th>
+                        <th>CTR</th>
+                        <th>Position</th>
+                    </tr>
+                    <tr *ngFor="let data of data">
+                        <td>{{ data.query }}</td>
+                        <td>{{ data.click }}</td>
+                        <td>{{ data.impression }}</td>
+                        <td>{{ data.inputed_ctr | percent:'1.0-2' }}</td>
+                        <td>{{ data.position }}</td>
+                    </tr>
+                </table>
+            </md-tab>
+            <md-tab label="CSV 5+">
+                <table>
+                    <tr>
+                        <th>Queries</th>
+                        <th>Clicks</th>
+                        <th>Impressions</th>
+                        <th>CTR</th>
+                        <th>Position</th>
+                    </tr>
+                    <tr *ngFor="let data of filteredData">
+                        <td>{{ data.query }}</td>
+                        <td>{{ data.click }}</td>
+                        <td>{{ data.impression }}</td>
+                        <td>{{ data.inputed_ctr | percent:'1.0-2' }}</td>
+                        <td>{{ data.position }}</td>
+                    </tr>
+                </table>
+            </md-tab>
+            <md-tab label="All Queries">
+                <table>
+                    <tr>
+                        <th>Queries</th>
+                        <th>Clicks</th>
+                        <th>Impressions</th>
+                        <th>Position</th>
+                        <th>CTR</th>
+                        <th>Instances</th>
+                        <th>Expected CTR</th>
+                        <th>CTR&#916;</th>
+                        <th>Expected Clicks</th>
+                        <th>Traffic Loss</th>
+                        <th>Traffic Gain</th>
+                        <th>#1</th>
+                        <th>#2</th>
+                        <th>#3</th>
+                        <th>#4</th>
+                        <th>#5</th>
+                        <th>#6</th>
+                        <th>#7</th>
+                        <th>#8</th>
+                        <th>#9</th>
+                        <th>#10</th>
+                        <th>#1+</th>
+                    </tr>
+                    <tr *ngFor="let data of filteredData">
+                        <td>{{ data.query }}</td>
+                        <td>{{ data.click }}</td>
+                        <td>{{ data.impression }}</td>
+                        <td>{{ data.position }}</td>
+                        <td>{{ data.ctr | percent:'1.0-0' }}</td>
+                        <td>{{ data.instance }}</td>
+                        <td>{{ data.expected_ctr | percent:'1.0-2' }}</td>
+                        <td>{{ data.ctr_delta | percent:'1.0-2' }}</td>
+                        <td>{{ data.expected_clicks }}</td>
+                        <td>{{ data.traffic_loss }}</td>
+                        <td>{{ data.traffic_gain }}</td>
+                        <td>{{ data.nr1 }}</td>
+                        <td>{{ data.nr2 }}</td>
+                        <td>{{ data.nr3 }}</td>
+                        <td>{{ data.nr4 }}</td>
+                        <td>{{ data.nr5 }}</td>
+                        <td>{{ data.nr6 }}</td>
+                        <td>{{ data.nr7 }}</td>
+                        <td>{{ data.nr8 }}</td>
+                        <td>{{ data.nr9 }}</td>
+                        <td>{{ data.nr10 }}</td>
+                        <td>{{ data.nr11 }}</td>
+                    </tr>
+                </table>
+            </md-tab>
+            <md-tab label="Non-Branded">
+                <table>
+                    <tr>
+                        <th>Queries</th>
+                        <th>Clicks</th>
+                        <th>Impressions</th>
+                        <th>Position</th>
+                        <th>CTR</th>
+                        <th>Instances</th>
+                        <th>Expected CTR</th>
+                        <th>CTR&#916;</th>
+                        <th>Expected Clicks</th>
+                        <th>Traffic Loss</th>
+                        <th>Traffic Gain</th>
+                        <th>#1</th>
+                        <th>#2</th>
+                        <th>#3</th>
+                        <th>#4</th>
+                        <th>#5</th>
+                        <th>#6</th>
+                        <th>#7</th>
+                        <th>#8</th>
+                        <th>#9</th>
+                        <th>#10</th>
+                        <th>#1+</th>
+                    </tr>
+                    <tr *ngFor="let data of nonBrandedData">
+                        <td>{{ data.query }}</td>
+                        <td>{{ data.click }}</td>
+                        <td>{{ data.impression }}</td>
+                        <td>{{ data.position }}</td>
+                        <td>{{ data.inputed_ctr | percent:'1.0-2' }}</td>
+                        <td>{{ data.instance }}</td>
+                        <td>{{ data.expected_ctr | percent:'1.0-2' }}</td>
+                        <td>{{ data.ctr_delta | percent:'1.0-2' }}</td>
+                        <td>{{ data.expected_clicks }}</td>
+                        <td>{{ data.traffic_loss }}</td>
+                        <td>{{ data.traffic_gain }}</td>
+                        <td>{{ data.nr1 }}</td>
+                        <td>{{ data.nr2 }}</td>
+                        <td>{{ data.nr3 }}</td>
+                        <td>{{ data.nr4 }}</td>
+                        <td>{{ data.nr5 }}</td>
+                        <td>{{ data.nr6 }}</td>
+                        <td>{{ data.nr7 }}</td>
+                        <td>{{ data.nr8 }}</td>
+                        <td>{{ data.nr9 }}</td>
+                        <td>{{ data.nr10 }}</td>
+                        <td>{{ data.nr11 }}</td>
+                    </tr>
+                </table>
+            </md-tab>
+            <md-tab label="Report">
+                <table>
+                    <tr>
+                        <th colspan="2">All Queries</th>
+                    </tr>
+                    <tr>
+                        <th>Traffic Loss</th>
+                        <th>Traffic Gain</th>
+                    </tr>
+                    <tr>
+                        <td>{{ all_queries_traffic_loss }}</td>
+                        <td>{{ all_queries_traffic_gain }}</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <th colspan="2">Non-Branded Queries</th>
+                    </tr>
+                    <tr>
+                        <th>Traffic Loss</th>
+                        <th>Traffic Gain</th>
+                    </tr>
+                    <tr>
+                        <td>{{ non_branded_traffic_loss }}</td>
+                        <td>{{ non_branded_traffic_gain }}</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <th colspan="2">Branded Under-Performance</th>
+                    </tr>
+                    <tr>
+                        <td>Traffic Loss</td>
+                        <td>{{ all_queries_traffic_loss - non_branded_traffic_loss }}</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>Potential traffic (non branded)</td>
+                        <td>{{ non_branded_traffic_loss >= 0 ? non_branded_traffic_loss : non_branded_traffic_loss*(-1) }}</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <th colspan="2">Top Ten Winners</th>
+                        <th>Traffic gain</th>
+                    </tr>
+                    <tr *ngFor="let item of top_traffic_gain; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ item.query }}</td>
+                        <td>{{ item.traffic_gain }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>Top 10 gain traffic</td>
+                        <td>{{ sum_top_traffic_gain }}</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <th colspan="2">Top Ten Losers</th>
+                        <th>Traffic loss</th>
+                    </tr>
+                    <tr *ngFor="let item of top_traffic_loss; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ item.query }}</td>
+                        <td>{{ item.traffic_loss }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>Top 10 gain traffic</td>
+                        <td>{{ sum_top_traffic_loss }}</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <th colspan="2">Top 10 CTR Statistics</th>
+                    </tr>
+                    <tr *ngFor="let pos of positions; let i = index">
+                        <td>Position {{ i + 1 }}</td>
+                        <td>toDo</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <th colspan="2">Current keywords positions</th>
+                    </tr>
+                    <tr *ngFor="let pos of positions; let i = index">
+                        <td>Position {{ i + 1 }}</td>
+                        <td>{{ pos }}</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <th colspan="3">Non branded keywords (if scenario)</th>
+                    </tr>
+                    <tr>
+                        <th>Position</th>
+                        <th>Clicks</th>
+                        <th>Difference</th>
+                    </tr>
+                    <tr *ngFor="let pos of positions; let i = index">
+                        <td>toDo</td>
+                        <td>toDo</td>
+                        <td>toDo</td>
+                    </tr>
+                </table>
+                <!--<div id="donutchart" style="width: 900px; height: 500px;"></div>-->
+            </md-tab>
+            <md-tab label="CTR Stats">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Position</th>
+                        <th>Data indexes</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let pos of positions_stats">
+                        <!--<td>{{ (i + 10)/10 }}</td>-->
+                        <td>{{ pos.position }}</td>
+                        <td><span *ngFor="let id of pos.row_indexes">{{ id }} </span></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Position</th>
+                        <th>Count of Instances</th>
+                        <th>Sum of Clicks</th>
+                        <th>Sum of Impressions</th>
+                        <th>Average of Expected CTR</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let pos of positions_stats">
+                        <td>{{ pos.position }}</td>
+                        <td>{{ pos.instances }}</td>
+                        <td>{{ pos.clicks_sum }}</td>
+                        <td>{{ pos.impressions_sum }}</td>
+                        <td>{{ pos.expected_ctr_avg | percent:'1.0-2' }}</td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td>Grand Total</td>
+                        <td>{{ grand_total.instances_sum }}</td>
+                        <td>{{ grand_total.clicks_sum_sum }}</td>
+                        <td>{{ grand_total.impressions_sum_sum }}</td>
+                        <td>{{ grand_total.expected_ctr_avg | percent:'1.0-2' }}</td>
+                    </tr>
+                    </tfoot>
+                </table>
+                <table>
+                    <tr>
+                        <th>Position</th>
+                        <th>Average CTR real</th>
+                        <th>Average CTR calculated</th>
+                    </tr>
+                    <tr *ngFor="let pos of position_stats_resulted; let i = index">
+                        <td>{{ pos.position }}</td>
+                        <td *ngIf="pos.expected_ctr_avg != 0">{{ pos.expected_ctr_avg | percent:'1.0-2' }}</td>
+                        <td *ngIf="pos.expected_ctr_avg == 0"></td>
+                        <td>{{ pos.ctr_calculated | percent:'1.0-2'}}</td>
+                    </tr>
+                </table>
+            </md-tab>
         </md-tab-group>
     </div>
 </div>

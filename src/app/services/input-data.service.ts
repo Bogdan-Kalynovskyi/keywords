@@ -19,10 +19,12 @@ export class InputDataService {
         if (!this.loadDataPromise) {
             this.loadDataPromise = this.http.get(this.dataUrl);
         }
-        // console.log('id=', report_id);
         return this.loadDataPromise
             .toPromise()
-            .then(response => this.data = response.json().data as InputDataRow[])
+            .then(response => {
+                this.data = response.json().data as InputDataRow[];
+                return this.data;
+            })
             .catch(this.handleError);
     }
 
@@ -55,6 +57,28 @@ export class InputDataService {
         return this.http.delete(url, { headers: this.headers })
             .toPromise()
             .then(() => null)
+            .catch(this.handleError);
+    }
+
+    // parseData(file: string) {
+    //     alert('Data parsed');
+    //     //this.reportData = {};
+    //     // return this.data
+    //     //     .toPromise()
+    //     //     .then(res => res.json().data)
+    //     //     .catch(this.handleError);
+    //
+    // }
+
+    // dataCalculate(reportData: any, reportKeywords: string) {
+    //     alert('Data is calculated');
+    // }
+
+    dataSave(reportId: number, reportData: any): Promise<void> {
+        return this.http
+            .post(this.dataUrl, JSON.stringify({ reportData: reportData,  }), { headers: this.headers })
+            .toPromise()
+            .then(res => res.json().data)
             .catch(this.handleError);
     }
 

@@ -45,20 +45,20 @@ export class CtrStatsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.route.params.switchMap((params: Params) =>
-            this.reportService.getReport(+params['id'])).subscribe(report => this.report = report);
-
-        this.route.params.switchMap((params: Params) =>
-            this.inputDataService.loadData(+params['id'])).subscribe(report_data => {
-            this.report_data_all_queries = report_data.filter(row_data => row_data.click >= 5);
-            this.dataCalculations1();
-        });
-
-        this.route.params.switchMap((params: Params) =>
-            this.inputDataService.loadData(+params['id'])).subscribe(report_data => {
-            this.report_data_non_branded = report_data.filter(row_data => row_data.click >= 5 && this.report.keywords.split(",").indexOf(row_data.query) == -1);
-            this.dataCalculations2();
-        });
+        // this.route.params.switchMap((params: Params) =>
+        //     this.reportService.getReport(+params['id'])).subscribe(report => this.report = report);
+        //
+        // this.route.params.switchMap((params: Params) =>
+        //     this.inputDataService.loadData(+params['id'])).subscribe(report_data => {
+        //     this.report_data_all_queries = report_data.filter(row_data => row_data.click >= 5);
+        //     this.dataCalculations1();
+        // });
+        //
+        // this.route.params.switchMap((params: Params) =>
+        //     this.inputDataService.loadData(+params['id'])).subscribe(report_data => {
+        //     this.report_data_non_branded = report_data.filter(row_data => row_data.click >= 5 && this.report.keywords.split(",").indexOf(row_data.query) == -1);
+        //     this.dataCalculations2();
+        // });
 
     }
 
