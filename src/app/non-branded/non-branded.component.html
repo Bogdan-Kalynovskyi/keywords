@@ -3,7 +3,6 @@
     <th>Queries</th>
     <th>Clicks</th>
     <th>Impressions</th>
-    <th>Inputed CTR</th>
     <th>Position</th>
     <th>CTR</th>
     <th>Instances</th>
@@ -28,9 +27,8 @@
     <td>{{ data.query }}</td>
     <td>{{ data.click }}</td>
     <td>{{ data.impression }}</td>
-    <td>{{ data.inputed_ctr | percent:'1.0-2' }}</td>
     <td>{{ data.position }}</td>
-    <td>{{ data.ctr | percent:'1.0-0' }}</td>
+    <td>{{ data.inputed_ctr | percent:'1.0-2' }}</td>
     <td>{{ data.instance }}</td>
     <td>{{ data.expected_ctr | percent:'1.0-2' }}</td>
     <td>{{ data.ctr_delta | percent:'1.0-2' }}</td>

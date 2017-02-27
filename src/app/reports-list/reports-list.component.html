@@ -10,10 +10,16 @@
 <!--Add-->
 <!--</button>-->
 <!--</md-card>-->
+
+<!--https://material.angularjs.org/latest/demo/virtualRepeat-->
+
 <md-toolbar color="accent">
-    <button md-icon-button>
-        <md-icon>playlist_add</md-icon>
+    <button md-mini-fab (click)="onAdd()">
+        <md-icon class="md-24">add</md-icon>
     </button>
+    <!--<button md-icon-button (click)="onAdd()">-->
+        <!--<md-icon>playlist_add</md-icon>-->
+    <!--</button>-->
 </md-toolbar>
 <md-nav-list>
     <a md-list-item *ngFor="let report of reports" (click)="onSelect(report)">

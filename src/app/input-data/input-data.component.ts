@@ -23,14 +23,13 @@ export class InputDataComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.route.params.switchMap((params: Params) =>
-            this.inputDataService.loadData(+params['id'])).subscribe(report_data =>
-                this.report_data = report_data
-        );
-
-    }
-
-    goBack(): void {
-        this.location.back();
+        // this.route.params.switchMap((params: Params) =>
+        //         this.inputDataService.loadData(+params['id'])).subscribe(report_data => {
+        //             this.report_data = report_data;
+        // });
+        //
+        // // this.route.params.switchMap((params: Params) =>
+        // //     this.inputDataService.loadData(+params['id'])).subscribe(report_data => this.report_data = report_data);
+        // this.report_data = this.inputDataService.getInputDataRows();
     }
 }

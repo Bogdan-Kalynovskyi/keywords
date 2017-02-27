@@ -1,15 +1,15 @@
 <table>
-  <tr>
-    <th colspan="2">All Queries</th>
-  </tr>
-  <tr>
-    <th>Traffic Loss</th>
-    <th>Traffic Gain</th>
-  </tr>
-  <tr>
-    <td>{{ all_queries_trafic_loss }}</td>
-    <td>{{ all_queries_trafic_gain }}</td>
-  </tr>
+    <tr>
+        <th colspan="2">All Queries</th>
+    </tr>
+    <tr>
+        <th>Traffic Loss</th>
+        <th>Traffic Gain</th>
+    </tr>
+    <tr>
+        <td>{{ all_queries_traffic_loss }}</td>
+        <td>{{ all_queries_traffic_gain }}</td>
+    </tr>
 </table>
 <table>
     <tr>
@@ -20,8 +20,8 @@
         <th>Traffic Gain</th>
     </tr>
     <tr>
-        <td>{{ non_branded_trafic_loss }}</td>
-        <td>{{ non_branded_trafic_gain }}</td>
+        <td>{{ non_branded_traffic_loss }}</td>
+        <td>{{ non_branded_traffic_gain }}</td>
     </tr>
 </table>
 <table>
@@ -30,59 +30,77 @@
     </tr>
     <tr>
         <td>Traffic Loss</td>
-        <td>{{ all_queries_trafic_loss - non_branded_trafic_loss }}</td>
+        <td>{{ all_queries_traffic_loss - non_branded_traffic_loss }}</td>
     </tr>
 </table>
 <table>
     <tr>
         <td>Potential traffic (non branded)</td>
-        <td>{{ non_branded_trafic_loss }}</td>
-        <!--need abs filter-->
+        <td>{{ non_branded_traffic_loss >= 0 ? non_branded_traffic_loss : non_branded_traffic_loss*(-1) }}</td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <th colspan="2">Top Ten Winners</th>
+        <th>Traffic gain</th>
+    </tr>
+    <tr *ngFor="let item of top_traffic_gain; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ item.query }}</td>
+        <td>{{ item.traffic_gain }}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Top 10 gain traffic</td>
+        <td>{{ sum_top_traffic_gain }}</td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <th colspan="2">Top Ten Losers</th>
+        <th>Traffic loss</th>
+    </tr>
+    <tr *ngFor="let item of top_traffic_loss; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ item.query }}</td>
+        <td>{{ item.traffic_loss }}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Top 10 gain traffic</td>
+        <td>{{ sum_top_traffic_loss }}</td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <th colspan="2">Top 10 CTR Statistics</th>
+    </tr>
+    <tr *ngFor="let pos of positions; let i = index">
+        <td>Position {{ i + 1 }}</td>
+        <td>toDo</td>
     </tr>
 </table>
 <table>
     <tr>
         <th colspan="2">Current keywords positions</th>
     </tr>
+    <tr *ngFor="let pos of positions; let i = index">
+        <td>Position {{ i + 1 }}</td>
+        <td>{{ pos }}</td>
+    </tr>
+</table>
+<table>
     <tr>
-        <td>Position 1</td>
-        <td></td>
+        <th colspan="3">Non branded keywords (if scenario)</th>
     </tr>
     <tr>
-        <td>Position 2</td>
-        <td></td>
+        <th>Position</th>
+        <th>Clicks</th>
+        <th>Difference</th>
     </tr>
-    <tr>
-        <td>Position 3</td>
-        <td></td>
+    <tr *ngFor="let pos of positions; let i = index">
+        <td>toDo</td>
+        <td>toDo</td>
+        <td>toDo</td>
     </tr>
-    <tr>
-        <td>Position 4</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Position 5</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Position 6</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Position 7</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Position 8</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Position 9</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Position 10</td>
-        <td></td>
-    </tr>
-
 </table>

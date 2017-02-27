@@ -23,14 +23,10 @@ export class FilteredDataComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.route.params.switchMap((params: Params) =>
-            this.inputDataService.loadData(+params['id'])).subscribe(report_data =>
-            this.report_data = report_data.filter(row_data => row_data.click >= 5)
-        );
+        // this.route.params.switchMap((params: Params) =>
+        //     this.inputDataService.loadData(+params['id'])).subscribe(report_data =>
+        //     this.report_data = report_data.filter(row_data => row_data.click >= 5)
+        // );
+        //this.report_data = this.inputDataService.getInputDataRows();
     }
-
-    goBack(): void {
-        this.location.back();
-    }
-
 }

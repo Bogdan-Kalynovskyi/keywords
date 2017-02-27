@@ -7,7 +7,7 @@ import { RoutingModule } from './routing.module';
 import { MaterialModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
-import { ReportsListComponent, SelectedReportDialog } from './reports-list/reports-list.component';
+import { ReportsListComponent, NewReportDialog } from './reports-list/reports-list.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
 import { InputDataComponent} from './input-data/input-data.component';
@@ -19,18 +19,20 @@ import { ReportService } from './services/report.service';
 import { InMemoryDataService } from './services/in-memory-data.service';
 import { ReportComponent } from './report/report.component';
 import { NonBrandedComponent } from './non-branded/non-branded.component';
+import { CtrStatsComponent } from './ctr-stats/ctr-stats.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         ReportsListComponent,
-        SelectedReportDialog,
+        NewReportDialog,
         DashboardComponent,
         InputDataComponent,
         FilteredDataComponent,
         AllQueriesDataComponent,
         ReportComponent,
-        NonBrandedComponent
+        NonBrandedComponent,
+        CtrStatsComponent
     ],
     imports: [
         BrowserModule,
@@ -41,6 +43,7 @@ import { NonBrandedComponent } from './non-branded/non-branded.component';
         MaterialModule.forRoot()
     ],
     providers: [InputDataService, ReportService],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    entryComponents: [NewReportDialog]
 })
 export class AppModule { }

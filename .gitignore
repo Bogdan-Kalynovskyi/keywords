@@ -4,6 +4,7 @@
 # compiled output
 /dist
 /tmp
+/src/**/*.js
 
 # dependencies
 /node_modules
@@ -33,3 +34,8 @@ testem.log
 #System Files
 .DS_Store
 Thumbs.db
+
+
+#docs
+*.csv
+*.xlsx

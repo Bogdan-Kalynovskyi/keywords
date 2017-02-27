@@ -23,11 +23,11 @@ export class AllQueriesDataComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.route.params.switchMap((params: Params) =>
-            this.inputDataService.loadData(+params['id'])).subscribe(report_data => {
-                this.report_data = report_data.filter(row_data => row_data.click >= 5);
-                this.dataCalculations();
-            });
+        // this.route.params.switchMap((params: Params) =>
+        //     this.inputDataService.loadData(+params['id'])).subscribe(report_data => {
+        //         this.report_data = report_data.filter(row_data => row_data.click >= 5);
+        //         this.dataCalculations();
+        //     });
     }
 
     dataCalculations() {
@@ -35,7 +35,7 @@ export class AllQueriesDataComponent implements OnInit {
 
             var sum = 0;
             var count = 0;
-            row.ctr = row.impression ? row.click/row.impression : 0;
+            row.ctr = (row.impression != 0) ? parseFloat((row.click/row.impression).toFixed(2)) : 0;
             row.instance = arr.reduce(function(total,x){return x.position === row.position ? total+1 : total}, 0);
             for (var item of arr) {
                 if (item.position === row.position) {
@@ -43,11 +43,11 @@ export class AllQueriesDataComponent implements OnInit {
                     count ++;
                 }
             }
-            row.expected_ctr = sum/count;
+            row.expected_ctr = parseFloat((sum/count).toFixed(2));
             row.ctr_delta = row.ctr - row.expected_ctr;
             row.expected_clicks = row.expected_ctr*row.impression;
-            row.traffic_loss = ((row.click - row.expected_clicks) > 0) ? 0 : (row.click - row.expected_clicks);
-            row.traffic_gain = ((row.click - row.expected_clicks) < 0) ? 0 : (row.click - row.expected_clicks);
+            row.traffic_loss = ((row.click - row.expected_clicks) > 0) ? 0 : parseFloat((row.click - row.expected_clicks).toFixed(2));
+            row.traffic_gain = ((row.click - row.expected_clicks) < 0) ? 0 : parseFloat((row.click - row.expected_clicks).toFixed(2));
             row.nr1 = 3;
             row.nr2 = 3;
             row.nr3 = 3;
