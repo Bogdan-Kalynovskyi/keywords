@@ -3,7 +3,7 @@ export class InputDataRow {
     query: string;
     click: number;
     impression: number;
-    inputed_ctr: number;
+    inputted_ctr: number;
     position: number;
     ctr: number;
     instance: number;

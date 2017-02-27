@@ -1,0 +1,6 @@
+[
+  {"id": 0, "query": "trolley", "click": 261, "impression": 12770, "inputted_ctr": 0.0204, "position": 2.8},
+  {"id": 1, "query": "trolleys", "click": 167, "impression": 4052, "inputted_ctr": 0.0412, "position": 3.6},
+  {"id": 2, "query": "pallet jack", "click": 84, "impression": 4826, "inputted_ctr": 0.0174, "position": 5},
+  {"id": 3, "query": "stainless steel trolley", "click": 65, "impression": 552, "inputted_ctr": 0.1178, "position": 2.3}
+]
