@@ -160,12 +160,12 @@ export class DashboardComponent implements OnInit {
             }, 0);
             for (var item of arr) {
                 if (item.position === row.position) {
-                    sum += item.inputted_ctr;
+                    sum += item.inputed_ctr;
                     count++;
                 }
             }
             row.expected_ctr = parseFloat((sum / count).toFixed(2));
-            row.ctr_delta = row.inputted_ctr - row.expected_ctr;
+            row.ctr_delta = row.inputed_ctr - row.expected_ctr;
             row.expected_clicks = row.expected_ctr * row.impression;
             row.traffic_loss = ((row.click - row.expected_clicks) > 0) ? 0 : parseFloat((row.click - row.expected_clicks).toFixed(2));
             row.traffic_gain = ((row.click - row.expected_clicks) < 0) ? 0 : parseFloat((row.click - row.expected_clicks).toFixed(2));
