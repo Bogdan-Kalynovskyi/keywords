@@ -15,9 +15,9 @@
         #loading {
             position: absolute;
             font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-            color: #bbb;
-            font-size: 1.25rem;
-            letter-spacing: 0.4px;
+            color: #bfbfbf;
+            font-size: 1.5rem;
+            letter-spacing: 0.45px;
             font-weight: 500;
             width: 100%;
             top: calc(50% - 28px);

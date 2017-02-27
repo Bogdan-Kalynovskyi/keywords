@@ -15,6 +15,9 @@ RewriteEngine On
 # Disclosure Authorisation headers to PHP
 RewriteRule .? - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+# Rewrite the whole /dist folder to root folder
+RewriteRule ^dist/(.*)$ /$1 [R=301,NC,L]
+
 # to redirect any request to index.html,
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
