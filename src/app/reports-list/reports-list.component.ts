@@ -4,24 +4,20 @@ import { MdDialog, MdDialogRef } from '@angular/material';
 
 import { Report } from '../models/report';
 import { ReportService } from '../services/report.service';
-import { InputDataService } from '../services/input-data.service'
 
 @Component({
     selector: 'app-reports-list',
     templateUrl: './reports-list.component.html',
     styleUrls: ['./reports-list.component.css'],
-    providers: [ReportService, InputDataService]
+    providers: [ReportService]
 })
 
 export class ReportsListComponent implements OnInit {
     selectedReport: Report;
-    newReportData: any;
-    //newReport: any;
     reports: Report[];
     dialogRef: MdDialogRef<NewReportDialog>;
 
     constructor(
-        private reportData: InputDataService,
         private reportService: ReportService,
         private router: Router,
         private dialog: MdDialog) { }
@@ -31,8 +27,7 @@ export class ReportsListComponent implements OnInit {
     }
 
     getReportsList(): void {
-        this.reportService.getReports().then(reports =>
-            this.reports = reports);
+        this.reportService.getReports().then(reports => this.reports = reports);
     }
 
     onSelect(report: Report): void {
@@ -42,8 +37,6 @@ export class ReportsListComponent implements OnInit {
 
     onAdd(): void {
         this.dialogRef = this.dialog.open(NewReportDialog);
-        //this.newReport = new Report('-1', '', '');
-        //this.dialogRef.componentInstance.newReport = this.newReport;
     }
 
     delete(report: Report): void {
@@ -65,31 +58,43 @@ export class ReportsListComponent implements OnInit {
     template: `
         <h2>New report</h2>
         <md-input-container>
-            <input md-input #reportName placeholder="Report name" />
+            <input mdInput #reportName placeholder="Report name" />
         </md-input-container><br>
         <md-input-container>
-            <input md-input #keywords placeholder="Keywords" />
+            <input mdInput #keywords placeholder="Report keywords" />
         </md-input-container><br>
-            <input id="file-input" type="file"><br><br>
-        <button md-raised-button (click)="addReport(reportName.value, keywords.value, file.value);">Add</button>
+            <input type="file" accept=".csv" (change)="onFileChange($event)"><br><br>
+        <button md-raised-button color="primary" (click)="addReport(reportName.value, keywords.value);">Add</button>
         <button md-raised-button (click)="dialogRef.close()">Close</button>
     `
 })
 export class NewReportDialog {
     public title: string;
-    newReport: any;
+    newReportData: any;
     constructor(
         public dialogRef: MdDialogRef<NewReportDialog>,
         private reportService: ReportService,
         private router: Router){
     }
 
-    addReport(name: string, keywords: string, file: string) {
+    onFileChange(ev){
+
+        let reader = new FileReader();
+        reader.onload = (theFile =>
+                e => {
+                    this.newReportData = e.target.result;
+                    //this.dataCalculate(this.data, this.report.keywords);
+                }
+        )(ev.target.files[0]);
+
+        reader.readAsText(ev.target.files[0]);
+    }
+
+    addReport(name: string, keywords: string) {
         this.dialogRef.close();
-        alert('new');
-        this.reportService.create(name, keywords, file);
-             // .then(reportId => {
-             //     this.router.navigate(['/dashboard', reportId]);
-             // });
+        this.reportService.create(name, keywords, this.newReportData)
+             .then(reportId => {
+                 this.router.navigate(['/dashboard', reportId]);
+             });
     }
 }

@@ -2,34 +2,33 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { InMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { RoutingModule } from './routing.module';
 import { MaterialModule } from '@angular/material';
+import { Ng2GoogleChartsModule } from 'ng2-google-charts';
 
 import { AppComponent } from './app.component';
 import { ReportsListComponent, NewReportDialog } from './reports-list/reports-list.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardComponent, RoundPipe } from './dashboard/dashboard.component';
 
-import { InputDataService } from './services/input-data.service';
 import { ReportService } from './services/report.service';
-import { InMemoryDataService } from './services/in-memory-data.service';
 
 @NgModule({
     declarations: [
         AppComponent,
         ReportsListComponent,
         NewReportDialog,
-        DashboardComponent
+        DashboardComponent,
+        RoundPipe
     ],
     imports: [
         BrowserModule,
         FormsModule,
         HttpModule,
         RoutingModule,
-        InMemoryWebApiModule.forRoot(InMemoryDataService),
-        MaterialModule.forRoot()
+        MaterialModule.forRoot(),
+        Ng2GoogleChartsModule
     ],
-    providers: [InputDataService, ReportService],
+    providers: [ReportService],
     bootstrap: [AppComponent],
     entryComponents: [NewReportDialog]
 })

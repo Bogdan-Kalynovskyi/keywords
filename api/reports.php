@@ -30,10 +30,10 @@ if ($s = mysql_error()) {
 
 
 function get () {
-    $id = intval($_GET['id']);
+    $id = isset($_GET['id']) ? intval($_GET['id']) : false;
 
     if ($id) {
-        $query = mysql_query('SELECT * FROM `reports` WHERE id = '.$id.' AND owner = ' . esc($_SESSION['userGoogleId']));
+        $query = mysql_query('SELECT `keywords`, `csv` FROM `reports` WHERE id = '.$id);// .' AND owner = ' . esc($_SESSION['userGoogleId']));
         $result = mysql_fetch_array($query, MYSQL_ASSOC);
 
         if ($result) {
@@ -45,28 +45,21 @@ function get () {
     }
 
     else {
-        $query = mysql_query('SELECT id, name FROM `reports` WHERE owner = ' . esc($_SESSION['userGoogleId']) . ' ORDER BY created');
+        $query = mysql_query('SELECT `id`, `name`, `keywords`, `created` FROM `reports`');//' WHERE owner = ' . esc($_SESSION['userGoogleId']) . ' ORDER BY created');
+
         $result = array();
-
         while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
-            $num = array_shift($row);
-            $result[$num] = $row;
+            $result[] = $row;
         }
-
-        if ($result) {
-            echo json_encode($result);
-        } else {
-            echo '{}';
-        }
+        echo json_encode($result);
     }
 }
 
 
 function post () {
     $post = json_decode(file_get_contents('php://input'), true);
-    $report = $post['report'];
 
-    mysql_query('INSERT INTO `reports` (`csv`, `branded`, `name`, `owner`, `created`) VALUES ('.esc($report['csv']).', '.esc($report['branded']).', '.esc($report['name']).', '.esc($_SESSION['userGoogleId']).', UNIX_TIMESTAMP())');
+    mysql_query('INSERT INTO `reports` (`csv`, `keywords`, `name`, `created`) VALUES ('.esc($post['csv']).', '.esc($post['keywords']).', '.esc($post['name']).', UNIX_TIMESTAMP())');
 
     echo mysql_insert_id();
 }
@@ -76,11 +69,11 @@ function put () {
     $post = json_decode(file_get_contents('php://input'), true);
     $id = intval($_GET['id']);
 
-    mysql_query('UPDATE `reports` SET `csv` = '.esc($post['csv']).', `branded` = '.esc($post['branded']).', `name` = '.esc($post['name']).',  WHERE id = '.$id.' AND owner = ' . esc($_SESSION['userGoogleId']));
+    mysql_query('UPDATE `reports` SET `csv` = '.esc($post['csv']).', `keywords` = '.esc($post['keywords']).', `name` = '.esc($post['name']).',  WHERE id = '.$id);//.' AND owner = ' . esc($_SESSION['userGoogleId']));
 }
 
 
 function delete () {
     $id = intval($_GET['id']);
-    mysql_query('DELETE FROM `reports` WHERE id = '.$id.' AND owner = ' . esc($_SESSION['userGoogleId']));
+    mysql_query('DELETE FROM `reports` WHERE id = '.$id);//.' AND owner = ' . esc($_SESSION['userGoogleId']));
 }

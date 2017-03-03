@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Pipe } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
@@ -7,13 +7,19 @@ import { Report } from '../models/report';
 import { ReportService } from '../services/report.service';
 
 import { InputDataRow } from '../models/input-data-row';
-import { InputDataService } from '../services/input-data.service';
+
+@Pipe({name: 'round'})
+export class RoundPipe {
+    transform (input:number) {
+        return Math.round(input);
+    }
+}
 
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.css'],
-    providers: [InputDataService]
+    providers: [ReportService]
 })
 export class DashboardComponent implements OnInit {
     @Input()
@@ -21,13 +27,13 @@ export class DashboardComponent implements OnInit {
     reportId: number;
     private data: InputDataRow[];
     private filteredData: InputDataRow[];
-    private allDataQueriesData: InputDataRow[];
+    private allQueriesData: InputDataRow[];
     private nonBrandedData: InputDataRow[];
 
-    all_queries_traffic_loss: number = 0;
-    all_queries_traffic_gain: number = 0;
-    non_branded_traffic_loss: number = 0;
-    non_branded_traffic_gain: number = 0;
+    all_queries_traffic_loss: number;
+    all_queries_traffic_gain: number;
+    non_branded_traffic_loss: number;
+    non_branded_traffic_gain: number;
     positions: number[] = [];
     positions_stats = [];
     grand_total = {};
@@ -38,98 +44,114 @@ export class DashboardComponent implements OnInit {
     top_traffic_loss: InputDataRow[];
     sum_top_traffic_loss: number;
 
-
     constructor(
         private reportService: ReportService,
-        private inputDataService: InputDataService,
-        private route: ActivatedRoute,
-        private location: Location
+        private route: ActivatedRoute
     ) { }
 
+    nonBrandedChartOptions =  {
+        chartType: 'PieChart',
+        dataTable: [
+            ['Category', 'Value']
+        ],
+        options: {
+            'title': 'Non Branded queries',
+            'pieHole': 0.4,
+            'width': 900,
+            'height': 500
+        },
+    };
+
+    brandedChartOptions =  {
+        chartType: 'PieChart',
+        dataTable: [
+            ['Category', 'Value']
+        ],
+        options: {
+            'title': 'Branded queries',
+            'pieHole': 0.4,
+            'width': 900,
+            'height': 500
+        },
+    };
+
     ngOnInit() {
-        //this.googleChartsLoader();
         this.route.params.switchMap((params: Params) => {
             this.reportId = params['id'];
             return this.reportService.getReport(+this.reportId);
         })
             .subscribe(report => {
                 this.report = report;
-                this.inputDataService.loadData(this.reportId).then(data => {
+                this.reportService.loadData(this.reportId).then(data => {
                     this.data = data;
                     this.dataCalculate(this.data, this.report.keywords)
                 });
-                return report;
             });
 
     }
-
-    // googleChartsLoader() {
-    //     debugger;
-    //     google.charts.load("current", {packages:["corechart"]});
-    //     google.charts.setOnLoadCallback(drawChart);
-    //     function drawChart() {
-    //         var data = google.visualization.arrayToDataTable([
-    //             ['Task', 'Hours per Day'],
-    //             ['Work',     11],
-    //             ['Eat',      2],
-    //             ['Commute',  2],
-    //             ['Watch TV', 2],
-    //             ['Sleep',    7]
-    //         ]);
-    //
-    //         var options = {
-    //             title: 'My Daily Activities',
-    //             pieHole: 0.4,
-    //         };
-    //
-    //         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-    //         chart.draw(data, options);
-    //     }
-    // }
 
     dataCalculate(
         data: InputDataRow[],
         reportKeywords: string
     ) {
-        this.filteredData = this.data.filter(row_data => row_data.click >= 5);
+        this.all_queries_traffic_loss = 0;
+        this.all_queries_traffic_gain = 0;
+        this.non_branded_traffic_loss = 0;
+        this.non_branded_traffic_gain = 0;
 
-        this.allDataQueriesData = this.filteredData;
+        this.filteredData = [];
 
-        this.allDataQueriesData.forEach((row, i , arr) => {
+        data.forEach(data => {
+            if (data.clicks >= 5) {
+                this.filteredData.push(Object.assign({}, data));
+            }
+        });
 
+        this.allQueriesData = [];
+        this.filteredData.forEach(data => {
+            this.allQueriesData.push(Object.assign({}, data));
+        });
+
+        this.allQueriesData.forEach((row, i , arr) => {
+
+            row.calculatedCtr = (row.impressions != 0) ? row.clicks / row.impressions : 0;
+            row.instance = arr.reduce(function (total, x) {
+                return x.position === row.position ? total + 1 : total
+            }, 0);
+        });
+
+        this.allQueriesData.forEach((row, i , arr) => {
             var sum = 0;
             var count = 0;
-            row.ctr = (row.impression != 0) ? parseFloat((row.click/row.impression).toFixed(2)) : 0;
-            row.instance = arr.reduce(function(total,x){return x.position === row.position ? total+1 : total}, 0);
+
             for (var item of arr) {
-                if (item.position === row.position) {
-                    sum += item.ctr;
+                if (item.position == row.position) {
+                    sum += item.calculatedCtr;
                     count ++;
                 }
             }
-            row.expected_ctr = parseFloat((sum/count).toFixed(2));
-            row.ctr_delta = row.ctr - row.expected_ctr;
-            row.expected_clicks = row.expected_ctr*row.impression;
-            row.traffic_loss = ((row.click - row.expected_clicks) > 0) ? 0 : parseFloat((row.click - row.expected_clicks).toFixed(2));
-            row.traffic_gain = ((row.click - row.expected_clicks) < 0) ? 0 : parseFloat((row.click - row.expected_clicks).toFixed(2));
+            row.expected_ctr = sum / count;
+            row.ctr_delta = row.calculatedCtr - row.expected_ctr;
+            row.expected_clicks = row.expected_ctr*row.impressions;
+            row.traffic_loss = row.clicks - row.expected_clicks;
+
+            if (row.traffic_loss > 0) {
+                row.traffic_gain = row.traffic_loss;
+                row.traffic_loss = 0;
+            } else {
+                row.traffic_gain = 0;
+            }
 
             this.all_queries_traffic_loss += row.traffic_loss;
             this.all_queries_traffic_gain += row.traffic_gain;
-
-            row.nr1 = 3;
-            row.nr2 = 3;
-            row.nr3 = 3;
-            row.nr4 = 3;
-            row.nr5 = 3;
-            row.nr6 = 3;
-            row.nr7 = 3;
-            row.nr8 = 3;
-            row.nr9 = 3;
-            row.nr10 = 3;
-            row.nr11 = 3;
         });
 
-        this.nonBrandedData = this.allDataQueriesData.filter(row_data => this.report.keywords.split(",").indexOf(row_data.query) == -1);
+        this.nonBrandedData = [];
+        this.allQueriesData.forEach(data => {
+            if (reportKeywords.split(",").indexOf(data.queries) == -1) {
+                this.nonBrandedData.push(Object.assign({}, data));
+            }
+        });
 
         for (var i = 0; i < 10; i++) {
             this.positions.push(0);
@@ -150,6 +172,9 @@ export class DashboardComponent implements OnInit {
             });
         }
 
+        this.brandedChartOptions.dataTable.push(['Traffic Loss', ((-1) * this.all_queries_traffic_loss).toString()]);
+        this.brandedChartOptions.dataTable.push(['Traffic Gain', this.all_queries_traffic_gain.toString()]);
+
         this.nonBrandedData.forEach((row, i, arr) => {
 
             var sum = 0;
@@ -160,15 +185,22 @@ export class DashboardComponent implements OnInit {
             }, 0);
             for (var item of arr) {
                 if (item.position === row.position) {
-                    sum += item.inputted_ctr;
+                    sum += item.ctr;
                     count++;
                 }
             }
-            row.expected_ctr = parseFloat((sum / count).toFixed(2));
-            row.ctr_delta = row.inputted_ctr - row.expected_ctr;
-            row.expected_clicks = row.expected_ctr * row.impression;
-            row.traffic_loss = ((row.click - row.expected_clicks) > 0) ? 0 : parseFloat((row.click - row.expected_clicks).toFixed(2));
-            row.traffic_gain = ((row.click - row.expected_clicks) < 0) ? 0 : parseFloat((row.click - row.expected_clicks).toFixed(2));
+            row.expected_ctr = sum / count;
+            row.ctr_delta = row.ctr - row.expected_ctr;
+            row.expected_clicks = row.expected_ctr*row.impressions;
+
+            row.traffic_loss = row.clicks - row.expected_clicks;
+
+            if (row.traffic_loss > 0) {
+                row.traffic_gain = row.traffic_loss;
+                row.traffic_loss = 0;
+            } else {
+                row.traffic_gain = 0;
+            }
 
             this.non_branded_traffic_loss += row.traffic_loss;
             this.non_branded_traffic_gain += row.traffic_gain;
@@ -182,34 +214,28 @@ export class DashboardComponent implements OnInit {
                 if (((j + 10) / 10 <= row.position) && (row.position < (j + 11) / 10)) {
                     arr1[j].row_indexes.push(row.id);
                     arr1[j].instances = row.instance;
-                    arr1[j].clicks_sum += row.click;
-                    arr1[j].impressions_sum += row.impression;
-                    //console.log((j + 10)/10 + '   ' + row.expected_ctr);
+                    arr1[j].clicks_sum += row.clicks;
+                    arr1[j].impressions_sum += row.impressions;
                     if (row.expected_ctr != 0) arr1[j].expected_ctr_avg = row.expected_ctr;
-                    //console.log(arr1[j]);
-                    //arr1[j].expected_ctr_sum += row.expected_ctr;
                 }
-                ;
             });
-
-            row.nr1 = 3;
-            row.nr2 = 3;
-            row.nr3 = 3;
-            row.nr4 = 3;
-            row.nr5 = 3;
-            row.nr6 = 3;
-            row.nr7 = 3;
-            row.nr8 = 3;
-            row.nr9 = 3;
-            row.nr10 = 3;
-            row.nr11 = 3;
         });
 
-        this.position_stats_limited = this.positions_stats.slice(0, 91);
+        // ((-1) * this.non_branded_traffic_loss)
+        // this.non_branded_traffic_gain
+        this.nonBrandedChartOptions.dataTable.push(['Traffic Loss', (3).toString()]);
+        this.nonBrandedChartOptions.dataTable.push(['Traffic Gain', (5).toString()]);
+
+        this.position_stats_limited = [];
+        this.positions_stats.forEach((data, i) => {
+            if (i < 92) {this.position_stats_limited.push(Object.assign({}, data))};
+        });
 
         for (var i = 0; i <= 10; i++) {
             var tmp = [];
-            tmp = this.position_stats_limited.filter(row => row.position.toFixed(0) == i);
+            this.position_stats_limited.forEach(data => {
+                if (data.position.toFixed(0) == i) {tmp.push(Object.assign({}, data))}
+            })
             var sum = 0;
             var count = 0;
             tmp.forEach((row, i, arr) => {
@@ -217,8 +243,6 @@ export class DashboardComponent implements OnInit {
                     sum += row.expected_ctr_avg;
                     count++;
                 }
-                //console.log(row);
-
             });
 
             tmp.forEach((row, i, arr) => {
@@ -229,12 +253,13 @@ export class DashboardComponent implements OnInit {
                 }
             });
 
-            this.position_stats_resulted = this.position_stats_resulted.concat(tmp);
-
-            //console.log(tmp);
+            this.position_stats_resulted = [];
+            tmp.forEach((data, i) => {
+                this.position_stats_resulted.push(Object.assign({}, data));
+            });
         }
 
-        this.positions_stats = this.positions_stats.filter(row => row.row_indexes.length != 0);
+        this.positions_stats = this.positions_stats.filter(row => row.row_indexes.length != 0).slice();
 
         this.grand_total = {
             instances_sum: this.positions_stats.reduce((a, b) => a + b.instances, 0),
@@ -248,10 +273,32 @@ export class DashboardComponent implements OnInit {
 
         this.top_traffic_loss = this.nonBrandedData.sort((a, b) => a.traffic_loss - b.traffic_loss).slice(0, 9);
         this.sum_top_traffic_loss = this.top_traffic_loss.reduce((a, b) => a + b.traffic_loss, 0);
+
+        console.log(this.nonBrandedChartOptions.dataTable);
+
+
     };
 
-    updateData() {
-        console.log('Save data ToDo');
-        this.dataCalculate(this.data, this.report.keywords);
+    onFileChange(ev){
+
+        let reader = new FileReader();
+        reader.onload = (theFile =>
+                e => {
+                    this.data = this.reportService.parseCsv(e.target.result) as InputDataRow[];
+                    this.dataCalculate(this.data, this.report.keywords);
+                }
+        )(ev.target.files[0]);
+
+        reader.readAsText(ev.target.files[0]);
     }
+
+    updateData(file: string) {
+        this.reportService.update(this.report.id, this.report.name, this.report.keywords, file);
+            //.then(report => {
+               // this.dataCalculate(this.inputDataService.parseCsv(file) as InputDataRow[], report.keywords);
+              //  return report;
+            //}
+        //);
+        this.dataCalculate(this.reportService.parseCsv(file) as InputDataRow[], this.report.keywords);
+    };
 }

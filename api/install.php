@@ -25,7 +25,7 @@ $query = '
 CREATE TABLE IF NOT EXISTS `reports` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `branded` TEXT NOT NULL,
+  `keywords` TEXT NOT NULL,
   `csv` LONGTEXT NOT NULL,
   `owner` varchar(255) NOT NULL,
   `created` int NOT NULL,

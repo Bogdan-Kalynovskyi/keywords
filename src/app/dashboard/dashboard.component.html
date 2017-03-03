@@ -1,14 +1,13 @@
-<!--<div id="donutchart" style="width: 900px; height: 500px;"></div>-->
 <div *ngIf="report" class="report-content">
     <md-input-container>
-        <input md-input placeholder="Name" [(ngModel)]="report.name" />
+        <input mdInput placeholder="Report name" [(ngModel)]="report.name" />
     </md-input-container>
     <md-input-container>
-        <input md-input placeholder="Keywords" [(ngModel)]="report.keywords" />
+        <input mdInput placeholder="Report keywords" [(ngModel)]="report.keywords" />
     </md-input-container>
-    <input class="ng-hide" id="input-file-id" multiple type="file" />
-    <!--<label for="input-file-id" class="md-button md-raised md-primary">File to update data</label>-->
-    <button md-raised-button color="primary" (click)="updateData()">UPDATE</button>
+    <!--<input #inputtedFile type="file" [(ngModel)]="fileupload" />-->
+    <input type="file" accept=".csv" (change)="onFileChange($event)" />
+    <button md-raised-button color="primary" (click)="updateData(inputtedFile.value)">Save changes</button>
     <div class="scrolling-content">
         <md-tab-group>
             <md-tab label="CSV_import">
@@ -21,10 +20,10 @@
                         <th>Position</th>
                     </tr>
                     <tr *ngFor="let data of data">
-                        <td>{{ data.query }}</td>
-                        <td>{{ data.click }}</td>
-                        <td>{{ data.impression }}</td>
-                        <td>{{ data.inputted_ctr | percent:'1.0-2' }}</td>
+                        <td>{{ data.queries }}</td>
+                        <td>{{ data.clicks }}</td>
+                        <td>{{ data.impressions }}</td>
+                        <td>{{ data.ctr | percent:'1.0-2' }}</td>
                         <td>{{ data.position }}</td>
                     </tr>
                 </table>
@@ -39,10 +38,10 @@
                         <th>Position</th>
                     </tr>
                     <tr *ngFor="let data of filteredData">
-                        <td>{{ data.query }}</td>
-                        <td>{{ data.click }}</td>
-                        <td>{{ data.impression }}</td>
-                        <td>{{ data.inputted_ctr | percent:'1.0-2' }}</td>
+                        <td>{{ data.queries }}</td>
+                        <td>{{ data.clicks }}</td>
+                        <td>{{ data.impressions }}</td>
+                        <td>{{ data.ctr | percent:'1.0-2' }}</td>
                         <td>{{ data.position }}</td>
                     </tr>
                 </table>
@@ -73,18 +72,18 @@
                         <th>#10</th>
                         <th>#1+</th>
                     </tr>
-                    <tr *ngFor="let data of filteredData">
-                        <td>{{ data.query }}</td>
-                        <td>{{ data.click }}</td>
-                        <td>{{ data.impression }}</td>
+                    <tr *ngFor="let data of allQueriesData">
+                        <td>{{ data.queries }}</td>
+                        <td>{{ data.clicks }}</td>
+                        <td>{{ data.impressions }}</td>
                         <td>{{ data.position }}</td>
-                        <td>{{ data.ctr | percent:'1.0-0' }}</td>
+                        <td>{{ data.calculatedCtr | percent:'1.0-0' }}</td>
                         <td>{{ data.instance }}</td>
                         <td>{{ data.expected_ctr | percent:'1.0-2' }}</td>
                         <td>{{ data.ctr_delta | percent:'1.0-2' }}</td>
-                        <td>{{ data.expected_clicks }}</td>
-                        <td>{{ data.traffic_loss }}</td>
-                        <td>{{ data.traffic_gain }}</td>
+                        <td>{{ data.expected_clicks | round}}</td>
+                        <td>{{ data.traffic_loss | round }}</td>
+                        <td>{{ data.traffic_gain | round }}</td>
                         <td>{{ data.nr1 }}</td>
                         <td>{{ data.nr2 }}</td>
                         <td>{{ data.nr3 }}</td>
@@ -126,17 +125,17 @@
                         <th>#1+</th>
                     </tr>
                     <tr *ngFor="let data of nonBrandedData">
-                        <td>{{ data.query }}</td>
-                        <td>{{ data.click }}</td>
-                        <td>{{ data.impression }}</td>
+                        <td>{{ data.queries }}</td>
+                        <td>{{ data.clicks }}</td>
+                        <td>{{ data.impressions }}</td>
                         <td>{{ data.position }}</td>
-                        <td>{{ data.inputted_ctr | percent:'1.0-2' }}</td>
+                        <td>{{ data.ctr | percent:'1.0-2' }}</td>
                         <td>{{ data.instance }}</td>
                         <td>{{ data.expected_ctr | percent:'1.0-2' }}</td>
                         <td>{{ data.ctr_delta | percent:'1.0-2' }}</td>
-                        <td>{{ data.expected_clicks }}</td>
-                        <td>{{ data.traffic_loss }}</td>
-                        <td>{{ data.traffic_gain }}</td>
+                        <td>{{ data.expected_clicks | round }}</td>
+                        <td>{{ data.traffic_loss | round}}</td>
+                        <td>{{ data.traffic_gain | round }}</td>
                         <td>{{ data.nr1 }}</td>
                         <td>{{ data.nr2 }}</td>
                         <td>{{ data.nr3 }}</td>
@@ -161,8 +160,8 @@
                         <th>Traffic Gain</th>
                     </tr>
                     <tr>
-                        <td>{{ all_queries_traffic_loss }}</td>
-                        <td>{{ all_queries_traffic_gain }}</td>
+                        <td>{{ (all_queries_traffic_loss * 100 | round ) /100  }}</td>
+                        <td>{{ (all_queries_traffic_gain * 100 | round ) /100}}</td>
                     </tr>
                 </table>
                 <table>
@@ -174,8 +173,8 @@
                         <th>Traffic Gain</th>
                     </tr>
                     <tr>
-                        <td>{{ non_branded_traffic_loss }}</td>
-                        <td>{{ non_branded_traffic_gain }}</td>
+                        <td>{{ (non_branded_traffic_loss * 100 | round ) /100 }}</td>
+                        <td>{{ (non_branded_traffic_gain * 100 | round ) /100 }}</td>
                     </tr>
                 </table>
                 <table>
@@ -184,13 +183,13 @@
                     </tr>
                     <tr>
                         <td>Traffic Loss</td>
-                        <td>{{ all_queries_traffic_loss - non_branded_traffic_loss }}</td>
+                        <td>{{ ((all_queries_traffic_loss - non_branded_traffic_loss)  * 100 | round ) /100 }}</td>
                     </tr>
                 </table>
                 <table>
                     <tr>
                         <td>Potential traffic (non branded)</td>
-                        <td>{{ non_branded_traffic_loss >= 0 ? non_branded_traffic_loss : non_branded_traffic_loss*(-1) }}</td>
+                        <td>{{ non_branded_traffic_loss >= 0 ? (non_branded_traffic_loss  * 100 | round ) /100 : (non_branded_traffic_loss*(-1) * 100 | round ) /100 }}</td>
                     </tr>
                 </table>
                 <table>
@@ -258,7 +257,8 @@
                         <td>toDo</td>
                     </tr>
                 </table>
-                <!--<div id="donutchart" style="width: 900px; height: 500px;"></div>-->
+                <google-chart [data]="nonBrandedChartOptions"></google-chart>
+                <google-chart [data]="brandedChartOptions"></google-chart>
             </md-tab>
             <md-tab label="CTR Stats">
                 <table>
@@ -311,7 +311,7 @@
                         <th>Average CTR real</th>
                         <th>Average CTR calculated</th>
                     </tr>
-                    <tr *ngFor="let pos of position_stats_resulted; let i = index">
+                    <tr *ngFor="let pos of position_stats_resulted">
                         <td>{{ pos.position }}</td>
                         <td *ngIf="pos.expected_ctr_avg != 0">{{ pos.expected_ctr_avg | percent:'1.0-2' }}</td>
                         <td *ngIf="pos.expected_ctr_avg == 0"></td>

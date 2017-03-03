@@ -1,11 +1,11 @@
 export class InputDataRow {
     id: number;
-    query: string;
-    click: number;
-    impression: number;
-    inputted_ctr: number;
-    position: number;
+    queries: string;
+    clicks: number;
+    impressions: number;
     ctr: number;
+    position: number;
+    calculatedCtr: number;
     instance: number;
     expected_ctr: number;
     ctr_delta: number;
