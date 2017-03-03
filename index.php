@@ -10,15 +10,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title><?php echo $token ? '::' : ':: Log In' ?></title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
-    <link href="styles.bundle.css" rel="stylesheet">
     <meta name="google-signin-client_id" content="<?php echo $google_api_id ?>">
-    <base href="/">
     <style>
-        body {
-            margin: 0;
-        }
         #loading {
             position: absolute;
             font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -76,6 +69,7 @@
 <body>
 <script src="https://apis.google.com/js/platform.js" async defer onload="onPlatformLoad()"></script>
 
+
 <script>
     (function() {
         var ua = navigator.userAgent,
@@ -100,7 +94,10 @@
         xhr.open('GET', 'api/login.php?authToken=' + encodeURIComponent(g.getAuthResponse().id_token));
         xhr.onload = function() {
             if (xhr.status === 200) {
-                location.reload();
+                window.xsrfToken = xhr.responseText;
+                if (window.app) {       // flag that app file has been loaded
+                    showApp();
+                }
             }
             else {
                 alert('Login error: ' + xhr.responseText); // ?
@@ -154,12 +151,12 @@
         </div>
         <iframe src="//mindmup.github.io/3rdpartycookiecheck/start.html" style="display:none"></iframe>
     </div>
-<?php } else { ?>
-    <app-root><div id="loading">Loading...</div></app-root>
-    <script src="inline.bundle.js"></script>
-    <script src="vendor.bundle.js"></script>
-    <script src="main.bundle.js"></script>
 <?php } ?>
+
+
+<div id="logged-in">
+    <div id="loading">Loading...</div>
+</div>
 
 </body>
 </html>
