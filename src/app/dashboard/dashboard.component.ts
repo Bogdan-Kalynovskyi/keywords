@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, Pipe } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 
 import { Report } from '../models/report';
@@ -51,26 +50,28 @@ export class DashboardComponent implements OnInit {
 
     nonBrandedChartOptions =  {
         chartType: 'PieChart',
-        dataTable: [
-            ['Category', 'Value']
-        ],
+        dataTable: [],
         options: {
             'title': 'Non Branded queries',
-            'pieHole': 0.4,
-            'width': 900,
+            'pieHole': 0.5,
+            'pieSliceTextStyle' : {
+                'color': 'black',
+            },
+            'width': 800,
             'height': 500
         },
     };
 
     brandedChartOptions =  {
         chartType: 'PieChart',
-        dataTable: [
-            ['Category', 'Value']
-        ],
+        dataTable: [],
         options: {
             'title': 'Branded queries',
-            'pieHole': 0.4,
-            'width': 900,
+            'pieHole': 0.5,
+            'pieSliceTextStyle' : {
+                'color': 'black',
+            },
+            'width': 800,
             'height': 500
         },
     };
@@ -80,14 +81,17 @@ export class DashboardComponent implements OnInit {
             this.reportId = params['id'];
             return this.reportService.getReport(+this.reportId);
         })
-            .subscribe(report => {
-                this.report = report;
-                this.reportService.loadData(this.reportId).then(data => {
-                    this.data = data;
-                    this.dataCalculate(this.data, this.report.keywords)
-                });
+            .subscribe(reportData => {
+                if (reportData) {
+                    this.data = reportData.csv;
+                    this.report = {
+                        id: this.reportId,
+                        name: reportData.name,
+                        keywords: reportData.keywords
+                    };
+                    this.dataCalculate(this.data, this.report.keywords);
+                }
             });
-
     }
 
     dataCalculate(
@@ -172,8 +176,11 @@ export class DashboardComponent implements OnInit {
             });
         }
 
-        this.brandedChartOptions.dataTable.push(['Traffic Loss', ((-1) * this.all_queries_traffic_loss).toString()]);
-        this.brandedChartOptions.dataTable.push(['Traffic Gain', this.all_queries_traffic_gain.toString()]);
+        //ToDo
+        this.brandedChartOptions.dataTable = [];
+        this.brandedChartOptions.dataTable.push(['Category', 'Value']);
+        this.brandedChartOptions.dataTable.push(['Traffic Loss', ((-1) * this.all_queries_traffic_loss)]);
+        this.brandedChartOptions.dataTable.push(['Traffic Gain', this.all_queries_traffic_gain]);
 
         this.nonBrandedData.forEach((row, i, arr) => {
 
@@ -221,10 +228,10 @@ export class DashboardComponent implements OnInit {
             });
         });
 
-        // ((-1) * this.non_branded_traffic_loss)
-        // this.non_branded_traffic_gain
-        this.nonBrandedChartOptions.dataTable.push(['Traffic Loss', (3).toString()]);
-        this.nonBrandedChartOptions.dataTable.push(['Traffic Gain', (5).toString()]);
+        this.nonBrandedChartOptions.dataTable = [];
+        this.nonBrandedChartOptions.dataTable.push(['Category', 'Value']);
+        this.nonBrandedChartOptions.dataTable.push(['Traffic Loss', (-1) * this.non_branded_traffic_loss]);
+        this.nonBrandedChartOptions.dataTable.push(['Traffic Gain', this.non_branded_traffic_gain]);
 
         this.position_stats_limited = [];
         this.positions_stats.forEach((data, i) => {
@@ -274,9 +281,6 @@ export class DashboardComponent implements OnInit {
         this.top_traffic_loss = this.nonBrandedData.sort((a, b) => a.traffic_loss - b.traffic_loss).slice(0, 9);
         this.sum_top_traffic_loss = this.top_traffic_loss.reduce((a, b) => a + b.traffic_loss, 0);
 
-        console.log(this.nonBrandedChartOptions.dataTable);
-
-
     };
 
     onFileChange(ev){
@@ -293,6 +297,7 @@ export class DashboardComponent implements OnInit {
     }
 
     updateData(file: string) {
+        debugger;
         this.reportService.update(this.report.id, this.report.name, this.report.keywords, file);
             //.then(report => {
                // this.dataCalculate(this.inputDataService.parseCsv(file) as InputDataRow[], report.keywords);

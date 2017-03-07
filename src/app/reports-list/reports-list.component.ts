@@ -14,7 +14,8 @@ import { ReportService } from '../services/report.service';
 
 export class ReportsListComponent implements OnInit {
     selectedReport: Report;
-    reports: Report[];
+    newReport: Report;
+    public reports: Report[];
     dialogRef: MdDialogRef<NewReportDialog>;
 
     constructor(
@@ -27,7 +28,7 @@ export class ReportsListComponent implements OnInit {
     }
 
     getReportsList(): void {
-        this.reportService.getReports().then(reports => this.reports = reports);
+        this.reportService.getReports().then(reports => this.reports = this.reportService.reportList);
     }
 
     onSelect(report: Report): void {
@@ -37,18 +38,18 @@ export class ReportsListComponent implements OnInit {
 
     onAdd(): void {
         this.dialogRef = this.dialog.open(NewReportDialog);
+        this.dialogRef.componentInstance.reportList = this.reports;
     }
 
     delete(report: Report): void {
-        alert('delete');
-        // this.reportService
-        //     .delete(report.id)
-        //     .then(() => {
-        //         this.reports = this.reports.filter(h => h !== report);
-        //         if (this.selectedReport === report) {
-        //             this.selectedReport = null;
-        //         }
-        //     });
+        this.reportService
+            .delete(report.id)
+            .then(() => {
+                this.reports = this.reports.filter(h => h !== report);
+                if (this.selectedReport === report) {
+                    this.selectedReport = null;
+                }
+            });
     }
 
 }
@@ -68,9 +69,10 @@ export class ReportsListComponent implements OnInit {
         <button md-raised-button (click)="dialogRef.close()">Close</button>
     `
 })
+
 export class NewReportDialog {
-    public title: string;
     newReportData: any;
+    reportList: Report[];
     constructor(
         public dialogRef: MdDialogRef<NewReportDialog>,
         private reportService: ReportService,
@@ -78,23 +80,21 @@ export class NewReportDialog {
     }
 
     onFileChange(ev){
-
         let reader = new FileReader();
-        reader.onload = (theFile =>
-                e => {
-                    this.newReportData = e.target.result;
-                    //this.dataCalculate(this.data, this.report.keywords);
-                }
-        )(ev.target.files[0]);
-
+        reader.onload = (theFile => e => this.newReportData = e.target.result)(ev.target.files[0]);
         reader.readAsText(ev.target.files[0]);
     }
 
     addReport(name: string, keywords: string) {
         this.dialogRef.close();
         this.reportService.create(name, keywords, this.newReportData)
-             .then(reportId => {
-                 this.router.navigate(['/dashboard', reportId]);
-             });
+            .then(reportId => {
+                this.reportList.push({
+                    id: reportId,
+                    name: name,
+                    keywords: keywords
+                });
+                this.router.navigate(['/dashboard', reportId]);
+            });
     }
 }

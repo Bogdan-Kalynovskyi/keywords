@@ -200,12 +200,12 @@
                     <tr *ngFor="let item of top_traffic_gain; let i = index">
                         <td>{{ i + 1 }}</td>
                         <td>{{ item.query }}</td>
-                        <td>{{ item.traffic_gain }}</td>
+                        <td>{{ (item.traffic_gain * 100 | round)/100 }}</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td>Top 10 gain traffic</td>
-                        <td>{{ sum_top_traffic_gain }}</td>
+                        <td>{{ (sum_top_traffic_gain * 100 | round)/100 }}</td>
                     </tr>
                 </table>
                 <table>
@@ -216,12 +216,12 @@
                     <tr *ngFor="let item of top_traffic_loss; let i = index">
                         <td>{{ i + 1 }}</td>
                         <td>{{ item.query }}</td>
-                        <td>{{ item.traffic_loss }}</td>
+                        <td>{{ (item.traffic_loss * 100 | round) / 100 }}</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td>Top 10 gain traffic</td>
-                        <td>{{ sum_top_traffic_loss }}</td>
+                        <td>{{ (sum_top_traffic_loss * 100 | round) / 100 }}</td>
                     </tr>
                 </table>
                 <table>

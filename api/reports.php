@@ -33,7 +33,7 @@ function get () {
     $id = isset($_GET['id']) ? intval($_GET['id']) : false;
 
     if ($id) {
-        $query = mysql_query('SELECT `keywords`, `csv` FROM `reports` WHERE id = '.$id);// .' AND owner = ' . esc($_SESSION['userGoogleId']));
+        $query = mysql_query('SELECT `name`, `keywords`, `csv` FROM `reports` WHERE id = '.$id);// .' AND owner = ' . esc($_SESSION['userGoogleId']));
         $result = mysql_fetch_array($query, MYSQL_ASSOC);
 
         if ($result) {
@@ -45,7 +45,7 @@ function get () {
     }
 
     else {
-        $query = mysql_query('SELECT `id`, `name`, `keywords`, `created` FROM `reports`');//' WHERE owner = ' . esc($_SESSION['userGoogleId']) . ' ORDER BY created');
+        $query = mysql_query('SELECT `id`, `name`, `created` FROM `reports`');//' WHERE owner = ' . esc($_SESSION['userGoogleId']) . ' ORDER BY created');
 
         $result = array();
         while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {

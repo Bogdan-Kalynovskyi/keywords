@@ -4,36 +4,26 @@ import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/catch';
 
 import {Report} from '../models/report';
-import {InputDataRow} from '../models/input-data-row';
 
 import any = jasmine.any;
 
 @Injectable()
 export class ReportService {
-
+    public reportList: Report[]= [];
     private dataUrl = 'http://localhost/api/reports.php';
     private headers = new Headers({ 'Content-Type': 'application/json' });
-    private reportsPromise;
 
     constructor(private http: Http) { }
 
     getReports(): Promise<Report[]> {
-        // todo caching does not work
-        this.reportsPromise = this.reportsPromise
-            || this.http
+        return this.http
             .get(this.dataUrl, { headers: this.headers })
             .toPromise()
-            .then(res => res.json())
+            .then(res => {
+                this.reportList = res.json();
+                return res.json();
+            })
             .catch(this.handleError);
-
-        return this.reportsPromise;
-    }
-
-    getReport(id: number): Promise<Report> {
-        return this.getReports()
-            .then(reports => reports.find(report => {
-                return report.id == id;
-            }));
     }
 
     public parseCsv(csvText) {
@@ -67,13 +57,17 @@ export class ReportService {
         return outputArray;
     }
 
-    loadData(id: number): Promise<InputDataRow[]> {
+    getReport(id: number): Promise<any> {
         return this.http
             .get(this.dataUrl + '?id=' + id, { headers: this.headers })
             .toPromise()
             .then(response => {
                 let all = response.json();
-                return this.parseCsv(all.csv) as InputDataRow[];
+                return {
+                    name: all.name,
+                    keywords: all.keywords,
+                    csv: this.parseCsv(all.csv)
+                };
             })
             .catch(this.handleError);
     }
@@ -82,7 +76,7 @@ export class ReportService {
         return this.http
             .post(this.dataUrl, {name, keywords, csv}, { headers: this.headers })
             .toPromise()
-            .then(id => {console.log(id);})
+            .then(response => response.text())
             .catch(this.handleError);
     }
 
@@ -106,8 +100,3 @@ export class ReportService {
     }
 
 }
-
-
-
-
-
