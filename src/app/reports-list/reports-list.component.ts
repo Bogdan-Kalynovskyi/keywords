@@ -87,12 +87,12 @@ export class NewReportDialog {
 
     addReport(name: string, keywords: string) {
         this.dialogRef.close();
-        this.reportService.create(name, keywords, this.newReportData)
+        this.reportService.create(name, keywords.trim(), this.newReportData)
             .then(reportId => {
                 this.reportList.push({
                     id: reportId,
                     name: name,
-                    keywords: keywords
+                    keywords: keywords.trim()
                 });
                 this.router.navigate(['/dashboard', reportId]);
             });

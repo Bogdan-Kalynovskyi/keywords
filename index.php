@@ -1,7 +1,7 @@
 <?php
     include 'settings/settings.php';
     session_start();
-    $token = isset($_SESSION['xsrfToken']) && $_SESSION['xsrfToken'];
+    $token = 1;//isset($_SESSION['xsrfToken']) && $_SESSION['xsrfToken'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -10,8 +10,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title><?php echo $token ? '::' : ':: Log In' ?></title>
+    <base href="/">
     <meta name="google-signin-client_id" content="<?php echo $google_api_id ?>">
     <style>
+        body {
+            margin: 0;
+        }
         #loading {
             position: absolute;
             font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -64,6 +68,7 @@
     }
     </style>
     <?php } ?>
+    <link href="dist/styles.bundle.css" rel="stylesheet">
 </head>
 
 <body>
@@ -94,10 +99,7 @@
         xhr.open('GET', 'api/login.php?authToken=' + encodeURIComponent(g.getAuthResponse().id_token));
         xhr.onload = function() {
             if (xhr.status === 200) {
-                window.xsrfToken = xhr.responseText;
-                if (window.app) {       // flag that app file has been loaded
-                    showApp();
-                }
+                location.reload();
             }
             else {
                 alert('Login error: ' + xhr.responseText); // ?
@@ -122,7 +124,7 @@
 
 
     <?php if ($token) { ?>
-    window.xsrfToken = '<?php echo $_SESSION['xsrfToken'] ?>';
+    window.xsrfToken = '1';
     <?php } else { ?>
     // check for 3d party cookies are enabled
     window.addEventListener("message", function (evt) {
@@ -151,12 +153,18 @@
         </div>
         <iframe src="//mindmup.github.io/3rdpartycookiecheck/start.html" style="display:none"></iframe>
     </div>
+
+<?php } else { ?>
+
+    <app-root><div id="loading">Loading...</div></app-root>
+    <script src="dist/inline.bundle.js"></script>
+    <script src="dist/vendor.bundle.js"></script>
+    <script src="dist/main.bundle.js"></script>
+
 <?php } ?>
 
 
-<div id="logged-in">
-    <div id="loading">Loading...</div>
-</div>
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://www.gstatic.com/charts/loader.js"></script>
 </body>
 </html>
