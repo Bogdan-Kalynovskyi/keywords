@@ -69,7 +69,11 @@ function put () {
     $post = json_decode(file_get_contents('php://input'), true);
     $id = intval($_GET['id']);
 
-    mysql_query('UPDATE `reports` SET `csv` = '.esc($post['csv']).', `keywords` = '.esc($post['keywords']).', `name` = '.esc($post['name']).',  WHERE id = '.$id);//.' AND owner = ' . esc($_SESSION['userGoogleId']));
+    if ($post['csv'] != '') {
+        mysql_query('UPDATE `reports` SET `csv` = '.esc($post['csv']).', `keywords` = '.esc($post['keywords']).', `name` = '.esc($post['name']).'  WHERE id = '.$id);//.' AND owner = ' . esc($_SESSION['userGoogleId']));
+    } else {
+        mysql_query('UPDATE `reports` SET `keywords` = '.esc($post['keywords']).', `name` = '.esc($post['name']).'  WHERE id = '.$id);//.' AND owner = ' . esc($_SESSION['userGoogleId']));
+    }
 }
 
 

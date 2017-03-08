@@ -11,7 +11,7 @@ import any = jasmine.any;
 export class ReportService {
     public reportList: Report[]= [];
     private dataUrl = 'http://localhost/api/reports.php';
-    private headers = new Headers({ 'Content-Type': 'application/json' });
+    private headers = new Headers({ 'Authorization': window['xsrfToken'] });
 
     constructor(private http: Http) { }
 
@@ -27,7 +27,6 @@ export class ReportService {
     }
 
     public parseCsv(csvText) {
-        // console.log(csvText);
         let textLines = csvText.split(/\r\n|\n/);
         let outputArray = [],
             title = textLines[0].split(','),

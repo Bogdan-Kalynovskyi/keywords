@@ -5,9 +5,8 @@
     <md-input-container>
         <input mdInput placeholder="Report keywords" [(ngModel)]="report.keywords" />
     </md-input-container>
-    <!--<input #inputtedFile type="file" [(ngModel)]="fileupload" />-->
     <input type="file" accept=".csv" (change)="onFileChange($event)" />
-    <button md-raised-button color="primary" (click)="updateData(inputtedFile.value)">Save changes</button>
+    <button md-raised-button color="primary" (click)="updateData()">Save changes</button>
     <div class="scrolling-content">
         <md-tab-group>
             <md-tab label="CSV_import">

@@ -24,6 +24,7 @@ export class DashboardComponent implements OnInit {
     @Input()
     report: Report;
     reportId: number;
+    file = '';
     private data: InputDataRow[];
     private filteredData: InputDataRow[];
     private allQueriesData: InputDataRow[];
@@ -77,21 +78,22 @@ export class DashboardComponent implements OnInit {
     };
 
     ngOnInit() {
+
         this.route.params.switchMap((params: Params) => {
             this.reportId = params['id'];
             return this.reportService.getReport(+this.reportId);
         })
-            .subscribe(reportData => {
-                if (reportData) {
-                    this.data = reportData.csv;
-                    this.report = {
-                        id: this.reportId,
-                        name: reportData.name,
-                        keywords: reportData.keywords
-                    };
-                    this.dataCalculate(this.data, this.report.keywords);
-                }
-            });
+        .subscribe(reportData => {
+            if (reportData) {
+                this.data = reportData.csv;
+                this.report = {
+                    id: this.reportId,
+                    name: reportData.name,
+                    keywords: reportData.keywords
+                };
+                this.dataCalculate(this.data, this.report.keywords);
+            }
+        });
     }
 
     dataCalculate(
@@ -106,7 +108,7 @@ export class DashboardComponent implements OnInit {
         this.filteredData = [];
 
         data.forEach(data => {
-            if (data.clicks >= 5) {
+            if (data.clicks > 5) {
                 this.filteredData.push(Object.assign({}, data));
             }
         });
@@ -288,6 +290,7 @@ export class DashboardComponent implements OnInit {
         let reader = new FileReader();
         reader.onload = (theFile =>
                 e => {
+                    this.file = e.target.result;
                     this.data = this.reportService.parseCsv(e.target.result) as InputDataRow[];
                     this.dataCalculate(this.data, this.report.keywords);
                 }
@@ -296,14 +299,13 @@ export class DashboardComponent implements OnInit {
         reader.readAsText(ev.target.files[0]);
     }
 
-    updateData(file: string) {
-        debugger;
-        this.reportService.update(this.report.id, this.report.name, this.report.keywords, file);
+    updateData() {
+        this.reportService.update(this.report.id, this.report.name, this.report.keywords, this.file);
             //.then(report => {
                // this.dataCalculate(this.inputDataService.parseCsv(file) as InputDataRow[], report.keywords);
               //  return report;
             //}
         //);
-        this.dataCalculate(this.reportService.parseCsv(file) as InputDataRow[], this.report.keywords);
+       // this.dataCalculate(this.reportService.parseCsv(file) as InputDataRow[], this.report.keywords);
     };
 }

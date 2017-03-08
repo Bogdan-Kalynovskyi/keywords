@@ -10,7 +10,6 @@ export class InputDataService {
     private loadDataPromise;
     // private data: InputDataRow[];
     private dataUrl = 'http://localhost/api/report.php';
-    private headers = new Headers({ 'Content-Type': 'application/json' });
 
     constructor(private http: Http) {
     }
