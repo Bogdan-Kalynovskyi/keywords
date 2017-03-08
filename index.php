@@ -73,9 +73,6 @@
 </head>
 
 <body>
-<script src="https://apis.google.com/js/platform.js" async defer onload="onPlatformLoad()"></script>
-
-
 <script>
     (function() {
         var ua = navigator.userAgent,
@@ -135,6 +132,8 @@
     });
     <?php } ?>
 </script>
+
+<script src="https://apis.google.com/js/platform.js" async defer onload="onPlatformLoad()"></script>
 
 
 <?php if (!$token) { ?>

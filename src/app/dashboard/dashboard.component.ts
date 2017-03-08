@@ -78,22 +78,23 @@ export class DashboardComponent implements OnInit {
     };
 
     ngOnInit() {
-
-        this.route.params.switchMap((params: Params) => {
-            this.reportId = params['id'];
-            return this.reportService.getReport(+this.reportId);
-        })
-        .subscribe(reportData => {
-            if (reportData) {
-                this.data = reportData.csv;
-                this.report = {
-                    id: this.reportId,
-                    name: reportData.name,
-                    keywords: reportData.keywords
-                };
-                this.dataCalculate(this.data, this.report.keywords);
-            }
-        });
+        if (this.route.snapshot.params['id']) {
+            this.route.params.switchMap((params: Params) => {
+                this.reportId = params['id'];
+                return this.reportService.getReport(+this.reportId);
+            })
+                .subscribe(reportData => {
+                    if (reportData) {
+                        this.data = reportData.csv;
+                        this.report = {
+                            id: this.reportId,
+                            name: reportData.name,
+                            keywords: reportData.keywords
+                        };
+                        this.dataCalculate(this.data, this.report.keywords);
+                    }
+                });
+        }
     }
 
     dataCalculate(
