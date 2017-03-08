@@ -6,7 +6,7 @@
 
     // compare Auth header with xsrf token from cookie-based session
 
-    if (isset($_SERVER['HTTP_AUTHORIZATION']) && $_SERVER['HTTP_AUTHORIZATION'] === '1') {
+    if (isset($_SERVER['HTTP_AUTHORIZATION']) && isset($_SESSION['xsrfToken']) && $_SERVER['HTTP_AUTHORIZATION'] === $_SESSION['xsrfToken']) {
         // then connect to db
         $link = mysql_connect($db_host, $db_user, $db_pass);
         if (!$link || !mysql_select_db($db_name)) {

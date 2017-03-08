@@ -1,7 +1,7 @@
 <?php
     include 'settings/settings.php';
     session_start();
-    $token = 1;//isset($_SESSION['xsrfToken']) && $_SESSION['xsrfToken'];
+    $token = isset($_SESSION['xsrfToken']) && $_SESSION['xsrfToken'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -125,7 +125,7 @@
 
 
     <?php if ($token) { ?>
-    window.xsrfToken = '1';
+    window.xsrfToken = '<?php echo $_SESSION['xsrfToken'] ?>';
     <?php } else { ?>
     // check for 3d party cookies are enabled
     window.addEventListener("message", function (evt) {
