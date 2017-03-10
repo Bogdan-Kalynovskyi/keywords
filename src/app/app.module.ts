@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RoutingModule } from './routing.module';
 import { MaterialModule } from '@angular/material';
-import { Ng2GoogleChartsModule } from 'ng2-google-charts';
 
 import { AppComponent } from './app.component';
 import { ReportsListComponent, NewReportDialog } from './reports-list/reports-list.component';
@@ -25,8 +24,7 @@ import { ReportService } from './services/report.service';
         FormsModule,
         HttpModule,
         RoutingModule,
-        MaterialModule.forRoot(),
-        Ng2GoogleChartsModule
+        MaterialModule.forRoot()
     ],
     providers: [ReportService],
     bootstrap: [AppComponent],

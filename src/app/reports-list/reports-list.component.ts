@@ -14,7 +14,6 @@ import { ReportService } from '../services/report.service';
 
 export class ReportsListComponent implements OnInit {
     selectedReport: Report;
-    newReport: Report;
     public reports: Report[];
     dialogRef: MdDialogRef<NewReportDialog>;
 
@@ -42,7 +41,8 @@ export class ReportsListComponent implements OnInit {
     }
 
     delete(report: Report): void {
-        this.reportService
+        if (window['confirm']('Are you sure?')) {
+            this.reportService
             .delete(report.id)
             .then(() => {
                 this.reports = this.reports.filter(h => h !== report);
@@ -50,6 +50,7 @@ export class ReportsListComponent implements OnInit {
                     this.selectedReport = null;
                 }
             });
+        }
     }
 
 }
@@ -87,12 +88,14 @@ export class NewReportDialog {
 
     addReport(name: string, keywords: string) {
         this.dialogRef.close();
-        this.reportService.create(name, keywords.trim(), this.newReportData)
+        console.log(keywords);
+        console.log(keywords.trim());
+        this.reportService.create(name, keywords, this.newReportData)
             .then(reportId => {
                 this.reportList.push({
                     id: reportId,
                     name: name,
-                    keywords: keywords.trim()
+                    keywords: keywords
                 });
                 this.router.navigate(['/dashboard', reportId]);
             });

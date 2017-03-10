@@ -43,39 +43,47 @@ export class DashboardComponent implements OnInit {
     sum_top_traffic_gain: number;
     top_traffic_loss: InputDataRow[];
     sum_top_traffic_loss: number;
+    private google;
+    private brandedDataTable;
+    private nonBrandedDataTable;
 
     constructor(
         private reportService: ReportService,
         private route: ActivatedRoute
-    ) { }
+    ) {
+        this.google = window['google'];
+        this.google.charts.load('current', {'packages':['corechart']});
+    }
+    
+    drawChart() {
+        let nonBrandedChartOptions =  {
+            title: 'Non Branded queries',
+            pieHole: 0.5,
+            pieSliceTextStyle : {
+                color: 'black',
+            },
+            width: 800,
+            height: 500
+        };
 
-    nonBrandedChartOptions =  {
-        chartType: 'PieChart',
-        dataTable: [],
-        options: {
-            'title': 'Non Branded queries',
-            'pieHole': 0.5,
-            'pieSliceTextStyle' : {
+        let brandedChartOptions =  {
+            title: 'Branded queries',
+            pieHole: 0.5,
+            pieSliceTextStyle : {
                 'color': 'black',
             },
-            'width': 800,
-            'height': 500
-        },
-    };
+            width: 800,
+            height: 500
+        };
 
-    brandedChartOptions =  {
-        chartType: 'PieChart',
-        dataTable: [],
-        options: {
-            'title': 'Branded queries',
-            'pieHole': 0.5,
-            'pieSliceTextStyle' : {
-                'color': 'black',
-            },
-            'width': 800,
-            'height': 500
-        },
-    };
+        let data = this.google.visualization.arrayToDataTable(this.nonBrandedDataTable);
+        let chart = new this.google.visualization.PieChart(document.getElementById('chartNonBranded'));
+        chart.draw(data, nonBrandedChartOptions);
+
+        data = this.google.visualization.arrayToDataTable(this.brandedDataTable);
+        chart = new this.google.visualization.PieChart(document.getElementById('chartBranded'));
+        chart.draw(data, brandedChartOptions);
+    }
 
     ngOnInit() {
         if (this.route.snapshot.params['id']) {
@@ -83,17 +91,18 @@ export class DashboardComponent implements OnInit {
                 this.reportId = params['id'];
                 return this.reportService.getReport(+this.reportId);
             })
-                .subscribe(reportData => {
-                    if (reportData) {
-                        this.data = reportData.csv;
-                        this.report = {
-                            id: this.reportId,
-                            name: reportData.name,
-                            keywords: reportData.keywords
-                        };
-                        this.dataCalculate(this.data, this.report.keywords);
-                    }
-                });
+            .subscribe(reportData => {
+                if (reportData) {
+                    this.data = reportData.csv;
+                    this.report = {
+                        id: this.reportId,
+                        name: reportData.name,
+                        keywords: reportData.keywords
+                    };
+
+                    this.dataCalculate(this.data, this.report.keywords);
+                }
+            });
         }
     }
 
@@ -128,10 +137,10 @@ export class DashboardComponent implements OnInit {
         });
 
         this.allQueriesData.forEach((row, i , arr) => {
-            var sum = 0;
-            var count = 0;
+            let sum = 0;
+            let count = 0;
 
-            for (var item of arr) {
+            for (let item of arr) {
                 if (item.position == row.position) {
                     sum += item.calculatedCtr;
                     count ++;
@@ -154,17 +163,19 @@ export class DashboardComponent implements OnInit {
         });
 
         this.nonBrandedData = [];
+        let keywords = reportKeywords.split(',').map(str => str.trim());
+
         this.allQueriesData.forEach(data => {
-            if (reportKeywords.split(",").indexOf(data.queries) == -1) {
+            if (keywords.indexOf(data.queries) === -1) {
                 this.nonBrandedData.push(Object.assign({}, data));
             }
         });
 
-        for (var i = 0; i < 10; i++) {
+        for (let i = 0; i < 10; i++) {
             this.positions.push(0);
         }
 
-        for (var i = 0; i < 1000; i++) {
+        for (let i = 0; i < 1000; i++) {
             this.positions_stats.push({
                 position: 0,
                 row_indexes: [],
@@ -179,21 +190,21 @@ export class DashboardComponent implements OnInit {
             });
         }
 
-        //ToDo
-        this.brandedChartOptions.dataTable = [];
-        this.brandedChartOptions.dataTable.push(['Category', 'Value']);
-        this.brandedChartOptions.dataTable.push(['Traffic Loss', ((-1) * this.all_queries_traffic_loss)]);
-        this.brandedChartOptions.dataTable.push(['Traffic Gain', this.all_queries_traffic_gain]);
+        this.brandedDataTable = [
+            ['Category', 'Value'],
+            ['Traffic Loss', Math.abs(this.all_queries_traffic_loss)],
+            ['Traffic Gain', this.all_queries_traffic_gain]
+        ];
 
         this.nonBrandedData.forEach((row, i, arr) => {
-
-            var sum = 0;
-            var count = 0;
+            let sum = 0;
+            let count = 0;
 
             row.instance = arr.reduce(function (total, x) {
                 return x.position === row.position ? total + 1 : total
             }, 0);
-            for (var item of arr) {
+
+            for (let item of arr) {
                 if (item.position === row.position) {
                     sum += item.ctr;
                     count++;
@@ -231,23 +242,24 @@ export class DashboardComponent implements OnInit {
             });
         });
 
-        this.nonBrandedChartOptions.dataTable = [];
-        this.nonBrandedChartOptions.dataTable.push(['Category', 'Value']);
-        this.nonBrandedChartOptions.dataTable.push(['Traffic Loss', (-1) * this.non_branded_traffic_loss]);
-        this.nonBrandedChartOptions.dataTable.push(['Traffic Gain', this.non_branded_traffic_gain]);
+        this.nonBrandedDataTable = [
+            ['Category', 'Value'],
+            ['Traffic Loss', Math.abs(this.non_branded_traffic_loss)],
+            ['Traffic Gain', this.non_branded_traffic_gain]
+        ];
 
         this.position_stats_limited = [];
         this.positions_stats.forEach((data, i) => {
             if (i < 92) {this.position_stats_limited.push(Object.assign({}, data))};
         });
 
-        for (var i = 0; i <= 10; i++) {
-            var tmp = [];
+        for (let i = 0; i <= 10; i++) {
+            let tmp = [];
             this.position_stats_limited.forEach(data => {
                 if (data.position.toFixed(0) == i) {tmp.push(Object.assign({}, data))}
-            })
-            var sum = 0;
-            var count = 0;
+            });
+            let sum = 0;
+            let count = 0;
             tmp.forEach((row, i, arr) => {
                 if (row.expected_ctr_avg != 0) {
                     sum += row.expected_ctr_avg;
@@ -269,6 +281,9 @@ export class DashboardComponent implements OnInit {
             });
         }
 
+        this.google.charts.setOnLoadCallback(this.drawChart.bind(this));
+
+
         this.positions_stats = this.positions_stats.filter(row => row.row_indexes.length != 0).slice();
 
         this.grand_total = {
@@ -283,7 +298,6 @@ export class DashboardComponent implements OnInit {
 
         this.top_traffic_loss = this.nonBrandedData.sort((a, b) => a.traffic_loss - b.traffic_loss).slice(0, 9);
         this.sum_top_traffic_loss = this.top_traffic_loss.reduce((a, b) => a + b.traffic_loss, 0);
-
     };
 
     onFileChange(ev){
@@ -293,7 +307,6 @@ export class DashboardComponent implements OnInit {
                 e => {
                     this.file = e.target.result;
                     this.data = this.reportService.parseCsv(e.target.result) as InputDataRow[];
-                    this.dataCalculate(this.data, this.report.keywords);
                 }
         )(ev.target.files[0]);
 
@@ -301,12 +314,10 @@ export class DashboardComponent implements OnInit {
     }
 
     updateData() {
-        this.reportService.update(this.report.id, this.report.name, this.report.keywords, this.file);
-            //.then(report => {
-               // this.dataCalculate(this.inputDataService.parseCsv(file) as InputDataRow[], report.keywords);
-              //  return report;
-            //}
-        //);
-       // this.dataCalculate(this.reportService.parseCsv(file) as InputDataRow[], this.report.keywords);
+        this.reportService.update(this.report.id, this.report.name, this.report.keywords, this.file)
+            .then(() => {
+               this.dataCalculate(this.reportService.parseCsv(this.file) as InputDataRow[], this.report.keywords);
+            }
+        );
     };
 }

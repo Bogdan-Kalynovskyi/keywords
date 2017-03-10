@@ -20,8 +20,8 @@
             position: absolute;
             font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
             color: #bfbfbf;
-            font-size: 1.5rem;
-            letter-spacing: 0.45px;
+            font-size: 1.75rem;
+            letter-spacing: 0.7px;
             font-weight: 500;
             width: 100%;
             top: calc(50% - 28px);
@@ -67,8 +67,6 @@
         text-decoration: none;
     }
     </style>
-    <?php } else { ?>
-        <link href="dist/styles.bundle.css" rel="stylesheet">
     <?php } ?>
 </head>
 
@@ -162,10 +160,11 @@
 <?php } ?>
 
 
+<link href="dist/styles.bundle.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="dist/inline.bundle.js"></script>
 <script src="dist/vendor.bundle.js"></script>
 <script src="dist/main.bundle.js"></script>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<script src="https://www.gstatic.com/charts/loader.js"></script>
 </body>
 </html>

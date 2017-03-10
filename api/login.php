@@ -14,7 +14,6 @@
             $_SESSION['userGoogleId'] = $obj->sub;
             $_SESSION['xsrfToken'] = base64_encode(openssl_random_pseudo_bytes(32));
             echo $_SESSION['xsrfToken'];
-            print_r($_SESSION);
         }
         else {
             header("HTTP/1.0 401 Unauthorized", true, 401);

@@ -33,8 +33,10 @@ function get () {
     $id = isset($_GET['id']) ? intval($_GET['id']) : false;
 
     if ($id) {
-        $query = mysql_query('SELECT `name`, `keywords`, `csv` FROM `reports` WHERE id = '.$id.' AND owner = ' . esc($_SESSION['userGoogleId']));
+        $query = mysql_query('SELECT `name`, `keywords`, `csv`, `owner` FROM `reports` WHERE id = '.$id);
         $result = mysql_fetch_array($query, MYSQL_ASSOC);
+
+        $result['owner'] = $result['owner'] === $_SESSION['userGoogleId'];
 
         if ($result) {
             echo json_encode($result);
