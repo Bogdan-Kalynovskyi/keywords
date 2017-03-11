@@ -1,6 +1,7 @@
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject} from '@angular/core';
 import { MdDialog, MdDialogRef } from '@angular/material';
+import { DOCUMENT } from '@angular/platform-browser';
 
 import { Report } from '../models/report';
 import { ReportService } from '../services/report.service';
@@ -14,10 +15,12 @@ import { ReportService } from '../services/report.service';
 
 export class ReportsListComponent implements OnInit {
     selectedReport: Report;
+    selectedReportId : number;
     public reports: Report[];
     dialogRef: MdDialogRef<NewReportDialog>;
 
     constructor(
+        @Inject(DOCUMENT) private document: any,
         private reportService: ReportService,
         private router: Router,
         private dialog: MdDialog) { }
@@ -33,6 +36,11 @@ export class ReportsListComponent implements OnInit {
     onSelect(report: Report): void {
         this.selectedReport = report;
         this.router.navigate(['/dashboard', this.selectedReport.id]);
+    }
+
+    isActive(id: number): boolean {
+        const urlId = this.document.location.pathname.split('/')[2];
+        return urlId == id;
     }
 
     onAdd(): void {
@@ -88,8 +96,6 @@ export class NewReportDialog {
 
     addReport(name: string, keywords: string) {
         this.dialogRef.close();
-        console.log(keywords);
-        console.log(keywords.trim());
         this.reportService.create(name, keywords, this.newReportData)
             .then(reportId => {
                 this.reportList.push({

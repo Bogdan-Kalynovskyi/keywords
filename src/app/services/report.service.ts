@@ -10,7 +10,7 @@ import any = jasmine.any;
 @Injectable()
 export class ReportService {
     public reportList: Report[]= [];
-    private dataUrl = 'api/reports.php';
+    private dataUrl = 'http://localhost/api/reports.php';
     private headers = new Headers({ 'Authorization': window['xsrfToken'] });
 
     constructor(private http: Http) { }

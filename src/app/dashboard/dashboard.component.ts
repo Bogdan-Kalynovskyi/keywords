@@ -283,7 +283,6 @@ export class DashboardComponent implements OnInit {
 
         this.google.charts.setOnLoadCallback(this.drawChart.bind(this));
 
-
         this.positions_stats = this.positions_stats.filter(row => row.row_indexes.length != 0).slice();
 
         this.grand_total = {
