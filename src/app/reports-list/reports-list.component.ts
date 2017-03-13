@@ -58,6 +58,7 @@ export class ReportsListComponent implements OnInit {
                     this.selectedReport = null;
                 }
             });
+            this.router.navigate(['']);
         }
     }
 

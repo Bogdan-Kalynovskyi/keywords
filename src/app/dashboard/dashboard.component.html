@@ -1,12 +1,14 @@
 <div *ngIf="report" class="report-content">
-    <md-input-container>
-        <input mdInput placeholder="Report name" [(ngModel)]="report.name" />
-    </md-input-container>
-    <md-input-container>
-        <input mdInput placeholder="Report keywords" [(ngModel)]="report.keywords" />
-    </md-input-container>
-    <input type="file" accept=".csv" (change)="onFileChange($event)" />
-    <button md-raised-button color="primary" (click)="updateData()">Save changes</button>
+    <div>
+        <md-input-container>
+            <input mdInput placeholder="Report name" [(ngModel)]="report.name" />
+        </md-input-container>
+        <md-input-container>
+            <input mdInput placeholder="Report keywords" [(ngModel)]="report.keywords" />
+        </md-input-container>
+        <input type="file" accept=".csv" (change)="onFileChange($event)" />
+        <button md-raised-button color="primary" (click)="updateData()">Save changes</button>
+    </div>
     <div class="scrolling-content">
         <md-tab-group>
             <md-tab label="CSV_import">
@@ -267,9 +269,8 @@
                     </thead>
                     <tbody>
                     <tr *ngFor="let pos of positions_stats">
-                        <!--<td>{{ (i + 10)/10 }}</td>-->
                         <td>{{ pos.position }}</td>
-                        <td><span *ngFor="let id of pos.row_indexes">{{ id }} </span></td>
+                        <td><span *ngFor="let id of pos.row_indexes">{{ id }} | </span></td>
                     </tr>
                     </tbody>
                 </table>
@@ -289,7 +290,7 @@
                         <td>{{ pos.instances }}</td>
                         <td>{{ pos.clicks_sum }}</td>
                         <td>{{ pos.impressions_sum }}</td>
-                        <td>{{ pos.expected_ctr_avg | percent:'1.0-2' }}</td>
+                        <td>{{ pos.expected_ctr_avg | percent:'1.0-0' }}</td>
                     </tr>
                     </tbody>
                     <tfoot>
@@ -308,11 +309,11 @@
                         <th>Average CTR real</th>
                         <th>Average CTR calculated</th>
                     </tr>
-                    <tr *ngFor="let pos of position_stats_resulted">
+                    <tr *ngFor="let pos of positions_stats_resulted">
                         <td>{{ pos.position }}</td>
-                        <td *ngIf="pos.expected_ctr_avg != 0">{{ pos.expected_ctr_avg | percent:'1.0-2' }}</td>
+                        <td *ngIf="pos.expected_ctr_avg != 0">{{ pos.expected_ctr_avg | percent:'1.0-0' }}</td>
                         <td *ngIf="pos.expected_ctr_avg == 0"></td>
-                        <td>{{ pos.ctr_calculated | percent:'1.0-2'}}</td>
+                        <td>{{ pos.ctr_calculated | percent:'1.0-0'}}</td>
                     </tr>
                 </table>
             </md-tab>
