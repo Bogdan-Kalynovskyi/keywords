@@ -80,17 +80,13 @@ export class DashboardComponent implements OnInit {
         };
 
         let data, chart;
-        if (document.getElementById('chartNonBranded') != null) {
-            data = this.google.visualization.arrayToDataTable(this.nonBrandedDataTable);
-            chart = new this.google.visualization.PieChart(document.getElementById('chartNonBranded'));
-            chart.draw(data, nonBrandedChartOptions);
-        }
+        data = this.google.visualization.arrayToDataTable(this.nonBrandedDataTable);
+        chart = new this.google.visualization.PieChart(document.getElementById('chartNonBranded'));
+        chart.draw(data, nonBrandedChartOptions);
 
-        if (document.getElementById('chartBranded') != null) {
-            data = this.google.visualization.arrayToDataTable(this.brandedDataTable);
-            chart = new this.google.visualization.PieChart(document.getElementById('chartBranded'));
-            chart.draw(data, brandedChartOptions);
-        }
+        data = this.google.visualization.arrayToDataTable(this.brandedDataTable);
+        chart = new this.google.visualization.PieChart(document.getElementById('chartBranded'));
+        chart.draw(data, brandedChartOptions);
     }
 
     ngOnInit() {
