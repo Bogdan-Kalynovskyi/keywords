@@ -85,17 +85,7 @@
                         <td>{{ data.expected_clicks | round}}</td>
                         <td>{{ data.traffic_loss | round }}</td>
                         <td>{{ data.traffic_gain | round }}</td>
-                        <td>{{ data.nr1 }}</td>
-                        <td>{{ data.nr2 }}</td>
-                        <td>{{ data.nr3 }}</td>
-                        <td>{{ data.nr4 }}</td>
-                        <td>{{ data.nr5 }}</td>
-                        <td>{{ data.nr6 }}</td>
-                        <td>{{ data.nr7 }}</td>
-                        <td>{{ data.nr8 }}</td>
-                        <td>{{ data.nr9 }}</td>
-                        <td>{{ data.nr10 }}</td>
-                        <td>{{ data.nr11 }}</td>
+                        <td *ngFor="let pos of data.nr">{{ pos | round }}</td>
                     </tr>
                 </table>
             </md-tab>
@@ -137,17 +127,7 @@
                         <td>{{ data.expected_clicks | round }}</td>
                         <td>{{ data.traffic_loss | round}}</td>
                         <td>{{ data.traffic_gain | round }}</td>
-                        <td>{{ data.nr1 }}</td>
-                        <td>{{ data.nr2 }}</td>
-                        <td>{{ data.nr3 }}</td>
-                        <td>{{ data.nr4 }}</td>
-                        <td>{{ data.nr5 }}</td>
-                        <td>{{ data.nr6 }}</td>
-                        <td>{{ data.nr7 }}</td>
-                        <td>{{ data.nr8 }}</td>
-                        <td>{{ data.nr9 }}</td>
-                        <td>{{ data.nr10 }}</td>
-                        <td>{{ data.nr11 }}</td>
+                        <td *ngFor="let pos of data.nr">{{ pos | round }}</td>
                     </tr>
                 </table>
             </md-tab>
@@ -229,9 +209,9 @@
                     <tr>
                         <th colspan="2">Top 10 CTR Statistics</th>
                     </tr>
-                    <tr *ngFor="let pos of positions; let i = index">
-                        <td>Position {{ i + 1 }}</td>
-                        <td>toDo</td>
+                    <tr *ngFor="let pos of top_ctr_statistics">
+                        <td>Position {{ pos.position }}</td>
+                        <td>{{ pos.ctr_calculated | percent:'1.0-0' }}</td>
                     </tr>
                 </table>
                 <table>
@@ -252,28 +232,28 @@
                         <th>Clicks</th>
                         <th>Difference</th>
                     </tr>
-                    <tr *ngFor="let pos of positions; let i = index">
-                        <td>toDo</td>
-                        <td>toDo</td>
-                        <td>toDo</td>
+                    <tr *ngFor="let pos of non_branded_keywords">
+                        <td>{{ pos.position }}</td>
+                        <td>{{ pos.clicks | round }}</td>
+                        <td>{{ pos.difference | percent:'1.0-0' }}</td>
                     </tr>
                 </table>
             </md-tab>
             <md-tab label="CTR Stats">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Position</th>
-                        <th>Data indexes</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr *ngFor="let pos of positions_stats">
-                        <td>{{ pos.position }}</td>
-                        <td><span *ngFor="let id of pos.row_indexes">{{ id }} | </span></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <!--<table>-->
+                    <!--<thead>-->
+                    <!--<tr>-->
+                        <!--<th>Position</th>-->
+                        <!--<th>Data queries</th>-->
+                    <!--</tr>-->
+                    <!--</thead>-->
+                    <!--<tbody>-->
+                    <!--<tr *ngFor="let pos of positions_stats">-->
+                        <!--<td>{{ pos.position }}</td>-->
+                        <!--<td><span *ngFor="let id of pos.row_indexes">{{ id }} | </span></td>-->
+                    <!--</tr>-->
+                    <!--</tbody>-->
+                <!--</table>-->
                 <table>
                     <thead>
                     <tr>

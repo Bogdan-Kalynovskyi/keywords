@@ -43,6 +43,9 @@ export class DashboardComponent implements OnInit {
     sum_top_traffic_gain: number;
     top_traffic_loss: InputDataRow[];
     sum_top_traffic_loss: number;
+    top_ctr_statistics = [];
+    non_branded_keywords = [];
+
     private google;
     private brandedDataTable;
     private nonBrandedDataTable;
@@ -76,13 +79,18 @@ export class DashboardComponent implements OnInit {
             height: 500
         };
 
-        let data = this.google.visualization.arrayToDataTable(this.nonBrandedDataTable);
-        let chart = new this.google.visualization.PieChart(document.getElementById('chartNonBranded'));
-        chart.draw(data, nonBrandedChartOptions);
+        let data, chart;
+        if (document.getElementById('chartNonBranded') != null) {
+            data = this.google.visualization.arrayToDataTable(this.nonBrandedDataTable);
+            chart = new this.google.visualization.PieChart(document.getElementById('chartNonBranded'));
+            chart.draw(data, nonBrandedChartOptions);
+        }
 
-        data = this.google.visualization.arrayToDataTable(this.brandedDataTable);
-        chart = new this.google.visualization.PieChart(document.getElementById('chartBranded'));
-        chart.draw(data, brandedChartOptions);
+        if (document.getElementById('chartBranded') != null) {
+            data = this.google.visualization.arrayToDataTable(this.brandedDataTable);
+            chart = new this.google.visualization.PieChart(document.getElementById('chartBranded'));
+            chart.draw(data, brandedChartOptions);
+        }
     }
 
     ngOnInit() {
@@ -110,11 +118,6 @@ export class DashboardComponent implements OnInit {
         data: InputDataRow[],
         reportKeywords: string
     ) {
-        this.all_queries_traffic_loss = 0;
-        this.all_queries_traffic_gain = 0;
-        this.non_branded_traffic_loss = 0;
-        this.non_branded_traffic_gain = 0;
-
         this.filteredData = [];
 
         data.forEach(data => {
@@ -135,6 +138,9 @@ export class DashboardComponent implements OnInit {
                 return x.position === row.position ? total + 1 : total
             }, 0);
         });
+
+        this.all_queries_traffic_loss = 0;
+        this.all_queries_traffic_gain = 0;
 
         this.allQueriesData.forEach((row, i , arr) => {
             let sum = 0;
@@ -160,6 +166,8 @@ export class DashboardComponent implements OnInit {
 
             this.all_queries_traffic_loss += row.traffic_loss;
             this.all_queries_traffic_gain += row.traffic_gain;
+
+            row.nr = [];
         });
 
         this.nonBrandedData = [];
@@ -175,6 +183,7 @@ export class DashboardComponent implements OnInit {
             this.positions.push(0);
         }
 
+        this.positions_stats = [];
         for (let i = 0; i < 991; i++) {
             this.positions_stats.push({
                 position: 0,
@@ -190,8 +199,13 @@ export class DashboardComponent implements OnInit {
             });
         }
 
+        this.non_branded_traffic_loss = 0;
+        this.non_branded_traffic_gain = 0;
+
+        let sum_clicks = 0;
+
         this.nonBrandedData.forEach((row, i, arr) => {
-            let sum = 0;
+            let sum_ctr = 0;
             let count = 0;
 
             row.instance = arr.reduce(function (total, x) {
@@ -200,11 +214,11 @@ export class DashboardComponent implements OnInit {
 
             for (let item of arr) {
                 if (item.position === row.position) {
-                    sum += item.ctr;
+                    sum_ctr += item.ctr;
                     count++;
                 }
             }
-            row.expected_ctr = sum / count;
+            row.expected_ctr = sum_ctr / count;
             row.ctr_delta = row.ctr - row.expected_ctr;
             row.expected_clicks = row.expected_ctr*row.impressions;
 
@@ -235,6 +249,11 @@ export class DashboardComponent implements OnInit {
                     if (row.expected_ctr != 0) arr1[j].expected_ctr_avg = row.expected_ctr;
                 }
             });
+
+            row.nr = [];
+
+            sum_clicks += row.clicks;
+
         });
 
         this.positions_stats.forEach((pos, j, arr1) => {
@@ -273,7 +292,11 @@ export class DashboardComponent implements OnInit {
             });
 
             tmp.forEach((data, i) => {
-                this.positions_stats_resulted.push(Object.assign({}, data));
+                this.positions_stats_resulted.push(Object.assign({}, {
+                    position: data.position,
+                    expected_ctr_avg: data.expected_ctr_avg,
+                    ctr_calculated: data.ctr_calculated
+                }));
             });
         }
 
@@ -286,11 +309,79 @@ export class DashboardComponent implements OnInit {
             expected_ctr_avg: this.positions_stats.reduce((a, b) => a + b.expected_ctr_avg, 0) / this.positions_stats.length
         };
 
-        this.top_traffic_gain = this.nonBrandedData.sort((a, b) => b.traffic_gain - a.traffic_gain).slice(0, 9);
+        this.top_traffic_gain = this.nonBrandedData.sort((a, b) => b.traffic_gain - a.traffic_gain).slice(0, 10);
         this.sum_top_traffic_gain = this.top_traffic_gain.reduce((a, b) => a + b.traffic_gain, 0);
 
-        this.top_traffic_loss = this.nonBrandedData.sort((a, b) => a.traffic_loss - b.traffic_loss).slice(0, 9);
+        this.top_traffic_loss = this.nonBrandedData.sort((a, b) => a.traffic_loss - b.traffic_loss).slice(0, 10);
         this.sum_top_traffic_loss = this.top_traffic_loss.reduce((a, b) => a + b.traffic_loss, 0);
+
+        let tmp;
+
+        this.allQueriesData.forEach((row, i, arr) => {
+            for (let j = 1; j < 11; j++) {
+                if ( row.position < j + 1 ) {
+                    row.nr.push(0);
+                }
+                else {
+                    tmp = this.positions_stats_resulted.find(data => data.position == j);
+                    row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+                };
+            }
+            if ( row.position < 2 ) {
+                row.nr.push(0);
+            }
+            else {
+                if (row.position <= 10) {
+                    tmp = this.positions_stats_resulted.find(data => Math.round((row.position - 1 - data.position) * 100) == 0);
+                } else {
+                    tmp = this.positions_stats_resulted.find(data => data.position == 10);
+                }
+                row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+            };
+        });
+
+        this.nonBrandedData.forEach((row, i, arr) => {
+            for (let j = 1; j < 11; j++) {
+                if ( row.position < j + 1 ) {
+                    row.nr.push(0);
+                }
+                else {
+                    tmp = this.positions_stats_resulted.find(data => data.position == j);
+                    row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+                };
+            }
+            if ( row.position < 2 ) {
+                row.nr.push(0);
+            }
+            else {
+                if (row.position <= 10) {
+                    tmp = this.positions_stats_resulted.find(data => Math.round((row.position - 1 - data.position) * 100) == 0);
+                } else {
+                    tmp = this.positions_stats_resulted.find(data => data.position == 10);
+                }
+                row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+            };
+        });
+
+        this.top_ctr_statistics = [];
+        this.positions_stats_resulted.forEach(data => {
+            if ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].indexOf(data.position) != -1) {
+                this.top_ctr_statistics.push(Object.assign({}, {
+                    position: data.position,
+                    ctr_calculated: data.ctr_calculated
+                }));
+            }
+        });
+
+        this.non_branded_keywords = [];
+        for (let i = 0, clicks; i < 11; i++) {
+            clicks = this.nonBrandedData.reduce((a, b) => a + b.nr[i], 0);
+            this.non_branded_keywords.push({
+                position: ( i != 10 ) ? '#' + (i + 1).toString() : '1+',
+                clicks: clicks,
+                difference: (clicks - sum_clicks) / sum_clicks
+            });
+        }
 
         this.brandedDataTable = [
             ['Category', 'Value'],
