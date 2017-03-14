@@ -411,7 +411,8 @@ export class DashboardComponent implements OnInit {
     updateData() {
         this.reportService.update(this.report.id, this.report.name, this.report.keywords, this.file)
             .then(() => {
-               this.dataCalculate(this.reportService.parseCsv(this.file) as InputDataRow[], this.report.keywords);
+                if ( this.file != '' ) { this.dataCalculate(this.reportService.parseCsv(this.file) as InputDataRow[], this.report.keywords); }
+                location.reload();
             }
         );
     };

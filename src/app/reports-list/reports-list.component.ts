@@ -15,8 +15,7 @@ import { ReportService } from '../services/report.service';
 
 export class ReportsListComponent implements OnInit {
     selectedReport: Report;
-    selectedReportId : number;
-    public reports: Report[];
+    reports: Report[];
     dialogRef: MdDialogRef<NewReportDialog>;
 
     constructor(
