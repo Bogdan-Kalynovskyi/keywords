@@ -11,8 +11,7 @@ import {InputDataRow} from "../models/input-data-row";
 @Injectable()
 export class ReportService {
     public reportList: Report[]= [];
-    private dataUrl = 'http://localhost/api/reports.php';
-    private logoutUrl = 'http://localhost/api/logout.php';
+    private dataUrl = 'api/reports.php';
     private headers = new Headers({ 'Authorization': window['xsrfToken'] });
 
     constructor(private http: Http) { }
@@ -154,16 +153,6 @@ export class ReportService {
             .delete(this.dataUrl + '?id=' + id, { headers: this.headers })
             .toPromise()
             .catch(this.handleError);
-    }
-
-    logout(): Promise<any> {debugger;
-        return Promise.all([
-            this.http.post(this.logoutUrl, { logout: window['xsrfToken'] }),
-            window['gapi'].auth2.getAuthInstance().signOut()
-        ])
-        .then(function () {
-            window.location.reload();
-        });
     }
 
     private handleError(error: any): Promise<any> {
