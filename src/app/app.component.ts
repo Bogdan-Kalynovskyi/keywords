@@ -1,20 +1,13 @@
 import { Component } from '@angular/core';
-import { ReportService } from './services/report.service';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css'],
-    providers: [ReportService]
+    styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
-    constructor(
-        private reportService: ReportService
-    ) {
-
-    }
-
     logout() {
-        this.reportService.logout();
+        location.href = "https://www.google.com/accounts/Logout?continue=" + location.href;
     }
 }
