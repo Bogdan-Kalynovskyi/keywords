@@ -4,7 +4,7 @@
             <input mdInput placeholder="Report name" [(ngModel)]="report.name" />
         </md-input-container>
         <md-input-container>
-            <input mdInput placeholder="Report keywords" [(ngModel)]="report.keywords" />
+            <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" />
         </md-input-container>
         <input type="file" accept=".csv" (change)="onFileChange($event)" />
         <button md-raised-button color="primary" (click)="updateData()">Save changes</button>
@@ -71,7 +71,7 @@
                         <th>#8</th>
                         <th>#9</th>
                         <th>#10</th>
-                        <th>#1+</th>
+                        <th>1+</th>
                     </tr>
                     <tr *ngFor="let data of allQueriesData">
                         <td>{{ data.queries }}</td>
@@ -113,7 +113,7 @@
                         <th>#8</th>
                         <th>#9</th>
                         <th>#10</th>
-                        <th>#1+</th>
+                        <th>1+</th>
                     </tr>
                     <tr *ngFor="let data of nonBrandedData">
                         <td>{{ data.queries }}</td>
@@ -144,7 +144,7 @@
                         <td>{{ (all_queries_traffic_loss * 100 | round ) /100  }}</td>
                         <td>{{ (all_queries_traffic_gain * 100 | round ) /100}}</td>
                     </tr>
-                </table>
+                </table><br><br>
                 <table>
                     <tr>
                         <th colspan="2">Non-Branded Queries</th>
@@ -157,7 +157,7 @@
                         <td>{{ (non_branded_traffic_loss * 100 | round ) /100 }}</td>
                         <td>{{ (non_branded_traffic_gain * 100 | round ) /100 }}</td>
                     </tr>
-                </table>
+                </table><br><br>
                 <table>
                     <tr>
                         <th colspan="2">Branded Under-Performance</th>
@@ -166,13 +166,13 @@
                         <td>Traffic Loss</td>
                         <td>{{ ((all_queries_traffic_loss - non_branded_traffic_loss)  * 100 | round ) /100 }}</td>
                     </tr>
-                </table>
+                </table><br><br>
                 <table>
                     <tr>
                         <td>Potential traffic (non branded)</td>
                         <td>{{ non_branded_traffic_loss >= 0 ? (non_branded_traffic_loss  * 100 | round ) /100 : (non_branded_traffic_loss*(-1) * 100 | round ) /100 }}</td>
                     </tr>
-                </table>
+                </table><br><br>
                 <table>
                     <tr>
                         <th colspan="2">Top Ten Winners</th>
@@ -188,7 +188,7 @@
                         <td>Top 10 gain traffic</td>
                         <td>{{ (sum_top_traffic_gain * 100 | round)/100 }}</td>
                     </tr>
-                </table>
+                </table><br><br>
                 <table>
                     <tr>
                         <th colspan="2">Top Ten Losers</th>
@@ -204,7 +204,7 @@
                         <td>Top 10 gain traffic</td>
                         <td>{{ (sum_top_traffic_loss * 100 | round) / 100 }}</td>
                     </tr>
-                </table>
+                </table><br><br>
                 <table>
                     <tr>
                         <th colspan="2">Top 10 CTR Statistics</th>
@@ -213,7 +213,7 @@
                         <td>Position {{ pos.position }}</td>
                         <td>{{ pos.ctr_calculated | percent:'1.0-0' }}</td>
                     </tr>
-                </table>
+                </table><br><br>
                 <table>
                     <tr>
                         <th colspan="2">Current keywords positions</th>
@@ -222,7 +222,7 @@
                         <td>Position {{ i + 1 }}</td>
                         <td>{{ pos }}</td>
                     </tr>
-                </table>
+                </table><br><br>
                 <table>
                     <tr>
                         <th colspan="3">Non branded keywords (if scenario)</th>
@@ -282,7 +282,7 @@
                         <td>{{ grand_total.expected_ctr_avg | percent:'1.0-2' }}</td>
                     </tr>
                     </tfoot>
-                </table>
+                </table><br><br>
                 <table>
                     <tr>
                         <th>Position</th>

@@ -106,15 +106,11 @@
 
 
     function onPlatformLoad() {
-<!--        --><?php //if ($token) { ?>
-//        if (window.app) {
-//            gapi.load('auth2', function () {
-//                gapi.auth2.init({
-//                    client_id: '<?php //echo $google_api_id ?>//'
-//                });
-//            });
-//        }
-//        <?php //} ?>
+        <?php if ($token) { ?>
+            gapi.load('auth2', function () {
+                gapi.auth2.init({client_id: '<?php echo $google_api_id ?>'});
+            });
+        <?php } ?>
         // https://accounts.google.com/o/oauth2/revoke?token="+ACCESS_TOKEN
     }
 
