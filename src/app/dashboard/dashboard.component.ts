@@ -74,17 +74,13 @@ export class DashboardComponent implements OnInit {
         };
 
         let data, chart;
-        if (document.getElementById('chartNonBranded') != null) {
             data = this.google.visualization.arrayToDataTable(this.nonBrandedDataTable);
             chart = new this.google.visualization.PieChart(document.getElementById('chartNonBranded'));
             chart.draw(data, nonBrandedChartOptions);
-        }
 
-        if (document.getElementById('chartBranded') != null) {
             data = this.google.visualization.arrayToDataTable(this.brandedDataTable);
             chart = new this.google.visualization.PieChart(document.getElementById('chartBranded'));
             chart.draw(data, brandedChartOptions);
-        }
     }
 
     ngOnInit() {
@@ -250,14 +246,14 @@ export class DashboardComponent implements OnInit {
 
         });
 
-        this.positions_stats.forEach((pos, j, arr1) => {
+        this.positions_stats.forEach((pos) => {
             if (pos.row_indexes.length != 0) {
                 pos.expected_ctr_avg = pos.expected_ctr_sum / pos.row_indexes.length;
             }
         });
 
         this.positions_stats_limited = [];
-        this.positions_stats.forEach((data, i) => {
+        this.positions_stats.forEach((data) => {
             if (data.position <= 10) { this.positions_stats_limited.push(Object.assign({}, data)); }
         });
 
@@ -270,14 +266,14 @@ export class DashboardComponent implements OnInit {
             });
             let sum = 0;
             let count = 0;
-            tmp.forEach((row, i, arr) => {
+            tmp.forEach((row) => {
                 if (row.expected_ctr_avg != 0) {
                     sum += row.expected_ctr_avg;
                     count++;
                 }
             });
 
-            tmp.forEach((row, i, arr) => {
+            tmp.forEach((row) => {
                 if (row.expected_ctr_avg == 0) {
                     row.ctr_calculated = (count != 0) ? sum / count : 0;
                 } else {
@@ -285,7 +281,7 @@ export class DashboardComponent implements OnInit {
                 }
             });
 
-            tmp.forEach((data, i) => {
+            tmp.forEach((data) => {
                 this.positions_stats_resulted.push(Object.assign({}, {
                     position: data.position,
                     expected_ctr_avg: data.expected_ctr_avg,
@@ -311,7 +307,7 @@ export class DashboardComponent implements OnInit {
 
         let tmp;
 
-        this.allQueriesData.forEach((row, i, arr) => {
+        this.allQueriesData.forEach((row) => {
             for (let j = 1; j < 11; j++) {
                 if ( row.position < j + 1 ) {
                     row.nr.push(0);
@@ -319,7 +315,7 @@ export class DashboardComponent implements OnInit {
                 else {
                     tmp = this.positions_stats_resulted.find(data => data.position == j);
                     row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
-                };
+                }
             }
             if ( row.position < 2 ) {
                 row.nr.push(0);
@@ -331,10 +327,10 @@ export class DashboardComponent implements OnInit {
                     tmp = this.positions_stats_resulted.find(data => data.position == 10);
                 }
                 row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
-            };
+            }
         });
 
-        this.nonBrandedData.forEach((row, i, arr) => {
+        this.nonBrandedData.forEach((row) => {
             for (let j = 1; j < 11; j++) {
                 if ( row.position < j + 1 ) {
                     row.nr.push(0);
@@ -342,7 +338,7 @@ export class DashboardComponent implements OnInit {
                 else {
                     tmp = this.positions_stats_resulted.find(data => data.position == j);
                     row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
-                };
+                }
             }
             if ( row.position < 2 ) {
                 row.nr.push(0);
@@ -354,7 +350,7 @@ export class DashboardComponent implements OnInit {
                     tmp = this.positions_stats_resulted.find(data => data.position == 10);
                 }
                 row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
-            };
+            }
         });
 
         this.top_ctr_statistics = [];
@@ -389,12 +385,11 @@ export class DashboardComponent implements OnInit {
             ['Traffic Gain', this.non_branded_traffic_gain]
         ];
 
-        this.google.charts.setOnLoadCallback(this.drawChart.bind(this));
-
+        this.google.charts.setOnLoadCallback(() => this.drawChart());
     };
 
-    onFileChange(ev){
 
+    onFileChange(ev){
         let reader = new FileReader();
         reader.onload = (theFile =>
                 e => {
@@ -406,10 +401,13 @@ export class DashboardComponent implements OnInit {
         reader.readAsText(ev.target.files[0]);
     }
 
+    
     updateData() {
         this.reportService.update(this.report.id, this.report.name, this.report.keywords, this.file)
             .then(() => {
-                if ( this.file != '' ) { this.dataCalculate(this.reportService.parseCsv(this.file) as InputDataRow[], this.report.keywords); }
+                if (this.file != '') {
+                    this.dataCalculate(this.reportService.parseCsv(this.file) as InputDataRow[], this.report.keywords);
+                }
                 location.reload();
             }
         );

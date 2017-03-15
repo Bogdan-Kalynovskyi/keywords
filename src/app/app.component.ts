@@ -8,6 +8,6 @@ import { Component } from '@angular/core';
 
 export class AppComponent {
     logout() {
-        location.href = "https://www.google.com/accounts/Logout?continue=" + location.href;
+        location.reload();
     }
 }

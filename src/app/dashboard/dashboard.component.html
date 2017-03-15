@@ -6,7 +6,7 @@
         <md-input-container>
             <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" />
         </md-input-container>
-        <input type="file" accept=".csv" (change)="onFileChange($event)" />
+        <input type="file" accept=".csv" (change)="onFileChange($event)">
         <button md-raised-button color="primary" (click)="updateData()">Save changes</button>
     </div>
     <div class="scrolling-content">
@@ -306,7 +306,5 @@
                 </table>
             </md-tab>
         </md-tab-group>
-        <div id="chartNonBranded"></div>
-        <div id="chartBranded"></div>
     </div>
 </div>

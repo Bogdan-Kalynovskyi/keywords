@@ -84,7 +84,7 @@
         if (IEVersion !== -1) {
             document.documentElement.className = 'ie' + IEVersion;
             if (IEVersion < 10) {
-                alert('Sorry, but we are not supporting Internet Explorer 9 and lower.');
+                alert('Sorry, we are not supporting Internet Explorer 9 and lower.');
             }
         }
     })();
@@ -105,16 +105,6 @@
     }
 
 
-    function onPlatformLoad() {
-        <?php if ($token) { ?>
-            gapi.load('auth2', function () {
-                gapi.auth2.init({client_id: '<?php echo $google_api_id ?>'});
-            });
-        <?php } ?>
-        // https://accounts.google.com/o/oauth2/revoke?token="+ACCESS_TOKEN
-    }
-
-
     <?php if ($token) { ?>
     window.xsrfToken = '<?php echo $_SESSION['xsrfToken'] ?>';
     <?php } else { ?>
@@ -127,7 +117,7 @@
     <?php } ?>
 </script>
 
-<script src="https://apis.google.com/js/platform.js" async defer onload="onPlatformLoad()"></script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 
 
 <?php if (!$token) { ?>
@@ -152,6 +142,9 @@
 <?php } else { ?>
 
     <app-root><div id="loading">Loading...</div></app-root>
+
+    <div id="chartNonBranded"></div>
+    <div id="chartBranded"></div>
 
 <?php } ?>
 
