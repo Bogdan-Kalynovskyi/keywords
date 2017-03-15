@@ -1,6 +1,6 @@
 <?php
 
-echo 'Your current version is '.PHP_VERSION;
+echo 'Your current version is '.PHP_VERSION.'<br>';
 $php_min_version = '5.3.10';
 if (version_compare(phpversion(), $php_min_version, '<')) {
     echo 'Minimal required PHP version is '.$php_min_version;

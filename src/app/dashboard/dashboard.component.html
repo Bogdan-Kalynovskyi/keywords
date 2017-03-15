@@ -12,124 +12,132 @@
     <div class="scrolling-content">
         <md-tab-group>
             <md-tab label="CSV_import">
-                <table>
-                    <tr>
-                        <th>Queries</th>
-                        <th>Clicks</th>
-                        <th>Impressions</th>
-                        <th>CTR</th>
-                        <th>Position</th>
-                    </tr>
-                    <tr *ngFor="let data of data">
-                        <td>{{ data.queries }}</td>
-                        <td>{{ data.clicks }}</td>
-                        <td>{{ data.impressions }}</td>
-                        <td>{{ data.ctr | percent:'1.0-2' }}</td>
-                        <td>{{ data.position }}</td>
-                    </tr>
-                </table>
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <tr>
+                            <th>Queries</th>
+                            <th>Clicks</th>
+                            <th>Impressions</th>
+                            <th>CTR</th>
+                            <th>Position</th>
+                        </tr>
+                        <tr *ngFor="let data of data">
+                            <td>{{ data.queries }}</td>
+                            <td>{{ data.clicks }}</td>
+                            <td>{{ data.impressions }}</td>
+                            <td>{{ data.ctr | percent:'1.0-2' }}</td>
+                            <td>{{ data.position }}</td>
+                        </tr>
+                    </table>
+                </div>
             </md-tab>
             <md-tab label="CSV 5+">
-                <table>
-                    <tr>
-                        <th>Queries</th>
-                        <th>Clicks</th>
-                        <th>Impressions</th>
-                        <th>CTR</th>
-                        <th>Position</th>
-                    </tr>
-                    <tr *ngFor="let data of filteredData">
-                        <td>{{ data.queries }}</td>
-                        <td>{{ data.clicks }}</td>
-                        <td>{{ data.impressions }}</td>
-                        <td>{{ data.ctr | percent:'1.0-2' }}</td>
-                        <td>{{ data.position }}</td>
-                    </tr>
-                </table>
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <tr>
+                            <th>Queries</th>
+                            <th>Clicks</th>
+                            <th>Impressions</th>
+                            <th>CTR</th>
+                            <th>Position</th>
+                        </tr>
+                        <tr *ngFor="let data of filteredData">
+                            <td>{{ data.queries }}</td>
+                            <td>{{ data.clicks }}</td>
+                            <td>{{ data.impressions }}</td>
+                            <td>{{ data.ctr | percent:'1.0-2' }}</td>
+                            <td>{{ data.position }}</td>
+                        </tr>
+                    </table>
+                </div>
             </md-tab>
             <md-tab label="All Queries">
-                <table>
-                    <tr>
-                        <th>Queries</th>
-                        <th>Clicks</th>
-                        <th>Impressions</th>
-                        <th>Position</th>
-                        <th>CTR</th>
-                        <th>Instances</th>
-                        <th>Expected CTR</th>
-                        <th>CTR&#916;</th>
-                        <th>Expected Clicks</th>
-                        <th>Traffic Loss</th>
-                        <th>Traffic Gain</th>
-                        <th>#1</th>
-                        <th>#2</th>
-                        <th>#3</th>
-                        <th>#4</th>
-                        <th>#5</th>
-                        <th>#6</th>
-                        <th>#7</th>
-                        <th>#8</th>
-                        <th>#9</th>
-                        <th>#10</th>
-                        <th>1+</th>
-                    </tr>
-                    <tr *ngFor="let data of allQueriesData">
-                        <td>{{ data.queries }}</td>
-                        <td>{{ data.clicks }}</td>
-                        <td>{{ data.impressions }}</td>
-                        <td>{{ data.position }}</td>
-                        <td>{{ data.calculatedCtr | percent:'1.0-0' }}</td>
-                        <td>{{ data.instance }}</td>
-                        <td>{{ data.expected_ctr | percent:'1.0-2' }}</td>
-                        <td>{{ data.ctr_delta | percent:'1.0-2' }}</td>
-                        <td>{{ data.expected_clicks | round}}</td>
-                        <td>{{ data.traffic_loss | round }}</td>
-                        <td>{{ data.traffic_gain | round }}</td>
-                        <td *ngFor="let pos of data.nr">{{ pos | round }}</td>
-                    </tr>
-                </table>
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <tr>
+                            <th>Queries</th>
+                            <th>Clicks</th>
+                            <th>Impressions</th>
+                            <th>Position</th>
+                            <th>CTR</th>
+                            <th>Instances</th>
+                            <th>Expected CTR</th>
+                            <th>CTR&#916;</th>
+                            <th>Expected Clicks</th>
+                            <th>Traffic Loss</th>
+                            <th>Traffic Gain</th>
+                            <th>#1</th>
+                            <th>#2</th>
+                            <th>#3</th>
+                            <th>#4</th>
+                            <th>#5</th>
+                            <th>#6</th>
+                            <th>#7</th>
+                            <th>#8</th>
+                            <th>#9</th>
+                            <th>#10</th>
+                            <th>1+</th>
+                        </tr>
+                        <tr *ngFor="let data of allQueriesData">
+                            <td>{{ data.queries }}</td>
+                            <td>{{ data.clicks }}</td>
+                            <td>{{ data.impressions }}</td>
+                            <td>{{ data.position }}</td>
+                            <td>{{ data.calculatedCtr | percent:'1.0-0' }}</td>
+                            <td>{{ data.instance }}</td>
+                            <td>{{ data.expected_ctr | percent:'1.0-2' }}</td>
+                            <td>{{ data.ctr_delta | percent:'1.0-2' }}</td>
+                            <td>{{ data.expected_clicks | round}}</td>
+                            <td>{{ data.traffic_loss | round }}</td>
+                            <td>{{ data.traffic_gain | round }}</td>
+                            <td *ngFor="let pos of data.nr">{{ pos | round }}</td>
+                        </tr>
+                    </table>
+                </div>
             </md-tab>
             <md-tab label="Non-Branded">
-                <table>
-                    <tr>
-                        <th>Queries</th>
-                        <th>Clicks</th>
-                        <th>Impressions</th>
-                        <th>Position</th>
-                        <th>CTR</th>
-                        <th>Instances</th>
-                        <th>Expected CTR</th>
-                        <th>CTR&#916;</th>
-                        <th>Expected Clicks</th>
-                        <th>Traffic Loss</th>
-                        <th>Traffic Gain</th>
-                        <th>#1</th>
-                        <th>#2</th>
-                        <th>#3</th>
-                        <th>#4</th>
-                        <th>#5</th>
-                        <th>#6</th>
-                        <th>#7</th>
-                        <th>#8</th>
-                        <th>#9</th>
-                        <th>#10</th>
-                        <th>1+</th>
-                    </tr>
-                    <tr *ngFor="let data of nonBrandedData">
-                        <td>{{ data.queries }}</td>
-                        <td>{{ data.clicks }}</td>
-                        <td>{{ data.impressions }}</td>
-                        <td>{{ data.position }}</td>
-                        <td>{{ data.ctr | percent:'1.0-2' }}</td>
-                        <td>{{ data.instance }}</td>
-                        <td>{{ data.expected_ctr | percent:'1.0-2' }}</td>
-                        <td>{{ data.ctr_delta | percent:'1.0-2' }}</td>
-                        <td>{{ data.expected_clicks | round }}</td>
-                        <td>{{ data.traffic_loss | round}}</td>
-                        <td>{{ data.traffic_gain | round }}</td>
-                        <td *ngFor="let pos of data.nr">{{ pos | round }}</td>
-                    </tr>
-                </table>
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <tr>
+                            <th>Queries</th>
+                            <th>Clicks</th>
+                            <th>Impressions</th>
+                            <th>Position</th>
+                            <th>CTR</th>
+                            <th>Instances</th>
+                            <th>Expected CTR</th>
+                            <th>CTR&#916;</th>
+                            <th>Expected Clicks</th>
+                            <th>Traffic Loss</th>
+                            <th>Traffic Gain</th>
+                            <th>#1</th>
+                            <th>#2</th>
+                            <th>#3</th>
+                            <th>#4</th>
+                            <th>#5</th>
+                            <th>#6</th>
+                            <th>#7</th>
+                            <th>#8</th>
+                            <th>#9</th>
+                            <th>#10</th>
+                            <th>1+</th>
+                        </tr>
+                        <tr *ngFor="let data of nonBrandedData">
+                            <td>{{ data.queries }}</td>
+                            <td>{{ data.clicks }}</td>
+                            <td>{{ data.impressions }}</td>
+                            <td>{{ data.position }}</td>
+                            <td>{{ data.ctr | percent:'1.0-2' }}</td>
+                            <td>{{ data.instance }}</td>
+                            <td>{{ data.expected_ctr | percent:'1.0-2' }}</td>
+                            <td>{{ data.ctr_delta | percent:'1.0-2' }}</td>
+                            <td>{{ data.expected_clicks | round }}</td>
+                            <td>{{ data.traffic_loss | round}}</td>
+                            <td>{{ data.traffic_gain | round }}</td>
+                            <td *ngFor="let pos of data.nr">{{ pos | round }}</td>
+                        </tr>
+                    </table>
+                </div>
             </md-tab>
             <md-tab label="Report">
                 <table>
@@ -180,7 +188,7 @@
                     </tr>
                     <tr *ngFor="let item of top_traffic_gain; let i = index">
                         <td>{{ i + 1 }}</td>
-                        <td>{{ item.query }}</td>
+                        <td>{{ item.queries }}</td>
                         <td>{{ (item.traffic_gain * 100 | round)/100 }}</td>
                     </tr>
                     <tr>
@@ -196,7 +204,7 @@
                     </tr>
                     <tr *ngFor="let item of top_traffic_loss; let i = index">
                         <td>{{ i + 1 }}</td>
-                        <td>{{ item.query }}</td>
+                        <td>{{ item.queries }}</td>
                         <td>{{ (item.traffic_loss * 100 | round) / 100 }}</td>
                     </tr>
                     <tr>

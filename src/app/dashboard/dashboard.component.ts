@@ -62,9 +62,6 @@ export class DashboardComponent implements OnInit {
         let nonBrandedChartOptions =  {
             title: 'Non Branded queries',
             pieHole: 0.5,
-            pieSliceTextStyle : {
-                color: 'black',
-            },
             width: 800,
             height: 500
         };
@@ -72,9 +69,6 @@ export class DashboardComponent implements OnInit {
         let brandedChartOptions =  {
             title: 'Branded queries',
             pieHole: 0.5,
-            pieSliceTextStyle : {
-                'color': 'black',
-            },
             width: 800,
             height: 500
         };
