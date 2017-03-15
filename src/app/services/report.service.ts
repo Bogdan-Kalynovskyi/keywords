@@ -14,7 +14,9 @@ export class ReportService {
     private dataUrl = 'api/reports.php';
     private headers = new Headers({ 'Authorization': window['xsrfToken'] });
 
-    constructor(private http: Http) { }
+    constructor(private http: Http) {
+        this.dataUrl = location.protocol + '//' + location.hostname + '/' + this.dataUrl;
+    }
 
     getReports(): Promise<Report[]> {
         return this.http
