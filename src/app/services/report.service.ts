@@ -12,6 +12,7 @@ import {InputDataRow} from "../models/input-data-row";
 export class ReportService {
     public reportList: Report[]= [];
     private dataUrl = 'api/reports.php';
+    private logoutUrl = 'api/login.php';
     private headers = new Headers({ 'Authorization': window['xsrfToken'] });
 
     constructor(private http: Http) {
@@ -155,6 +156,14 @@ export class ReportService {
             .delete(this.dataUrl + '?id=' + id, { headers: this.headers })
             .toPromise()
             .catch(this.handleError);
+    }
+
+    logout(): Promise<any> {debugger;
+        return this.http.post(location.protocol + '//' + location.hostname + '/' + this.logoutUrl, { logout: window['xsrfToken'] })
+            .toPromise()
+            .then(function () {
+                window.location.href = 'https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=' + window.location.href;
+            });
     }
 
     private handleError(error: any): Promise<any> {

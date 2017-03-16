@@ -28,8 +28,6 @@
     else {
         $post = json_decode(file_get_contents('php://input'), true);
         if (isset($post['logout']) && $post['logout'] === $_SESSION['xsrfToken']) {
-            $response = file_get_contents('https://accounts.google.com/o/oauth2/revoke?token='.$_SESSION['authToken']);
             session_destroy();
-            echo $response;
         }
     }
