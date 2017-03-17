@@ -33,10 +33,8 @@ function get () {
     $id = isset($_GET['id']) ? intval($_GET['id']) : false;
 
     if ($id) {
-        $query = mysql_query('SELECT `name`, `keywords`, `csv`, `owner` FROM `reports` WHERE id = '.$id);
+        $query = mysql_query('SELECT `name`, `keywords`, `csv`, IF(`owner` = ' . esc($_SESSION['userGoogleId']) . ', 1, 0) as `isOwner`  FROM `reports` WHERE id = '.$id);
         $result = mysql_fetch_array($query, MYSQL_ASSOC);
-
-        $result['owner'] = $result['owner'] === $_SESSION['userGoogleId'];
 
         if ($result) {
             echo json_encode($result);
@@ -47,7 +45,7 @@ function get () {
     }
 
     else {
-        $query = mysql_query('SELECT `id`, `name`, `created` FROM `reports` WHERE owner = ' . esc($_SESSION['userGoogleId']) . ' ORDER BY created');
+        $query = mysql_query('SELECT `id`, `name`, `created` FROM `reports` WHERE owner = ' . esc($_SESSION['userGoogleId']) . ' ORDER BY created DESC');
 
         $result = array();
         while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {

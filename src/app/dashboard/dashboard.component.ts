@@ -29,6 +29,7 @@ export class DashboardComponent implements OnInit {
     private filteredData: InputDataRow[];
     private allQueriesData: InputDataRow[];
     private nonBrandedData: InputDataRow[];
+    private isOwner: boolean;
 
     all_queries_traffic_loss: number;
     all_queries_traffic_gain: number;
@@ -92,6 +93,10 @@ export class DashboardComponent implements OnInit {
             .subscribe(reportData => {
                 if (reportData) {
                     this.data = reportData.csv;
+                    debugger;
+                    console.log(reportData.isOwner);
+                    console.log(this.isOwner);
+                    this.isOwner = reportData.isOwner == '1' ? true : false;
                     this.report = {
                         id: this.reportId,
                         name: reportData.name,
@@ -401,7 +406,7 @@ export class DashboardComponent implements OnInit {
         reader.readAsText(ev.target.files[0]);
     }
 
-    
+
     updateData() {
         this.reportService.update(this.report.id, this.report.name, this.report.keywords, this.file)
             .then(() => {

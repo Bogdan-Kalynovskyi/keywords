@@ -1,4 +1,4 @@
-<div *ngIf="report" class="report-content">
+<div *ngIf="report" class="report-content" [ngClass]="{ 'read-only': !isOwner }">
     <div>
         <md-input-container>
             <input mdInput placeholder="Report name" [(ngModel)]="report.name" />
@@ -7,7 +7,7 @@
             <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" />
         </md-input-container>
         <input type="file" accept=".csv" (change)="onFileChange($event)">
-        <button md-raised-button color="primary" (click)="updateData()">Save changes</button>
+        <button *ngIf="isOwner" md-raised-button color="primary" (click)="updateData()">Save changes</button>
     </div>
     <div class="scrolling-content">
         <md-tab-group>

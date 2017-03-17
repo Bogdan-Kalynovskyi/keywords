@@ -130,7 +130,8 @@ export class ReportService {
                 return {
                     name: all.name,
                     keywords: all.keywords,
-                    csv: this.parseCsv(all.csv)
+                    csv: this.parseCsv(all.csv),
+                    isOwner: all.isOwner
                 };
             })
             .catch(this.handleError);
