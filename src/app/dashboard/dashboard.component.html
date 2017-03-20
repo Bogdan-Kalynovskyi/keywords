@@ -1,13 +1,27 @@
 <div *ngIf="report" class="report-content" [ngClass]="{ 'read-only': !isOwner }">
     <div>
-        <md-input-container>
-            <input mdInput placeholder="Report name" [(ngModel)]="report.name" />
+        <md-input-container *ngIf="isOwner">
+            <span mdTooltip="You should press 'Save button' to save your changes">
+                <input mdInput placeholder="Report name" [(ngModel)]="report.name" />
+            </span>
         </md-input-container>
-        <md-input-container>
-            <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" />
+        <md-input-container *ngIf="!isOwner">
+            <input mdInput placeholder="Report name" [(ngModel)]="report.name" disabled />
         </md-input-container>
-        <input type="file" accept=".csv" (change)="onFileChange($event)">
+        <md-input-container *ngIf="isOwner">
+            <span mdTooltip="You should press 'Save button' to save your changes">
+                <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" (change)="onDataChange()" />
+            </span>
+        </md-input-container>
+        <md-input-container *ngIf="!isOwner">
+            <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" (change)="onDataChange()" />
+        </md-input-container>
+        <span mdTooltip="You should press 'Save button' to save your changes" *ngIf="isOwner">
+            <input type="file" accept=".csv" (change)="onFileChange($event)">
+        </span>
+        <input type="file" accept=".csv" (change)="onFileChange($event)" *ngIf="!isOwner">
         <button *ngIf="isOwner" md-raised-button color="primary" (click)="updateData()">Save changes</button>
+        <div *ngIf="!isOwner" class="warning">Your changes could not be saved</div>
     </div>
     <div class="scrolling-content">
         <md-tab-group>
@@ -15,11 +29,11 @@
                 <div class="data-table-container">
                     <table class="data-table">
                         <tr>
-                            <th>Queries</th>
-                            <th>Clicks</th>
-                            <th>Impressions</th>
-                            <th>CTR</th>
-                            <th>Position</th>
+                            <th (click)="setSort('data', 'queries', $event)">Queries</th>
+                            <th (click)="setSort('data', 'queries', $event)">Clicks</th>
+                            <th (click)="setSort('data', 'queries', $event)">Impressions</th>
+                            <th (click)="setSort('data', 'queries', $event)">CTR</th>
+                            <th (click)="setSort('data', 'queries', $event)">Position</th>
                         </tr>
                         <tr *ngFor="let data of data">
                             <td>{{ data.queries }}</td>

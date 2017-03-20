@@ -31,21 +31,23 @@ export class DashboardComponent implements OnInit {
     private nonBrandedData: InputDataRow[];
     private isOwner: boolean;
 
-    all_queries_traffic_loss: number;
-    all_queries_traffic_gain: number;
-    non_branded_traffic_loss: number;
-    non_branded_traffic_gain: number;
-    positions: number[] = [];
-    positions_stats = [];
-    grand_total = {};
-    positions_stats_limited = [];
-    positions_stats_resulted = [];
-    top_traffic_gain: InputDataRow[];
-    sum_top_traffic_gain: number;
-    top_traffic_loss: InputDataRow[];
-    sum_top_traffic_loss: number;
-    top_ctr_statistics = [];
-    non_branded_keywords = [];
+    private all_queries_traffic_loss: number;
+    private all_queries_traffic_gain: number;
+    private non_branded_traffic_loss: number;
+    private non_branded_traffic_gain: number;
+    private positions: number[] = [];
+    private positions_stats = [];
+    private grand_total = {};
+    private positions_stats_limited = [];
+    private positions_stats_resulted = [];
+    private top_traffic_gain: InputDataRow[];
+    private sum_top_traffic_gain: number;
+    private top_traffic_loss: InputDataRow[];
+    private sum_top_traffic_loss: number;
+    private top_ctr_statistics = [];
+    private non_branded_keywords = [];
+
+    private tablesSort;
 
     private google;
     private brandedDataTable;
@@ -58,7 +60,11 @@ export class DashboardComponent implements OnInit {
         this.google = window['google'];
         this.google.charts.load('current', {'packages':['corechart']});
     }
-    
+
+    setSort(table: string, col: string, ev) {
+        alert('Sort');
+    }
+
     drawChart() {
         let nonBrandedChartOptions =  {
             title: 'Non Branded queries',
@@ -93,10 +99,7 @@ export class DashboardComponent implements OnInit {
             .subscribe(reportData => {
                 if (reportData) {
                     this.data = reportData.csv;
-                    debugger;
-                    console.log(reportData.isOwner);
-                    console.log(this.isOwner);
-                    this.isOwner = reportData.isOwner == '1' ? true : false;
+                    this.isOwner = reportData.isOwner == '1';
                     this.report = {
                         id: this.reportId,
                         name: reportData.name,
@@ -393,6 +396,10 @@ export class DashboardComponent implements OnInit {
         this.google.charts.setOnLoadCallback(() => this.drawChart());
     };
 
+    onDataChange(){
+        this.dataCalculate(this.data, this.report.keywords);
+    }
+
 
     onFileChange(ev){
         let reader = new FileReader();
@@ -400,6 +407,7 @@ export class DashboardComponent implements OnInit {
                 e => {
                     this.file = e.target.result;
                     this.data = this.reportService.parseCsv(e.target.result) as InputDataRow[];
+                    this.onDataChange();
                 }
         )(ev.target.files[0]);
 
@@ -410,9 +418,6 @@ export class DashboardComponent implements OnInit {
     updateData() {
         this.reportService.update(this.report.id, this.report.name, this.report.keywords, this.file)
             .then(() => {
-                if (this.file != '') {
-                    this.dataCalculate(this.reportService.parseCsv(this.file) as InputDataRow[], this.report.keywords);
-                }
                 location.reload();
             }
         );

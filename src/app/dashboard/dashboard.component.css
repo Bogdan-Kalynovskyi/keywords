@@ -25,8 +25,26 @@
     padding-bottom: 12px;
     text-align: left;
     background-color: #bbb;
+    font-size: 13px;
 }
 
 .data-table-container {
     overflow-x:auto;
+}
+
+th.asc:after, th.desc:after {
+    margin-left: 0.41em;
+    cursor: pointer;
+}
+
+th.asc:after {
+    content: '▼';
+}
+
+th.desc:after {
+    content: '▲';
+}
+
+.warning {
+    color: rgba(255, 14, 9, 0.7);
 }
