@@ -59,23 +59,32 @@ export class DashboardComponent implements OnInit {
         this.google.charts.load('current', {'packages':['corechart']});
     }
 
-    setSort(ev) {
-        let column = ev.target;
+    setSort(event, firstField, secondField) {
+        let column = event.target;
         let row = column.parentNode;
         let tableName = row.parentNode.parentNode.id;
-        let colName = column.innerHTML.toLowerCase().replace(/[^a-z]/g, '');
+        let colName = firstField || column.innerHTML.toLowerCase().replace(/[^a-z]/g, '');
 
         Array.prototype.slice.call(row.children).forEach((col) => {
             if (col === column) {
+                let direction;
                 if (col.className === 'asc') {
                     col.className = 'desc';
-                    this[tableName].sort((a, b) => (a[colName] < b[colName] ? 1 : -1));
+                    direction = 1;
                 } else {
                     col.className = 'asc';
-                    this[tableName].sort((a, b) => (a[colName] > b[colName] ? 1 : -1));
+                    direction = -1;
                 }
+
+                if (secondField) {
+                    this[tableName].sort((a, b) => (a[colName][secondField] < b[colName][secondField] ? direction : -direction));
+                }
+                else {
+                    this[tableName].sort((a, b) => (a[colName] < b[colName] ? direction : -direction));
+                }
+
             } else {
-                col.className = "";
+                col.className = '';
             }
         });
     }

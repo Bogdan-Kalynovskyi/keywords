@@ -27,7 +27,7 @@
         <md-tab-group>
             <md-tab label="CSV_import">
                 <div class="data-table-container">
-                    <table id = "data" class="data-table">
+                    <table id="data" class="data-table">
                         <tr>
                             <th (click)="setSort($event)">Queries</th>
                             <th (click)="setSort($event)">Clicks</th>
@@ -47,13 +47,13 @@
             </md-tab>
             <md-tab label="CSV 5+">
                 <div class="data-table-container">
-                    <table class="data-table">
+                    <table id="filteredData" class="data-table">
                         <tr>
-                            <th>Queries</th>
-                            <th>Clicks</th>
-                            <th>Impressions</th>
-                            <th>CTR</th>
-                            <th>Position</th>
+                            <th (click)="setSort($event)">Queries</th>
+                            <th (click)="setSort($event)">Clicks</th>
+                            <th (click)="setSort($event)">Impressions</th>
+                            <th (click)="setSort($event)">CTR</th>
+                            <th (click)="setSort($event)">Position</th>
                         </tr>
                         <tr *ngFor="let dataTable of filteredData">
                             <td>{{ dataTable.queries }}</td>
@@ -67,30 +67,30 @@
             </md-tab>
             <md-tab label="All Queries">
                 <div class="data-table-container">
-                    <table class="data-table">
+                    <table id="allQueriesData" class="data-table">
                         <tr>
-                            <th>Queries</th>
-                            <th>Clicks</th>
-                            <th>Impressions</th>
-                            <th>Position</th>
-                            <th>CTR</th>
-                            <th>Instances</th>
-                            <th>Expected CTR</th>
-                            <th>CTR&#916;</th>
-                            <th>Expected Clicks</th>
-                            <th>Traffic Loss</th>
-                            <th>Traffic Gain</th>
-                            <th>#1</th>
-                            <th>#2</th>
-                            <th>#3</th>
-                            <th>#4</th>
-                            <th>#5</th>
-                            <th>#6</th>
-                            <th>#7</th>
-                            <th>#8</th>
-                            <th>#9</th>
-                            <th>#10</th>
-                            <th>1+</th>
+                            <th (click)="setSort($event)">Queries</th>
+                            <th (click)="setSort($event)">Clicks</th>
+                            <th (click)="setSort($event)">Impressions</th>
+                            <th (click)="setSort($event)">Position</th>
+                            <th (click)="setSort($event)">CTR</th>
+                            <th (click)="setSort($event)">Instances</th>
+                            <th (click)="setSort($event)">Expected CTR</th>
+                            <th (click)="setSort($event)">CTR&#916;</th>
+                            <th (click)="setSort($event)">Expected Clicks</th>
+                            <th (click)="setSort($event)">Traffic Loss</th>
+                            <th (click)="setSort($event)">Traffic Gain</th>
+                            <th (click)="setSort($event, 'nr', 0)">#1</th>
+                            <th (click)="setSort($event, 'nr', 1)">#2</th>
+                            <th (click)="setSort($event, 'nr', 2)">#3</th>
+                            <th (click)="setSort($event, 'nr', 3)">#4</th>
+                            <th (click)="setSort($event, 'nr', 4)">#5</th>
+                            <th (click)="setSort($event, 'nr', 5)">#6</th>
+                            <th (click)="setSort($event, 'nr', 6)">#7</th>
+                            <th (click)="setSort($event, 'nr', 7)">#8</th>
+                            <th (click)="setSort($event, 'nr', 8)">#9</th>
+                            <th (click)="setSort($event, 'nr', 9)">#10</th>
+                            <th (click)="setSort($event, 'nr', 10)">1+</th>
                         </tr>
                         <tr *ngFor="let dataTable of allQueriesData">
                             <td>{{ dataTable.queries }}</td>
@@ -111,30 +111,30 @@
             </md-tab>
             <md-tab label="Non-Branded">
                 <div class="data-table-container">
-                    <table class="data-table">
+                    <table id="nonBrandedData" class="data-table">
                         <tr>
-                            <th>Queries</th>
-                            <th>Clicks</th>
-                            <th>Impressions</th>
-                            <th>Position</th>
-                            <th>CTR</th>
-                            <th>Instances</th>
-                            <th>Expected CTR</th>
-                            <th>CTR&#916;</th>
-                            <th>Expected Clicks</th>
-                            <th>Traffic Loss</th>
-                            <th>Traffic Gain</th>
-                            <th>#1</th>
-                            <th>#2</th>
-                            <th>#3</th>
-                            <th>#4</th>
-                            <th>#5</th>
-                            <th>#6</th>
-                            <th>#7</th>
-                            <th>#8</th>
-                            <th>#9</th>
-                            <th>#10</th>
-                            <th>1+</th>
+                            <th (click)="setSort($event)">Queries</th>
+                            <th (click)="setSort($event)">Clicks</th>
+                            <th (click)="setSort($event)">Impressions</th>
+                            <th (click)="setSort($event)">Position</th>
+                            <th (click)="setSort($event)">CTR</th>
+                            <th (click)="setSort($event)">Instances</th>
+                            <th (click)="setSort($event)">Expected CTR</th>
+                            <th (click)="setSort($event)">CTR&#916;</th>
+                            <th (click)="setSort($event)">Expected Clicks</th>
+                            <th (click)="setSort($event)">Traffic Loss</th>
+                            <th (click)="setSort($event)">Traffic Gain</th>
+                            <th (click)="setSort($event, 'nr', 0)">#1</th>
+                            <th (click)="setSort($event, 'nr', 1)">#2</th>
+                            <th (click)="setSort($event, 'nr', 2)">#3</th>
+                            <th (click)="setSort($event, 'nr', 3)">#4</th>
+                            <th (click)="setSort($event, 'nr', 4)">#5</th>
+                            <th (click)="setSort($event, 'nr', 5)">#6</th>
+                            <th (click)="setSort($event, 'nr', 6)">#7</th>
+                            <th (click)="setSort($event, 'nr', 7)">#8</th>
+                            <th (click)="setSort($event, 'nr', 8)">#9</th>
+                            <th (click)="setSort($event, 'nr', 9)">#10</th>
+                            <th (click)="setSort($event, 'nr', 10)">1+</th>
                         </tr>
                         <tr *ngFor="let dataTable of nonBrandedData">
                             <td>{{ dataTable.queries }}</td>
