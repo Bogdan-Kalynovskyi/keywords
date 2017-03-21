@@ -73,13 +73,13 @@
                             <th (click)="setSort($event)">Clicks</th>
                             <th (click)="setSort($event)">Impressions</th>
                             <th (click)="setSort($event)">Position</th>
-                            <th (click)="setSort($event)">CTR</th>
+                            <th (click)="setSort($event, 'calculatedCtr')">CTR</th>
                             <th (click)="setSort($event)">Instances</th>
-                            <th (click)="setSort($event)">Expected CTR</th>
-                            <th (click)="setSort($event)">CTR&#916;</th>
-                            <th (click)="setSort($event)">Expected Clicks</th>
-                            <th (click)="setSort($event)">Traffic Loss</th>
-                            <th (click)="setSort($event)">Traffic Gain</th>
+                            <th (click)="setSort($event, 'expected_ctr')">Expected CTR</th>
+                            <th (click)="setSort($event, 'ctr_delta')">CTR&#916;</th>
+                            <th (click)="setSort($event, 'expected_clicks')">Expected Clicks</th>
+                            <th (click)="setSort($event, 'traffic_loss')">Traffic Loss</th>
+                            <th (click)="setSort($event, 'traffic_gain')">Traffic Gain</th>
                             <th (click)="setSort($event, 'nr', 0)">#1</th>
                             <th (click)="setSort($event, 'nr', 1)">#2</th>
                             <th (click)="setSort($event, 'nr', 2)">#3</th>
@@ -98,7 +98,7 @@
                             <td>{{ dataTable.impressions }}</td>
                             <td>{{ dataTable.position }}</td>
                             <td>{{ dataTable.calculatedCtr | percent:'1.0-0' }}</td>
-                            <td>{{ dataTable.instance }}</td>
+                            <td>{{ dataTable.instances }}</td>
                             <td>{{ dataTable.expected_ctr | percent:'1.0-2' }}</td>
                             <td>{{ dataTable.ctr_delta | percent:'1.0-2' }}</td>
                             <td>{{ dataTable.expected_clicks | round}}</td>
@@ -119,11 +119,11 @@
                             <th (click)="setSort($event)">Position</th>
                             <th (click)="setSort($event)">CTR</th>
                             <th (click)="setSort($event)">Instances</th>
-                            <th (click)="setSort($event)">Expected CTR</th>
-                            <th (click)="setSort($event)">CTR&#916;</th>
-                            <th (click)="setSort($event)">Expected Clicks</th>
-                            <th (click)="setSort($event)">Traffic Loss</th>
-                            <th (click)="setSort($event)">Traffic Gain</th>
+                            <th (click)="setSort($event, 'expected_ctr')">Expected CTR</th>
+                            <th (click)="setSort($event, 'ctr_delta')">CTR&#916;</th>
+                            <th (click)="setSort($event, 'expected_clicks')">Expected Clicks</th>
+                            <th (click)="setSort($event, 'traffic_loss')">Traffic Loss</th>
+                            <th (click)="setSort($event, 'traffic_gain')">Traffic Gain</th>
                             <th (click)="setSort($event, 'nr', 0)">#1</th>
                             <th (click)="setSort($event, 'nr', 1)">#2</th>
                             <th (click)="setSort($event, 'nr', 2)">#3</th>
@@ -142,7 +142,7 @@
                             <td>{{ dataTable.impressions }}</td>
                             <td>{{ dataTable.position }}</td>
                             <td>{{ dataTable.ctr | percent:'1.0-2' }}</td>
-                            <td>{{ dataTable.instance }}</td>
+                            <td>{{ dataTable.instances }}</td>
                             <td>{{ dataTable.expected_ctr | percent:'1.0-2' }}</td>
                             <td>{{ dataTable.ctr_delta | percent:'1.0-2' }}</td>
                             <td>{{ dataTable.expected_clicks | round }}</td>

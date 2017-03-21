@@ -63,7 +63,7 @@ export class DashboardComponent implements OnInit {
         let column = event.target;
         let row = column.parentNode;
         let tableName = row.parentNode.parentNode.id;
-        let colName = firstField || column.innerHTML.toLowerCase().replace(/[^a-z]/g, '');
+        let colName = firstField || column.innerHTML.toLowerCase(); //.replace(/[^a-z]/g, '');
 
         Array.prototype.slice.call(row.children).forEach((col) => {
             if (col === column) {
@@ -156,7 +156,7 @@ export class DashboardComponent implements OnInit {
         this.allQueriesData.forEach((row, i , arr) => {
 
             row.calculatedCtr = (row.impressions != 0) ? row.clicks / row.impressions : 0;
-            row.instance = arr.reduce(function (total, x) {
+            row.instances = arr.reduce(function (total, x) {
                 return x.position === row.position ? total + 1 : total
             }, 0);
         });
@@ -230,7 +230,7 @@ export class DashboardComponent implements OnInit {
             let sum_ctr = 0;
             let count = 0;
 
-            row.instance = arr.reduce(function (total, x) {
+            row.instances = arr.reduce(function (total, x) {
                 return x.position === row.position ? total + 1 : total
             }, 0);
 
@@ -264,7 +264,7 @@ export class DashboardComponent implements OnInit {
                 arr1[j].position = (j + 10) / 10;
                 if (((j + 10) / 10 <= row.position) && (row.position < (j + 11) / 10)) {
                     arr1[j].row_indexes.push(row.queries);
-                    arr1[j].instances = row.instance;
+                    arr1[j].instances = row.instances;
                     arr1[j].clicks_sum += row.clicks;
                     arr1[j].impressions_sum += row.impressions;
                     arr1[j].expected_ctr_sum += row.expected_ctr;

@@ -5,7 +5,7 @@ export class InputDataRow {
     ctr: number;
     position: number;
     calculatedCtr: number;
-    instance: number;
+    instances: number;
     expected_ctr: number;
     ctr_delta: number;
     expected_clicks: number;
