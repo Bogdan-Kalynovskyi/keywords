@@ -13,7 +13,8 @@
 
 .data-table td, .data-table th {
     border: 1px solid #aaa;
-    padding: 8px;
+    padding: 6px;
+    font-size: 14px;
 }
 
 .data-table tr:nth-child(even){background-color: #f2f2f2;}
@@ -25,7 +26,7 @@
     padding-bottom: 12px;
     text-align: left;
     background-color: #bbb;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .data-table-container {
@@ -37,11 +38,11 @@ th.asc:after, th.desc:after {
     cursor: pointer;
 }
 
-th.asc:after {
+th.desc:after {
     content: '▼';
 }
 
-th.desc:after {
+th.asc:after {
     content: '▲';
 }
 

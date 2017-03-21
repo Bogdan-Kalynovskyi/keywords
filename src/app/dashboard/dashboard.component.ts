@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Pipe } from '@angular/core';
+import {Component, Input, OnInit, Pipe, Query} from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 
@@ -47,8 +47,6 @@ export class DashboardComponent implements OnInit {
     private top_ctr_statistics = [];
     private non_branded_keywords = [];
 
-    private tablesSort;
-
     private google;
     private brandedDataTable;
     private nonBrandedDataTable;
@@ -61,8 +59,24 @@ export class DashboardComponent implements OnInit {
         this.google.charts.load('current', {'packages':['corechart']});
     }
 
-    setSort(table: string, col: string, ev) {
-        alert('Sort');
+    setSort(ev) {
+        let column = ev.target;
+        let tableName = column.parentNode.parentNode.parentNode.id;
+        let colName = column.innerHTML.toLowerCase();
+
+        Array.prototype.slice.call(column.parentNode.children).forEach((col) => {
+            if (col == column) {
+                if (col.className == 'asc') {
+                    col.className = 'desc';
+                    this[tableName].sort((a, b) => (a[colName] < b[colName] ? 1 : -1));
+                } else {
+                    col.className = 'asc';
+                    this[tableName].sort((a, b) => (a[colName] > b[colName] ? 1 : -1));
+                }
+            } else {
+                col.className = "";
+            }
+        });
     }
 
     drawChart() {
