@@ -61,12 +61,13 @@ export class DashboardComponent implements OnInit {
 
     setSort(ev) {
         let column = ev.target;
-        let tableName = column.parentNode.parentNode.parentNode.id;
-        let colName = column.innerHTML.toLowerCase();
+        let row = column.parentNode;
+        let tableName = row.parentNode.parentNode.id;
+        let colName = column.innerHTML.toLowerCase().replace(/[^a-z]/g, '');
 
-        Array.prototype.slice.call(column.parentNode.children).forEach((col) => {
-            if (col == column) {
-                if (col.className == 'asc') {
+        Array.prototype.slice.call(row.children).forEach((col) => {
+            if (col === column) {
+                if (col.className === 'asc') {
                     col.className = 'desc';
                     this[tableName].sort((a, b) => (a[colName] < b[colName] ? 1 : -1));
                 } else {
