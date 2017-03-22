@@ -421,6 +421,7 @@ export class DashboardComponent implements OnInit {
     };
 
     onDataChange(){
+        this.report.keywords = this.report.keywords.toLowerCase();
         this.dataCalculate(this.data, this.report.keywords);
     }
 
@@ -440,6 +441,7 @@ export class DashboardComponent implements OnInit {
 
 
     updateData() {
+        this.report.keywords = this.report.keywords;
         this.reportService.update(this.report.id, this.report.name, this.report.keywords, this.file)
             .then(() => {
                 location.reload();

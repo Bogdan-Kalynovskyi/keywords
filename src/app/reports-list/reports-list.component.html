@@ -3,7 +3,7 @@
         <md-icon>add</md-icon>
     </button>
 </md-toolbar>
-<md-nav-list>
+<md-nav-list class="scrolling-content">
     <a md-list-item *ngFor="let report of reports" (click)="onSelect(report)" [ngClass]="{'activeList': isActive(report.id)}">
         <p md-line>{{report.name}}</p>
         <button md-icon-button (click)="delete(report); $event.stopPropagation()">

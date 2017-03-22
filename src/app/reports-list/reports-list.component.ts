@@ -74,7 +74,7 @@ export class ReportsListComponent implements OnInit {
             <input mdInput #keywords placeholder="Branded keywords" />
         </md-input-container><br>
             <input type="file" accept=".csv" (change)="onFileChange($event)"><br><br>
-        <button md-raised-button color="primary" (click)="addReport(reportName.value, keywords.value);">Add</button>
+        <button md-raised-button color="primary" (click)="addReport(reportName.value, keywords.value.toLowerCase());">Add</button>
         <button md-raised-button (click)="dialogRef.close()">Close</button>
     `
 })

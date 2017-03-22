@@ -6,12 +6,13 @@ md-sidenav-container {
     margin: 0;
     width: 100%;
     height: 800px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
-.example-icon {
+.logout-icon {
     padding: 0 14px;
 }
 
-.example-spacer {
+.toolbar-spacer {
     flex: 1 1 auto;
 }
