@@ -65,18 +65,7 @@ export class ReportsListComponent implements OnInit {
 
 @Component({
     selector: 'new-report-dialog',
-    template: `
-        <h2>New report</h2>
-        <md-input-container>
-            <input mdInput #reportName placeholder="Report name" />
-        </md-input-container><br>
-        <md-input-container>
-            <input mdInput #keywords placeholder="Branded keywords" />
-        </md-input-container><br>
-            <input type="file" accept=".csv" (change)="onFileChange($event)"><br><br>
-        <button md-raised-button color="primary" (click)="addReport(reportName.value, keywords.value.toLowerCase());">Add</button>
-        <button md-raised-button (click)="dialogRef.close()">Close</button>
-    `
+    templateUrl: 'new_report_form.html'
 })
 
 export class NewReportDialog {
@@ -90,20 +79,35 @@ export class NewReportDialog {
 
     onFileChange(ev){
         let reader = new FileReader();
-        reader.onload = (theFile => e => this.newReportData = e.target.result)(ev.target.files[0]);
+        reader.onload = (theFile => e => {
+            this.newReportData = e.target.result;
+        })(ev.target.files[0]);
         reader.readAsText(ev.target.files[0]);
     }
 
-    addReport(name: string, keywords: string) {
+    addReport(name: string, keywords: string, siteUrl: string) {
         this.dialogRef.close();
-        this.reportService.create(name, keywords, this.newReportData)
+        this.reportService.create(name, keywords, siteUrl, this.newReportData)
             .then(reportId => {
-                this.reportList.push({
+                this.reportList.unshift({
                     id: reportId,
                     name: name,
-                    keywords: keywords
+                    keywords: keywords,
+                    siteUrl: siteUrl
                 });
                 this.router.navigate(['/dashboard', reportId]);
             });
+    }
+
+    reportDataPrepare(name: string, keywords: string, siteUrl: string) {
+        if (siteUrl) {
+            this.reportService.getGoogleData(siteUrl)
+                .then(data => {
+                    this.newReportData = data;
+                    this.addReport(name, keywords, siteUrl);
+                });
+        } else {
+            this.addReport(name, keywords, siteUrl);
+        }
     }
 }

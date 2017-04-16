@@ -33,7 +33,7 @@ function get () {
     $id = isset($_GET['id']) ? intval($_GET['id']) : false;
 
     if ($id) {
-        $query = mysql_query('SELECT `name`, `keywords`, `csv`, IF(`owner` = ' . esc($_SESSION['userGoogleId']) . ', 1, 0) as `isOwner`  FROM `reports` WHERE id = '.$id);
+        $query = mysql_query('SELECT `name`, `keywords`, `siteUrl`, `csv`, IF(`owner` = ' . esc($_SESSION['userGoogleId']) . ', 1, 0) as `isOwner`  FROM `reports` WHERE id = '.$id);
         $result = mysql_fetch_array($query, MYSQL_ASSOC);
 
         if ($result) {
@@ -45,7 +45,7 @@ function get () {
     }
 
     else {
-        $query = mysql_query('SELECT `id`, `name`, `created` FROM `reports` WHERE owner = ' . esc($_SESSION['userGoogleId']) . ' ORDER BY created DESC');
+        $query = mysql_query('SELECT `id`, `name`, `siteUrl`, `created` FROM `reports` WHERE owner = ' . esc($_SESSION['userGoogleId']) . ' ORDER BY created DESC');
 
         $result = array();
         while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
@@ -59,7 +59,7 @@ function get () {
 function post () {
     $post = json_decode(file_get_contents('php://input'), true);
 
-    mysql_query('INSERT INTO `reports` (`csv`, `keywords`, `name`, `owner`, `created`) VALUES ('.esc($post['csv']).', '.esc($post['keywords']).', '.esc($post['name']).', '.esc($_SESSION['userGoogleId']).', UNIX_TIMESTAMP())');
+    mysql_query('INSERT INTO `reports` (`csv`, `keywords`, `name`, `siteUrl`, `owner`, `created`) VALUES ('.esc($post['csv']).', '.esc($post['keywords']).', '.esc($post['name']).', '.esc($post['siteUrl']).', '.esc($_SESSION['userGoogleId']).', UNIX_TIMESTAMP())');
 
     echo mysql_insert_id();
 }
@@ -70,9 +70,9 @@ function put () {
     $id = intval($_GET['id']);
 
     if ($post['csv'] != '') {
-        mysql_query('UPDATE `reports` SET `csv` = '.esc($post['csv']).', `keywords` = '.esc($post['keywords']).', `name` = '.esc($post['name']).'  WHERE id = '.$id.' AND owner = ' . esc($_SESSION['userGoogleId']));
+        mysql_query('UPDATE `reports` SET `csv` = '.esc($post['csv']).', `keywords` = '.esc($post['keywords']).', `name` = '.esc($post['name']).', `siteUrl` = '.esc($post['siteUrl']).'  WHERE id = '.$id.' AND owner = ' . esc($_SESSION['userGoogleId']));
     } else {
-        mysql_query('UPDATE `reports` SET `keywords` = '.esc($post['keywords']).', `name` = '.esc($post['name']).'  WHERE id = '.$id.' AND owner = ' . esc($_SESSION['userGoogleId']));
+        mysql_query('UPDATE `reports` SET `keywords` = '.esc($post['keywords']).', `name` = '.esc($post['name']).', `siteUrl` = '.esc($post['siteUrl']).'  WHERE id = '.$id.' AND owner = ' . esc($_SESSION['userGoogleId']));
     }
 }
 

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, Pipe, Query} from '@angular/core';
+import {Component, Input, OnInit, Pipe} from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 
@@ -127,7 +127,8 @@ export class DashboardComponent implements OnInit {
                     this.report = {
                         id: this.reportId,
                         name: reportData.name,
-                        keywords: reportData.keywords
+                        keywords: reportData.keywords,
+                        siteUrl: reportData.siteUrl
                     };
 
                     this.dataCalculate(this.data, this.report.keywords);
@@ -441,8 +442,7 @@ export class DashboardComponent implements OnInit {
 
 
     updateData() {
-        this.report.keywords = this.report.keywords;
-        this.reportService.update(this.report.id, this.report.name, this.report.keywords, this.file)
+        this.reportService.update(this.report.id, this.report.name, this.report.siteUrl, this.report.keywords, this.file)
             .then(() => {
                 location.reload();
             }

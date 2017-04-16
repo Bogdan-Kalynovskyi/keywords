@@ -16,6 +16,14 @@
         <md-input-container *ngIf="!isOwner">
             <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" (change)="onDataChange()" />
         </md-input-container>
+        <md-input-container *ngIf="isOwner">
+            <span mdTooltip="You should press 'Save button' to save your changes">
+                <input mdInput placeholder="Site url" (change)="onUrlChange($event)" [(ngModel)]="report.siteUrl">
+            </span>
+        </md-input-container>
+        <md-input-container *ngIf="!isOwner">
+            <input mdInput placeholder="Site url" (change)="onUrlChange($event)" [(ngModel)]="report.siteUrl">
+        </md-input-container>
         <span mdTooltip="You should press 'Save button' to save your changes" *ngIf="isOwner">
             <input type="file" accept=".csv" (change)="onFileChange($event)">
         </span>

@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   `name` varchar(255) NOT NULL,
   `keywords` TEXT NOT NULL,
   `csv` LONGTEXT NOT NULL,
+  `siteUrl` TEXT NOT NULL,
   `owner` varchar(255) NOT NULL,
   `created` int NOT NULL,
   PRIMARY KEY (`id`),

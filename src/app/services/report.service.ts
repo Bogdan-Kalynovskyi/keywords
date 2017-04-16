@@ -108,14 +108,16 @@ export class ReportService {
         let result = [];
 
         for (let i = 1, n = arrData.length; i < n; i++) {
-            var x = arrData[i];
-            result.push({
-                queries: x[0],
-                clicks: +x[1],
-                impressions: +x[2],
-                ctr: parseFloat(x[3]) / 100,
-                position: +x[4]
-            });
+            if (arrData[i][0] != "") {
+                let x = arrData[i];
+                result.push({
+                    queries: x[0],
+                    clicks: +x[1],
+                    impressions: +x[2],
+                    ctr: parseFloat(x[3]) / 100,
+                    position: +x[4]
+                });
+            }
         }
         // Return the parsed data.
         return result;
@@ -130,6 +132,7 @@ export class ReportService {
                 return {
                     name: all.name,
                     keywords: all.keywords,
+                    siteUrl: all.siteUrl,
                     csv: this.parseCsv(all.csv),
                     isOwner: all.isOwner
                 };
@@ -137,17 +140,67 @@ export class ReportService {
             .catch(this.handleError);
     }
 
-    create(name: string, keywords: string, csv: string): Promise<any> {
+    convertData(data: string[]): string {
+
+        let str = 'Queries,Clicks,Impressions,CTR,Position\r\n';
+
+        for (let i = 0; i < data.length; i++) {
+            str += data[i]['keys'] + ','
+                + data[i]['clicks'] + ','
+                + data[i]['impressions'] + ','
+                + data[i]['ctr'].toFixed(2) + '%,'
+                + data[i]['position'].toFixed(1) + '\r\n';
+        }
+
+        return str.substr(0, str.length-2);
+    }
+
+    getFormattedDate(date) {
+        date = date.toString();
+        return (date.length == 1) ? date = '0' + date : date;
+    }
+
+    getGoogleData(siteUrl): Promise<any> {
+        let gapi;
+        gapi = window['gapi'];
+
+        let date = new Date();
+        let endDate = date.getFullYear() + '-' + this.getFormattedDate(date.getMonth() + 1) + '-' + this.getFormattedDate(date.getDate());
+        date.setDate(date.getDate() - 99);
+        let startDate = date.getFullYear() + '-' + this.getFormattedDate(date.getMonth() + 1) + '-' + this.getFormattedDate(date.getDate());
+
+        return gapi.client.request({
+            path: 'https://www.googleapis.com/webmasters/v3/sites/'+ encodeURIComponent(siteUrl) + '/searchAnalytics/query',
+            method: 'POST',
+            params: {
+                key: 'AIzaSyD5_k-oAl-WZNaDGey4k3U9_noryurZjKo'
+            },
+            body: {
+                "startDate": startDate,
+                "endDate": endDate,
+                //"rowLimit": 5, // Max 5000 default 1000
+                "dimensions": [
+                    "query"
+                ]
+            }
+        })
+            .then(
+                response => this.convertData(response.result.rows),
+                reason => alert('Error: ' + reason.result.error.message)
+            );
+    }
+
+    create(name: string, keywords: string, siteUrl: string, csv: string): Promise<any> {
         return this.http
-            .post(this.dataUrl, {name, keywords, csv}, { headers: this.headers })
+            .post(this.dataUrl, {name, keywords, siteUrl, csv}, { headers: this.headers })
             .toPromise()
             .then(response => response.text())
             .catch(this.handleError);
     }
 
-    update(id: number, name: string, keywords: string, csv: string): Promise<any> {
+    update(id: number, name: string, siteUrl: string, keywords: string, csv: string): Promise<any> {
         return this.http
-            .put(this.dataUrl + '?id=' + id, {name, keywords, csv}, { headers: this.headers })
+            .put(this.dataUrl + '?id=' + id, {name, siteUrl, keywords, csv}, { headers: this.headers })
             .toPromise()
             .catch(this.handleError);
     }
@@ -159,7 +212,7 @@ export class ReportService {
             .catch(this.handleError);
     }
 
-    logout(): Promise<any> {debugger;
+    logout(): Promise<any> {
         return this.http.post(location.protocol + '//' + location.hostname + '/' + this.logoutUrl, { logout: window['xsrfToken'] })
             .toPromise()
             .then(function () {
