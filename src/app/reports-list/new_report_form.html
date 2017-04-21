@@ -1,0 +1,18 @@
+<h2>New report</h2>
+<md-input-container>
+    <input mdInput #reportName placeholder="Report name" />
+</md-input-container><br>
+<md-input-container>
+    <input mdInput #keywords placeholder="Branded keywords" />
+</md-input-container><br>
+<md-radio-group [(ngModel)]="dataSource">
+    <md-radio-button value="google">Google Search Analytics</md-radio-button>
+    <md-radio-button value="file">.csv file</md-radio-button>
+</md-radio-group><br><br>
+<input [hidden]="dataSource != 'file'" type="file" accept=".csv" (change)="onFileChange($event)" />
+<md-input-container [hidden]="dataSource != 'google'">
+    <input mdInput #siteUrl placeholder="Site url" [hidden]="dataSource != 'google'"/>
+</md-input-container>
+<br><br>
+<button md-raised-button color="primary" (click)="reportDataPrepare(reportName.value, keywords.value.toLowerCase(), siteUrl.value);">Add</button>
+<button md-raised-button (click)="dialogRef.close()">Close</button>
