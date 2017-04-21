@@ -18,7 +18,6 @@
   <script src="https://apis.google.com/js/api.js"></script>
   <script>
       function start() {
-          // 2. Initialize the JavaScript client library.
           gapi.client.init({
               apiKey: 'AIzaSyD5_k-oAl-WZNaDGey4k3U9_noryurZjKo',
               discoveryDocs: ['https://searchconsole.googleapis.com/$discovery/rest?version=v1'],
@@ -28,10 +27,9 @@
           .then(function () {
 
           }, function(reason) {
-              console.log('Error: ' + reason.result.error.message);
+              alert('Error: ' + reason.result.error.message);
           });
       }
-      // 1. Load the JavaScript client library.
       gapi.load('client', start);
   </script>
 </body>

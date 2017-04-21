@@ -140,19 +140,38 @@ export class ReportService {
             .catch(this.handleError);
     }
 
-    convertData(data: string[]): string {
-
-        let str = 'Queries,Clicks,Impressions,CTR,Position\r\n';
-
-        for (let i = 0; i < data.length; i++) {
-            str += data[i]['keys'] + ','
-                + data[i]['clicks'] + ','
-                + data[i]['impressions'] + ','
-                + data[i]['ctr'].toFixed(2) + '%,'
-                + data[i]['position'].toFixed(1) + '\r\n';
+    convertDataToInputDataRow(data) {
+        for (var i = 0; i < data.length; i++) {
+            data[i]['queries'] = data[i]['keys'][0];
+            if (data[i]['keys'].length > 1) {alert('ooops');}
+            data[i]['clicks'] = Math.round(parseFloat(data[i]['clicks'])/3);
+            data[i]['impressions'] = Math.round(parseFloat(data[i]['impressions'])/3);
+            data[i]['ctr'] = Math.round((parseFloat(data[i]['ctr'])/3)*100)/100;
+            data[i]['position'] = Math.round((parseFloat(data[i]['position'])/3)*10)/10;
+            delete data[i]['keys'];
         }
 
-        return str.substr(0, str.length-2);
+        return data;
+    }
+
+    convertDataToCsv(data): string {
+        let str = 'Queries,Clicks,Impressions,CTR,Position\n';
+
+        for (let i = 0; i < data.length; i++) {
+            let row = data[i],
+                q = row.queries;
+
+            if (q.search(/("|,|\n)/g) >= 0) {
+                q = '"' + q + '"';
+            }
+            str += q + ','
+                + row.clicks + ','
+                + row.impressions + ','
+                + row.ctr + '%,'
+                + row.position + '\n';
+        }
+
+        return str.substr(0, str.length-1);
     }
 
     getFormattedDate(date) {
@@ -166,7 +185,7 @@ export class ReportService {
 
         let date = new Date();
         let endDate = date.getFullYear() + '-' + this.getFormattedDate(date.getMonth() + 1) + '-' + this.getFormattedDate(date.getDate());
-        date.setDate(date.getDate() - 99);
+        date.setDate(date.getDate() - 90);
         let startDate = date.getFullYear() + '-' + this.getFormattedDate(date.getMonth() + 1) + '-' + this.getFormattedDate(date.getDate());
 
         return gapi.client.request({
@@ -178,14 +197,20 @@ export class ReportService {
             body: {
                 "startDate": startDate,
                 "endDate": endDate,
-                //"rowLimit": 5, // Max 5000 default 1000
+                "rowLimit": 5000, // Max 5000 default 1000
                 "dimensions": [
                     "query"
                 ]
             }
         })
             .then(
-                response => this.convertData(response.result.rows),
+                response => {
+                    let inputDataRow = this.convertDataToInputDataRow(response.result.rows);
+                    return {
+                        csv: this.convertDataToCsv(inputDataRow),
+                        inputDataRow: inputDataRow
+                    }
+                },
                 reason => alert('Error: ' + reason.result.error.message)
             );
     }

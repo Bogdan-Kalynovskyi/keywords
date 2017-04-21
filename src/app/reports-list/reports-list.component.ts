@@ -103,7 +103,7 @@ export class NewReportDialog {
         if (siteUrl) {
             this.reportService.getGoogleData(siteUrl)
                 .then(data => {
-                    this.newReportData = data;
+                    this.newReportData = data['csv'];
                     this.addReport(name, keywords, siteUrl);
                 });
         } else {

@@ -373,7 +373,7 @@ export class DashboardComponent implements OnInit {
                     row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
                 }
             }
-            if ( row.position < 2 ) {
+            if (row.position < 2) {
                 row.nr.push(0);
             }
             else {
@@ -440,12 +440,30 @@ export class DashboardComponent implements OnInit {
         reader.readAsText(ev.target.files[0]);
     }
 
+    onUrlChange(ev){
+        if (ev.target.value) {
+            this.reportService.getGoogleData(ev.target.value)
+                .then(data => {
+                    this.data = data['inputDataRow'] as InputDataRow[];
+                    this.file = data['csv'];
+                    this.onDataChange();
+                });
+        }
+    }
 
     updateData() {
-        this.reportService.update(this.report.id, this.report.name, this.report.siteUrl, this.report.keywords, this.file)
-            .then(() => {
-                location.reload();
-            }
-        );
+        if (this.report.siteUrl) {
+            this.reportService.getGoogleData(this.report.siteUrl)
+                .then(data => {
+                    this.data = data['inputDataRow'] as InputDataRow[];
+                    this.file = data['csv'];
+                    this.onDataChange();
+                    this.reportService.update(this.report.id, this.report.name, this.report.siteUrl, this.report.keywords, this.file)
+                        .then(() => {
+                                location.reload();
+                            }
+                        );
+                });
+        }
     };
 }
