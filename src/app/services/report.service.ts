@@ -11,17 +11,17 @@ import {InputDataRow} from "../models/input-data-row";
 @Injectable()
 export class ReportService {
     public reportList: Report[]= [];
-    private dataUrl = 'api/reports.php';
+    private urlPrefix = location.protocol + '//' + location.hostname + '/';
+    private reportUrl = this.urlPrefix + 'api/reports.php';
+    private userUrl = this.urlPrefix + 'api/users.php';
     private logoutUrl = 'api/login.php';
-    private headers = new Headers({ 'Authorization': window['xsrfToken'] });
+    private headers = new Headers({ Authorization: window['xsrfToken'] });
 
-    constructor(private http: Http) {
-        this.dataUrl = location.protocol + '//' + location.hostname + '/' + this.dataUrl;
-    }
+    constructor(private http: Http) { }
 
     getReports(): Promise<Report[]> {
         return this.http
-            .get(this.dataUrl, { headers: this.headers })
+            .get(this.reportUrl, { headers: this.headers })
             .toPromise()
             .then(res => {
                 this.reportList = res.json();
@@ -125,7 +125,7 @@ export class ReportService {
 
     getReport(id: number): Promise<any> {
         return this.http
-            .get(this.dataUrl + '?id=' + id, { headers: this.headers })
+            .get(this.reportUrl + '?id=' + id, { headers: this.headers })
             .toPromise()
             .then(response => {
                 let all = response.json();
@@ -141,7 +141,7 @@ export class ReportService {
     }
 
     convertDataToInputDataRow(data) {
-        for (var i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
             data[i]['queries'] = data[i]['keys'][0];
             if (data[i]['keys'].length > 1) {alert('ooops');}
             data[i]['clicks'] = Math.round(parseFloat(data[i]['clicks'])/3);
@@ -174,25 +174,41 @@ export class ReportService {
         return str.substr(0, str.length-1);
     }
 
-    getFormattedDate(date) {
-        date = date.toString();
-        return (date.length == 1) ? date = '0' + date : date;
+    //getUser
+
+    setUserCode(code) {
+        return this.http
+            .put(this.userUrl, {code: code}, { headers: this.headers })
+            .toPromise()
+            .catch(this.handleError);
+    }
+
+    private leadingZero(number:Number) {
+        return (number < 10) ? '0' + number : number;
+    }
+
+    private getGoogleFormattedDate(date:Date) {
+        return date.getFullYear() + '-' + this.leadingZero(date.getMonth() + 1) + '-' + this.leadingZero(date.getDate());
     }
 
     getGoogleData(siteUrl): Promise<any> {
         let gapi;
         gapi = window['gapi'];
 
+        let apiKey;
+        apiKey = window['apiKey'];
+
         let date = new Date();
-        let endDate = date.getFullYear() + '-' + this.getFormattedDate(date.getMonth() + 1) + '-' + this.getFormattedDate(date.getDate());
-        date.setDate(date.getDate() - 90);
-        let startDate = date.getFullYear() + '-' + this.getFormattedDate(date.getMonth() + 1) + '-' + this.getFormattedDate(date.getDate());
+        date.setDate(date.getDate() - 2);
+        let endDate = this.getGoogleFormattedDate(date);
+        date.setDate(date.getDate() - 90); // note we already did -2 above
+        let startDate = this.getGoogleFormattedDate(date);
 
         return gapi.client.request({
             path: 'https://www.googleapis.com/webmasters/v3/sites/'+ encodeURIComponent(siteUrl) + '/searchAnalytics/query',
             method: 'POST',
             params: {
-                key: 'AIzaSyD5_k-oAl-WZNaDGey4k3U9_noryurZjKo'
+                key: apiKey
             },
             body: {
                 "startDate": startDate,
@@ -217,7 +233,7 @@ export class ReportService {
 
     create(name: string, keywords: string, siteUrl: string, csv: string): Promise<any> {
         return this.http
-            .post(this.dataUrl, {name, keywords, siteUrl, csv}, { headers: this.headers })
+            .post(this.reportUrl, {name, keywords, siteUrl, csv}, { headers: this.headers })
             .toPromise()
             .then(response => response.text())
             .catch(this.handleError);
@@ -225,14 +241,14 @@ export class ReportService {
 
     update(id: number, name: string, siteUrl: string, keywords: string, csv: string): Promise<any> {
         return this.http
-            .put(this.dataUrl + '?id=' + id, {name, siteUrl, keywords, csv}, { headers: this.headers })
+            .put(this.reportUrl + '?id=' + id, {name, siteUrl, keywords, csv}, { headers: this.headers })
             .toPromise()
             .catch(this.handleError);
     }
 
     delete(id: number): Promise<any> {
         return this.http
-            .delete(this.dataUrl + '?id=' + id, { headers: this.headers })
+            .delete(this.reportUrl + '?id=' + id, { headers: this.headers })
             .toPromise()
             .catch(this.handleError);
     }
@@ -246,7 +262,7 @@ export class ReportService {
     }
 
     private handleError(error: any): Promise<any> {
-        console.error('An error occurred', error); // for demo purposes only
+        console.error('An error occurred', error); // TODO aler message
         return Promise.reject(error.message || error);
     }
 

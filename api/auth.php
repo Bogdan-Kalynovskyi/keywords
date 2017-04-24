@@ -16,6 +16,14 @@
             }
             die;
         }
+
+        $result = mysql_query('SELECT `offline_code` FROM `users` WHERE google_id = ' . esc($_SESSION['userGoogleId']));
+        if ($result) {
+            $result = mysql_fetch_array($result);
+            if ($result) {
+                $_SESSION['offline'] = $result['offline_code'];
+            }
+        }
 //    }
 //    else {
 //        session_destroy();

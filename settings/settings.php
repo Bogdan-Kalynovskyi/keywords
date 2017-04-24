@@ -5,8 +5,8 @@
 
 
 
-$google_api_id = '211499477101-d78crq8gs6sojr7grdlm9ebmoltiel71.apps.googleusercontent.com';
-
+$google_api_id = '39575750767-99d6s3cqkh40ab1kto880rujad19nata.apps.googleusercontent.com';
+$api_key = 'AIzaSyD5_k-oAl-WZNaDGey4k3U9_noryurZjKo';
 
 
 

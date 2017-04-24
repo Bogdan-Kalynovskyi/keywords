@@ -2,6 +2,7 @@
     include 'settings/settings.php';
     session_start();
     $token = isset($_SESSION['xsrfToken']) && $_SESSION['xsrfToken'];
+    $has_offline_access = isset($_SESSION['offline']);
 ?>
 <!DOCTYPE html>
 <html>
@@ -106,7 +107,8 @@
 
 
     <?php if ($token) { ?>
-    window.xsrfToken = '<?php echo $_SESSION['xsrfToken'] ?>';
+    var xsrfToken = '<?php echo $_SESSION['xsrfToken'] ?>';
+    var hasOfflineAccess = <?php echo $has_offline_access ?>;
     <?php } else { ?>
     // check for 3d party cookies are enabled
     window.addEventListener("message", function (evt) {
@@ -117,11 +119,39 @@
     <?php } ?>
 </script>
 
-<script src="https://apis.google.com/js/platform.js" async defer></script>
 
 
-<?php if (!$token) { ?>
+<?php if ($token) { ?>
 
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+        var apiKey = '<?php echo $api_key ?>';
+        var clientId = '<?php echo $google_api_id ?>';
+
+        function initClient() {
+            gapi.client.init({
+                apiKey: apiKey,
+                //discoveryDocs: ['https://searchconsole.googleapis.com/$discovery/rest?version=v1'],
+                clientId: clientId,
+                scope: 'https://www.googleapis.com/auth/webmasters.readonly'
+            })
+                .then(function () {
+
+                }, function(reason) {
+                    alert('Error: ' + reason.result.error.message);
+                });
+        }
+        gapi.load('client', initClient);
+    </script>
+
+    <app-root><div id="loading">Loading...</div></app-root>
+
+    <div id="chartNonBranded"></div>
+    <div id="chartBranded"></div>
+
+<?php } else { ?>
+
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <div id="logged-out">
         <div id="login-form">
             <div style="float:left; width:160px">Company Logo</div>
@@ -138,13 +168,6 @@
         </div>
         <iframe src="//mindmup.github.io/3rdpartycookiecheck/start.html" style="display:none"></iframe>
     </div>
-
-<?php } else { ?>
-
-    <app-root><div id="loading">Loading...</div></app-root>
-
-    <div id="chartNonBranded"></div>
-    <div id="chartBranded"></div>
 
 <?php } ?>
 

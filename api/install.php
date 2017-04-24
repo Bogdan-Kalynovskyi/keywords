@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   `siteUrl` TEXT NOT NULL,
   `owner` varchar(255) NOT NULL,
   `created` int NOT NULL,
+  `updated` int NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `name` (`name`),
   INDEX `owner` (`owner`),
@@ -37,6 +38,38 @@ CREATE TABLE IF NOT EXISTS `reports` (
 ) DEFAULT CHARSET=utf8 ENGINE = InnoDB;
 ';
 mysql_query($query);
+
+$query = '
+DROP TABLE IF EXISTS `updates`;
+';
+mysql_query($query);
+$query = '
+CREATE TABLE IF NOT EXISTS `updates` (
+  `report_id` int NOT NULL,
+  `date` varchar(10) NOT NULL,
+  `data` LONGTEXT NOT NULL,
+  INDEX `report_id` (`report_id`),
+  INDEX `date` (`date`)
+) DEFAULT CHARSET=utf8 ENGINE = InnoDB;
+';
+mysql_query($query);
+
+$query = '
+DROP TABLE IF EXISTS `users`;
+';
+mysql_query($query);
+$query = '
+CREATE TABLE IF NOT EXISTS `users` (
+  `google_id` varchar(255) NOT NULL,
+  `offline_code` varchar(255) NOT NULL,
+  `access_code` varchar(255) NOT NULL,
+  PRIMARY KEY `google_id` (`google_id`),
+  INDEX `offline_code` (`offline_code`),
+  INDEX `access_code` (`access_code`)
+) DEFAULT CHARSET=utf8 ENGINE = InnoDB;
+';
+mysql_query($query);
+
 
 if (!mysql_errno()) {
 ?>

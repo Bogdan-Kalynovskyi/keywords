@@ -106,6 +106,16 @@ export class NewReportDialog {
                     this.newReportData = data['csv'];
                     this.addReport(name, keywords, siteUrl);
                 });
+            if (!window['hasOfflineAccess']) {
+                let gapi = window['gapi'];
+                let auth = gapi.auth2.getAuthInstance();
+                let user = auth.currentUser.get();
+                auth.grantOfflineAccess({
+                    authuser: user.getAuthResponse().session_state.extraQueryParams.authuser
+                }).then((response) => {
+                    this.reportService.setUserCode(response.code);
+                });
+            }
         } else {
             this.addReport(name, keywords, siteUrl);
         }
