@@ -23,14 +23,13 @@ DROP TABLE IF EXISTS `reports`;
 mysql_query($query);
 $query = '
 CREATE TABLE IF NOT EXISTS `reports` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `keywords` TEXT NOT NULL,
-  `csv` LONGTEXT NOT NULL,
   `siteUrl` TEXT NOT NULL,
   `owner` varchar(255) NOT NULL,
-  `created` int NOT NULL,
-  `updated` int NOT NULL,
+  `created` MEDIUMINT UNSIGNED NOT NULL,
+  `yes_date` MEDIUMINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `name` (`name`),
   INDEX `owner` (`owner`),
@@ -40,14 +39,18 @@ CREATE TABLE IF NOT EXISTS `reports` (
 mysql_query($query);
 
 $query = '
-DROP TABLE IF EXISTS `updates`;
+DROP TABLE IF EXISTS `seoData`;
 ';
 mysql_query($query);
 $query = '
-CREATE TABLE IF NOT EXISTS `updates` (
-  `report_id` int NOT NULL,
-  `date` varchar(10) NOT NULL,
-  `data` LONGTEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS `seoData` (
+  `report_id` MEDIUMINT UNSIGNED NOT NULL,
+  `date` INT NOT NULL,
+  `query` varchar(255) NOT NULL,
+  `clicks` MEDIUMINT UNSIGNED NOT NULL,
+  `impressions` MEDIUMINT UNSIGNED NOT NULL,
+  `ctr` MEDIUMINT UNSIGNED NOT NULL,
+  `position` TINYINT UNSIGNED NOT NULL,
   INDEX `report_id` (`report_id`),
   INDEX `date` (`date`)
 ) DEFAULT CHARSET=utf8 ENGINE = InnoDB;

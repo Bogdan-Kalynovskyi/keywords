@@ -5,7 +5,7 @@ import 'rxjs/add/operator/switchMap';
 import { Report } from '../models/report';
 import { ReportService } from '../services/report.service';
 
-import { InputDataRow } from '../models/input-data-row';
+import {InputDataRow, ServerData} from '../models/input-data-row';
 
 @Pipe({name: 'round'})
 export class RoundPipe {
@@ -24,7 +24,8 @@ export class DashboardComponent implements OnInit {
     @Input()
     report: Report;
     reportId: number;
-    file = '';
+    readyToSave: ServerData;
+    submitDisabled = false;
     private data: InputDataRow[];
     private filteredData: InputDataRow[];
     private allQueriesData: InputDataRow[];
@@ -123,7 +124,7 @@ export class DashboardComponent implements OnInit {
             .subscribe(reportData => {
                 if (reportData) {
                     this.data = reportData.csv;
-                    this.isOwner = reportData.isOwner == '1';
+                    this.isOwner = reportData.isOwner === '1';
                     this.report = {
                         id: this.reportId,
                         name: reportData.name,
@@ -131,7 +132,28 @@ export class DashboardComponent implements OnInit {
                         siteUrl: reportData.siteUrl
                     };
 
-                    this.dataCalculate(this.data, this.report.keywords);
+                    let now = Date.now() / 1000,
+                        day = 24 * 3600,
+                        daysAgo = (now - reportData.yes_date) / day,
+                        end,
+                        start;
+//todo material
+                    if (!this.isOwner || (daysAgo > 1 && window['confirm']('Show update?'))) {
+                        end = now - 2 * day;
+                        if (this.isOwner) {
+                            this.reportService.changeYesTime(this.reportId);
+                        }
+                    }
+                    else {
+                        end = reportData.yes_date;
+                    }
+                    start = end - 90 * day;
+
+                    this.reportService.getSeoData(this.reportId, start, end)
+                        .then(data => {
+                            this.data = data;    // todo is this needed?
+                            this.dataCalculate(this.data, this.report.keywords);
+                        });
                 }
             });
         }
@@ -197,7 +219,7 @@ export class DashboardComponent implements OnInit {
         let keywords = reportKeywords.split(',').map(str => str.trim());
 
         this.allQueriesData.forEach(data => {
-            if (keywords.indexOf(data.queries) === -1) {
+            if (keywords.indexOf(data.query) === -1) {
                 this.nonBrandedData.push(Object.assign({}, data));
             }
         });
@@ -264,7 +286,7 @@ export class DashboardComponent implements OnInit {
             this.positions_stats.forEach((pos, j, arr1) => {
                 arr1[j].position = (j + 10) / 10;
                 if (((j + 10) / 10 <= row.position) && (row.position < (j + 11) / 10)) {
-                    arr1[j].row_indexes.push(row.queries);
+                    arr1[j].row_indexes.push(row.query);
                     arr1[j].instances = row.instances;
                     arr1[j].clicks_sum += row.clicks;
                     arr1[j].impressions_sum += row.impressions;
@@ -279,14 +301,14 @@ export class DashboardComponent implements OnInit {
 
         });
 
-        this.positions_stats.forEach((pos) => {
+        this.positions_stats.forEach(pos => {
             if (pos.row_indexes.length != 0) {
                 pos.expected_ctr_avg = pos.expected_ctr_sum / pos.row_indexes.length;
             }
         });
 
         this.positions_stats_limited = [];
-        this.positions_stats.forEach((data) => {
+        this.positions_stats.forEach(data => {
             if (data.position <= 10) { this.positions_stats_limited.push(Object.assign({}, data)); }
         });
 
@@ -299,14 +321,14 @@ export class DashboardComponent implements OnInit {
             });
             let sum = 0;
             let count = 0;
-            tmp.forEach((row) => {
+            tmp.forEach(row => {
                 if (row.expected_ctr_avg != 0) {
                     sum += row.expected_ctr_avg;
                     count++;
                 }
             });
 
-            tmp.forEach((row) => {
+            tmp.forEach(row => {
                 if (row.expected_ctr_avg == 0) {
                     row.ctr_calculated = (count != 0) ? sum / count : 0;
                 } else {
@@ -314,7 +336,7 @@ export class DashboardComponent implements OnInit {
                 }
             });
 
-            tmp.forEach((data) => {
+            tmp.forEach(data => {
                 this.positions_stats_resulted.push(Object.assign({}, {
                     position: data.position,
                     expected_ctr_avg: data.expected_ctr_avg,
@@ -340,7 +362,7 @@ export class DashboardComponent implements OnInit {
 
         let tmp;
 
-        this.allQueriesData.forEach((row) => {
+        this.allQueriesData.forEach(row => {
             for (let j = 1; j < 11; j++) {
                 if ( row.position < j + 1 ) {
                     row.nr.push(0);
@@ -363,7 +385,7 @@ export class DashboardComponent implements OnInit {
             }
         });
 
-        this.nonBrandedData.forEach((row) => {
+        this.nonBrandedData.forEach(row => {
             for (let j = 1; j < 11; j++) {
                 if ( row.position < j + 1 ) {
                     row.nr.push(0);
@@ -421,6 +443,7 @@ export class DashboardComponent implements OnInit {
         this.google.charts.setOnLoadCallback(() => this.drawChart());
     };
 
+
     onDataChange(){
         this.report.keywords = this.report.keywords.toLowerCase();
         this.dataCalculate(this.data, this.report.keywords);
@@ -431,8 +454,7 @@ export class DashboardComponent implements OnInit {
         let reader = new FileReader();
         reader.onload = (theFile =>
                 e => {
-                    this.file = e.target.result;
-                    this.data = this.reportService.parseCsv(e.target.result) as InputDataRow[];
+                    [this.data, this.readyToSave] = this.reportService.parseCsv(e.target.result);
                     this.onDataChange();
                 }
         )(ev.target.files[0]);
@@ -440,30 +462,28 @@ export class DashboardComponent implements OnInit {
         reader.readAsText(ev.target.files[0]);
     }
 
-    onUrlChange(ev){
-        if (ev.target.value) {
-            this.reportService.getGoogleData(ev.target.value)
+
+    onUrlChange(){debugger;
+        if (this.report.siteUrl) {
+            this.submitDisabled = true;
+            // todo show spinner
+            this.reportService.getGoogleData(this.report.siteUrl)
                 .then(data => {
-                    this.data = data['inputDataRow'] as InputDataRow[];
-                    this.file = data['csv'];
+                    this.submitDisabled = false;
+                    this.data = data[0] as InputDataRow[];
+                    this.readyToSave = data[1];
                     this.onDataChange();
                 });
         }
     }
 
+
     updateData() {
-        if (this.report.siteUrl) {
-            this.reportService.getGoogleData(this.report.siteUrl)
-                .then(data => {
-                    this.data = data['inputDataRow'] as InputDataRow[];
-                    this.file = data['csv'];
-                    this.onDataChange();
-                    this.reportService.update(this.report.id, this.report.name, this.report.siteUrl, this.report.keywords, this.file)
-                        .then(() => {
-                                location.reload();
-                            }
-                        );
+        setTimeout(() => {
+            this.reportService.update(this.report.id, this.report.name, this.report.siteUrl, this.report.keywords, this.readyToSave)
+                .then(() => {
+                    location.reload();
                 });
-        }
-    };
+        }, 0);
+    }
 }

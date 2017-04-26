@@ -2,33 +2,33 @@
     <div>
         <md-input-container *ngIf="isOwner">
             <span mdTooltip="You should press 'Save button' to save your changes">
-                <input mdInput placeholder="Report name" [(ngModel)]="report.name" />
+                <input mdInput placeholder="Report name" [(ngModel)]="report.name">
             </span>
         </md-input-container>
         <md-input-container *ngIf="!isOwner">
-            <input mdInput placeholder="Report name" [(ngModel)]="report.name" disabled />
+            <input mdInput placeholder="Report name" [(ngModel)]="report.name" disabled>
         </md-input-container>
         <md-input-container *ngIf="isOwner">
             <span mdTooltip="You should press 'Save button' to save your changes">
-                <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" (change)="onDataChange()" />
+                <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" (change)="onDataChange()">
             </span>
         </md-input-container>
         <md-input-container *ngIf="!isOwner">
-            <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" (change)="onDataChange()" />
+            <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" (change)="onDataChange()">
         </md-input-container>
         <md-input-container *ngIf="isOwner">
             <span mdTooltip="You should press 'Save button' to save your changes">
-                <input mdInput placeholder="Site url" (change)="onUrlChange($event)" [(ngModel)]="report.siteUrl">
+                <input mdInput placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
             </span>
         </md-input-container>
         <md-input-container *ngIf="!isOwner">
-            <input mdInput placeholder="Site url" (change)="onUrlChange($event)" [(ngModel)]="report.siteUrl">
+            <input mdInput placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
         </md-input-container>
         <span mdTooltip="You should press 'Save button' to save your changes" *ngIf="isOwner">
             <input type="file" accept=".csv" (change)="onFileChange($event)">
         </span>
         <input type="file" accept=".csv" (change)="onFileChange($event)" *ngIf="!isOwner">
-        <button *ngIf="isOwner" md-raised-button color="primary" (click)="updateData()">Save changes</button>
+        <button *ngIf="isOwner" md-raised-button color="primary" (click)="updateData()" [disabled]="report.submitDisabled">Save changes</button>
         <div *ngIf="!isOwner" class="warning">Your changes could not be saved</div>
     </div>
     <div class="scrolling-content">
@@ -44,7 +44,7 @@
                             <th (click)="setSort($event)">Position</th>
                         </tr>
                         <tr *ngFor="let dataTable of data">
-                            <td>{{ dataTable.queries }}</td>
+                            <td>{{ dataTable.query }}</td>
                             <td>{{ dataTable.clicks }}</td>
                             <td>{{ dataTable.impressions }}</td>
                             <td>{{ dataTable.ctr | percent:'1.0-2' }}</td>
@@ -64,7 +64,7 @@
                             <th (click)="setSort($event)">Position</th>
                         </tr>
                         <tr *ngFor="let dataTable of filteredData">
-                            <td>{{ dataTable.queries }}</td>
+                            <td>{{ dataTable.query }}</td>
                             <td>{{ dataTable.clicks }}</td>
                             <td>{{ dataTable.impressions }}</td>
                             <td>{{ dataTable.ctr | percent:'1.0-2' }}</td>
@@ -101,7 +101,7 @@
                             <th (click)="setSort($event, 'nr', 10)">1+</th>
                         </tr>
                         <tr *ngFor="let dataTable of allQueriesData">
-                            <td>{{ dataTable.queries }}</td>
+                            <td>{{ dataTable.query }}</td>
                             <td>{{ dataTable.clicks }}</td>
                             <td>{{ dataTable.impressions }}</td>
                             <td>{{ dataTable.position }}</td>
@@ -145,7 +145,7 @@
                             <th (click)="setSort($event, 'nr', 10)">1+</th>
                         </tr>
                         <tr *ngFor="let dataTable of nonBrandedData">
-                            <td>{{ dataTable.queries }}</td>
+                            <td>{{ dataTable.query }}</td>
                             <td>{{ dataTable.clicks }}</td>
                             <td>{{ dataTable.impressions }}</td>
                             <td>{{ dataTable.position }}</td>
@@ -213,7 +213,7 @@
                         </tr>
                         <tr *ngFor="let item of top_traffic_gain; let i = index">
                             <td>{{ i + 1 }}</td>
-                            <td>{{ item.queries }}</td>
+                            <td>{{ item.query }}</td>
                             <td>{{ (item.traffic_gain * 100 | round)/100 }}</td>
                         </tr>
                         <tfoot>
@@ -232,7 +232,7 @@
                         </tr>
                         <tr *ngFor="let item of top_traffic_loss; let i = index">
                             <td>{{ i + 1 }}</td>
-                            <td>{{ item.queries }}</td>
+                            <td>{{ item.query }}</td>
                             <td>{{ (item.traffic_loss * 100 | round) / 100 }}</td>
                         </tr>
                         <tfoot>
@@ -278,20 +278,6 @@
                 </md-card>
             </md-tab>
             <md-tab label="CTR Stats">
-                <!--<table>-->
-                <!--<thead>-->
-                <!--<tr>-->
-                <!--<th>Position</th>-->
-                <!--<th>Data queries</th>-->
-                <!--</tr>-->
-                <!--</thead>-->
-                <!--<tbody>-->
-                <!--<tr *ngFor="let pos of positions_stats">-->
-                <!--<td>{{ pos.position }}</td>-->
-                <!--<td><span *ngFor="let id of pos.row_indexes">{{ id }} | </span></td>-->
-                <!--</tr>-->
-                <!--</tbody>-->
-                <!--</table>-->
                 <md-card class="stats">
                     <table class="data-table">
                         <thead>

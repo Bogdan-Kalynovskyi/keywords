@@ -1,5 +1,5 @@
 export class InputDataRow {
-    queries: string;
+    query: string;
     clicks: number;
     impressions: number;
     ctr: number;
@@ -13,3 +13,5 @@ export class InputDataRow {
     traffic_gain: number;
     nr: number[];
 }
+
+export type ServerData = Array< Array< any > >;
