@@ -42,9 +42,10 @@ function report_not_found($id) {
 function add_seoData ($seoData, $report_id) {
     $str = '';
     $comma = '';
+    $time = time();
 
     foreach ($seoData as $row) {
-        $str .= $comma . '('.$report_id.','.esc($row[0]).','.intval($row[1]).','.intval($row[2]).','.intval($row[3]).','.intval($row[4]).','.intval($row[5]).')';
+        $str .= $comma . '('.$report_id.','.esc($row[0]).','.intval($row[1]).','.intval($row[2]).','.intval($row[3]).','.intval($row[4]).','.intval(@$row[5] || $time).')';
 
         $comma = ',';
     }
@@ -98,9 +99,9 @@ function put () {
     $post = json_decode(file_get_contents('php://input'), true);
     $report_id = intval($_GET['id']);
 
-    $query = mysql_query('UPDATE `reports` SET `keywords`='.esc($post['keywords']).', `name`='.esc($post['name']).', `siteUrl`='.esc($post['siteUrl']).' WHERE id = '.$report_id.' AND owner = '.esc($_SESSION['userGoogleId']));
+    mysql_query('UPDATE `reports` SET `keywords`='.esc($post['keywords']).', `name`='.esc($post['name']).', `siteUrl`='.esc($post['siteUrl']).' WHERE id = '.$report_id.' AND owner = '.esc($_SESSION['userGoogleId']));
 
-    if (!mysql_affected_rows($query)) {
+    if (!mysql_affected_rows()) {
         report_not_found($report_id);
     }
     else {
@@ -114,9 +115,9 @@ function put () {
 function patch () {
     $report_id = intval($_GET['id']);
 
-    $query = mysql_query('UPDATE `reports` SET `yes_date`=UNIX_TIMESTAMP() WHERE id='.$report_id);
+    mysql_query('UPDATE `reports` SET `yes_date`=UNIX_TIMESTAMP() WHERE id='.$report_id);
 
-    if (!mysql_affected_rows($query)) {
+    if (!mysql_affected_rows()) {
         report_not_found($report_id);
     }
 }
@@ -124,9 +125,9 @@ function patch () {
 
 function delete () {
     $id = intval($_GET['id']);
-    $query = mysql_query('DELETE FROM `reports` WHERE id='.$id.' AND owner='.esc($_SESSION['userGoogleId']));
+    mysql_query('DELETE FROM `reports` WHERE id='.$id.' AND owner='.esc($_SESSION['userGoogleId']));
 
-    if (!mysql_affected_rows($query)) {
+    if (!mysql_affected_rows()) {
         report_not_found($id);
     }
 }

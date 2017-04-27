@@ -74,15 +74,11 @@ export class ReportService {
             // let's check to see which kind of value we
             // captured (quoted or unquoted).
             if (arrMatches[ 2 ]){
-
                 // We found a quoted value. When we capture
                 // this value, unescape any double quotes.
-                strMatchedValue = arrMatches[ 2 ].replace(
-                    g,
-                    "\""
-                );
-
-            } else {
+                strMatchedValue = arrMatches[ 2 ].replace(g, "\"");
+            }
+            else {
                 // We found a non-quoted value.
                 strMatchedValue = arrMatches[ 3 ];
             }
@@ -115,7 +111,7 @@ export class ReportService {
                 parsedCsv[i] = [query, clicks, impressions, ctr, position];
             }
             else {
-                parsedCsv.splice(n - 2, 1);
+                parsedCsv.splice(n - 1, 1);
             }
         }
         // Return the parsed data.
@@ -160,10 +156,10 @@ export class ReportService {
             let row = googleData[i],
                 query = row.keys[0],
                 date = new Date(row.keys[1]).getTime() / 1000,
-                clicks = Math.round(row.clicks / 3),
-                impressions = Math.round(row.impressions / 3),
-                ctr = Math.round(row.ctr * 100000 / 3),
-                position = Math.round(row.position * 10 / 3);
+                clicks = Math.round(row.clicks),
+                impressions = Math.round(row.impressions),
+                ctr = Math.round(row.ctr * 100000),
+                position = Math.round(row.position * 10);
 
             let avail = byQueries[query];
             if (avail) {
@@ -171,6 +167,7 @@ export class ReportService {
                 avail.impressions += impressions;
                 avail.ctr += ctr / 100000;
                 avail.position += position / 10;
+                //avail.count++;  todo
             }
             else {
                 byQueries[query] = {
@@ -178,7 +175,8 @@ export class ReportService {
                     clicks: clicks,
                     impressions: impressions,
                     ctr: ctr / 100000,
-                    position: position / 10
+                    position: position / 10,
+                    // count: 1
                 };
             }
 
@@ -296,7 +294,7 @@ export class ReportService {
             .toPromise()
             .then((response) => {
                 let data = response.json(),
-                    inputData = []; // todo better parse?
+                    inputData = []; // todo better parse than json?
 
                 for (let i = 0, n = data.length; i < n; i++) {
                     let row = data[i];

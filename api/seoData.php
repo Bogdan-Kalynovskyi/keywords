@@ -33,7 +33,7 @@ function get () {
     $start = intval($_GET['start']);
     $end = intval($_GET['end']);
 
-    $query = mysql_query('SELECT `query`, SUM(`clicks`) as `clicks`, SUM(`impressions`) as `impressions`, SUM(`ctr`) as `ctr`, SUM(`position`) as `position` FROM `seoData` WHERE report_id='.$report_id.' AND date >= '.$start.' AND date <= '.$end.' GROUP by `query`');
+    $query = mysql_query('SELECT `query`, SUM(`clicks`) as `clicks`, SUM(`impressions`) as `impressions`, ROUND(AVG(`ctr`)) as `ctr`, ROUND(AVG(`position`)) as `position` FROM `seoData` WHERE report_id='.$report_id.' AND date >= '.$start.' AND date <= '.$end.' GROUP by `query`');
     // todo security chac if the user has access to report id
 
     $result = array();
