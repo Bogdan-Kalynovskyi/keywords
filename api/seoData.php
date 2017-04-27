@@ -33,22 +33,12 @@ function get () {
     $start = intval($_GET['start']);
     $end = intval($_GET['end']);
 
-    $query = mysql_query('SELECT `query`, `clicks`, `impressions`, `ctr`, `position` FROM `seoData` WHERE report_id='.$report_id.' AND date >= '.$start.' AND date <= '.$end);
+    $query = mysql_query('SELECT `query`, SUM(`clicks`) as `clicks`, SUM(`impressions`) as `impressions`, SUM(`ctr`) as `ctr`, SUM(`position`) as `position` FROM `seoData` WHERE report_id='.$report_id.' AND date >= '.$start.' AND date <= '.$end.' GROUP by `query`');
     // todo security chac if the user has access to report id
 
     $result = array();
     while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
-        $query = $row['query'];
-        $existing = $result[$query];
-        if ($existing) {
-            $existing[0] += $row['clicks'];
-            $existing[1] += $row['impressions'];
-            $existing[2] += $row['ctr'];
-            $existing[3] += $row['position'];
-        }
-        else {
-            $result[$query] = [$row['clicks'], $row['impressions'], $row['ctr'], $row['position']]; // php ver?
-        }
+        $result[] = [$row['query'], $row['clicks'], $row['impressions'], $row['ctr'], $row['position']];
     }
     echo json_encode($result);
 }

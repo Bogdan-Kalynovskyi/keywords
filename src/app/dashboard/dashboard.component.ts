@@ -123,7 +123,6 @@ export class DashboardComponent implements OnInit {
             })
             .subscribe(reportData => {
                 if (reportData) {
-                    this.data = reportData.csv;
                     this.isOwner = reportData.isOwner === '1';
                     this.report = {
                         id: this.reportId,
@@ -132,24 +131,26 @@ export class DashboardComponent implements OnInit {
                         siteUrl: reportData.siteUrl
                     };
 
-                    let now = Date.now() / 1000,
-                        day = 24 * 3600,
-                        daysAgo = (now - reportData.yes_date) / day,
-                        end,
+                    let now = new Date(),
+                        yesDate = new Date(reportData.yes_date * 1000),
+                        dateDiff = (Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) -
+                            Date.UTC(yesDate.getFullYear(), yesDate.getMonth(), yesDate.getDate())) / 86400000,
+                        end = now,
                         start;
 //todo material
-                    if (!this.isOwner || (daysAgo > 1 && window['confirm']('Show update?'))) {
-                        end = now - 2 * day;
+                    if (!this.isOwner || (dateDiff > 1 && window['confirm']('Show update?'))) {
+                        end.setDate(end.getDate() - 2);
                         if (this.isOwner) {
                             this.reportService.changeYesTime(this.reportId);
                         }
                     }
                     else {
-                        end = reportData.yes_date;
+                        end = yesDate;
                     }
-                    start = end - 90 * day;
+                    start = new Date(end);
+                    start.setDate(start.getDate() - 90);
 
-                    this.reportService.getSeoData(this.reportId, start, end)
+                    this.reportService.getSeoData(this.reportId, start.getTime() / 1000, end.getTime() / 1000)
                         .then(data => {
                             this.data = data;    // todo is this needed?
                             this.dataCalculate(this.data, this.report.keywords);

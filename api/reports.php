@@ -59,7 +59,7 @@ function get () {
     $report_id = isset($_GET['id']) ? intval($_GET['id']) : false;
 
     if ($report_id) {
-        $query = mysql_query('SELECT `name`, `keywords`, `siteUrl`, `yes_date`, IF(`owner` = '.esc($_SESSION['userGoogleId']).', 1, 0) as `isOwner`  FROM `reports` WHERE id = '.$report_id);
+        $query = mysql_query('SELECT `name`, `keywords`, `siteUrl`, `yes_date`, IF(`owner`='.esc($_SESSION['userGoogleId']).', 1, 0) as `isOwner`  FROM `reports` WHERE id='.$report_id);
         $result = mysql_fetch_array($query, MYSQL_ASSOC);
 
         if ($result) {
@@ -71,7 +71,7 @@ function get () {
     }
 
     else {
-        $query = mysql_query('SELECT `id`, `name`, `siteUrl`, `created` FROM `reports` WHERE owner = '.esc($_SESSION['userGoogleId']).' ORDER BY created DESC');
+        $query = mysql_query('SELECT `id`, `name`, `siteUrl`, `created` FROM `reports` WHERE owner='.esc($_SESSION['userGoogleId']).' ORDER BY created DESC');
 
         $result = array();
         while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
@@ -98,9 +98,9 @@ function put () {
     $post = json_decode(file_get_contents('php://input'), true);
     $report_id = intval($_GET['id']);
 
-    $query = mysql_query('UPDATE `reports` SET `keywords` = '.esc($post['keywords']).', `name` = '.esc($post['name']).', `siteUrl` = '.esc($post['siteUrl']).' WHERE id = '.$report_id.' AND owner = '.esc($_SESSION['userGoogleId']));
+    $query = mysql_query('UPDATE `reports` SET `keywords`='.esc($post['keywords']).', `name`='.esc($post['name']).', `siteUrl`='.esc($post['siteUrl']).' WHERE id = '.$report_id.' AND owner = '.esc($_SESSION['userGoogleId']));
 
-    if (!mysql_num_rows($query)) {
+    if (!mysql_affected_rows($query)) {
         report_not_found($report_id);
     }
     else {
@@ -114,9 +114,9 @@ function put () {
 function patch () {
     $report_id = intval($_GET['id']);
 
-    $query = mysql_query('UPDATE `reports` SET `yes_date=UNIX_TIMESTAMP()` WHERE id = '.$report_id);
+    $query = mysql_query('UPDATE `reports` SET `yes_date`=UNIX_TIMESTAMP() WHERE id='.$report_id);
 
-    if (!mysql_num_rows($query)) {
+    if (!mysql_affected_rows($query)) {
         report_not_found($report_id);
     }
 }
@@ -124,9 +124,9 @@ function patch () {
 
 function delete () {
     $id = intval($_GET['id']);
-    $query = mysql_query('DELETE FROM `reports` WHERE id = '.$id.' AND owner = '.esc($_SESSION['userGoogleId']));
+    $query = mysql_query('DELETE FROM `reports` WHERE id='.$id.' AND owner='.esc($_SESSION['userGoogleId']));
 
-    if (!mysql_num_rows($query)) {
+    if (!mysql_affected_rows($query)) {
         report_not_found($id);
     }
 }

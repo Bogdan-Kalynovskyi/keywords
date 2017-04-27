@@ -159,7 +159,7 @@ export class ReportService {
         for (let i = 0, n = googleData.length; i < n; i++) {
             let row = googleData[i],
                 query = row.keys[0],
-                date = new Date(row.keys[1]).getTime(),
+                date = new Date(row.keys[1]).getTime() / 1000,
                 clicks = Math.round(row.clicks / 3),
                 impressions = Math.round(row.impressions / 3),
                 ctr = Math.round(row.ctr * 100000 / 3),
@@ -300,11 +300,10 @@ export class ReportService {
 
                 for (let i = 0, n = data.length; i < n; i++) {
                     let row = data[i];
-                    debugger; //int or string?
                     inputData.push({
                         query: row[0],
-                        clicks: row[1],
-                        impressions: row[2],
+                        clicks: +row[1],
+                        impressions: +row[2],
                         ctr: row[3] / 100000,
                         position: row[4] / 10
                     });

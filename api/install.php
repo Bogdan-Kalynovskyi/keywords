@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS `reports` (
   `keywords` TEXT NOT NULL,
   `siteUrl` TEXT NOT NULL,
   `owner` varchar(255) NOT NULL,
-  `created` MEDIUMINT UNSIGNED NOT NULL,
-  `yes_date` MEDIUMINT UNSIGNED NOT NULL,
+  `created` INT UNSIGNED NOT NULL,
+  `yes_date` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `name` (`name`),
   INDEX `owner` (`owner`),
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `seoData` (
   `clicks` MEDIUMINT UNSIGNED NOT NULL,
   `impressions` MEDIUMINT UNSIGNED NOT NULL,
   `ctr` MEDIUMINT UNSIGNED NOT NULL,
-  `position` TINYINT UNSIGNED NOT NULL,
+  `position` SMALLINT UNSIGNED NOT NULL,
   INDEX `report_id` (`report_id`),
   INDEX `date` (`date`)
 ) DEFAULT CHARSET=utf8 ENGINE = InnoDB;
