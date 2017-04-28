@@ -108,13 +108,14 @@ export class ReportService {
                     position: position / 10
                 });
 
-                parsedCsv[i] = [query, clicks, impressions, ctr, position];
+                parsedCsv[i - 1] = [query, clicks, impressions, ctr, position];
             }
             else {
-                parsedCsv.splice(n - 1, 1);
+                parsedCsv.pop();
             }
         }
-        // Return the parsed data.
+        parsedCsv.pop();
+
         return [inputDataRows, parsedCsv];
     }
 

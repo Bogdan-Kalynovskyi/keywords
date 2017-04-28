@@ -45,7 +45,8 @@ function add_seoData ($seoData, $report_id) {
     $time = time();
 
     foreach ($seoData as $row) {
-        $str .= $comma . '('.$report_id.','.esc($row[0]).','.intval($row[1]).','.intval($row[2]).','.intval($row[3]).','.intval($row[4]).','.intval(@$row[5] || $time).')';
+        $d = isset($row[5]) ? intval($row[5]) : $time;
+        $str .= $comma . '('.$report_id.','.esc($row[0]).','.intval($row[1]).','.intval($row[2]).','.intval($row[3]).','.intval($row[4]).','.$d.')';
 
         $comma = ',';
     }
