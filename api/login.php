@@ -14,6 +14,24 @@
         if ($obj && isset($obj->aud) && $obj->aud === $google_api_id) {
             $_SESSION['userGoogleId'] = $obj->sub;
             $_SESSION['xsrfToken'] = base64_encode(openssl_random_pseudo_bytes(32));
+
+            $link = mysql_connect($db_host, $db_user, $db_pass);
+            if (!$link || !mysql_select_db($db_name)) {
+                header("HTTP/1.0 500 Internal Server Error", true, 500);
+                if ($error_reporting_level !== 0) {
+                    echo mysql_error();
+                }
+                die;
+            }
+
+            $result = mysql_query('SELECT `offline_code` FROM `users` WHERE google_id = ' . esc($_SESSION['userGoogleId']));
+            if ($result) {
+                $result = mysql_fetch_array($result);
+                if ($result) {
+                    $_SESSION['offline'] = $result['offline_code'];
+                }
+            }
+
             echo $_SESSION['xsrfToken'];
         }
         else {

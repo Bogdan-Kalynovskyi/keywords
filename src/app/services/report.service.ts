@@ -289,9 +289,13 @@ export class ReportService {
     }
 
 
-    getSeoData(id: number, startTime: Number, endTime: Number): Promise<any> {
+    getSeoData(id: number, startTime?: Number, endTime?: Number): Promise<any> {
+        let url = '';
+        if (startTime) {
+            url = '&start=' + startTime + '&end=' + endTime;
+        }
         return this.http
-            .get(this.seoDataUrl + '?id=' + id + '&start=' + startTime + '&end=' + endTime, { headers: this.headers })
+            .get(this.seoDataUrl + '?id=' + id + url, { headers: this.headers })
             .toPromise()
             .then((response) => {
                 let data = response.json(),

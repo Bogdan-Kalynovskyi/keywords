@@ -131,28 +131,39 @@ export class DashboardComponent implements OnInit {
                         siteUrl: reportData.siteUrl
                     };
 
-                    let now = new Date(),
-                        yesDate = new Date(reportData.yes_date * 1000),
-                        dateDiff = (Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) -
-                            Date.UTC(yesDate.getFullYear(), yesDate.getMonth(), yesDate.getDate())) / 86400000,
-                        end = now,
-                        start;
+                    if (reportData.siteUrl) {
+                        let now = new Date(),
+                            yesDate = new Date(reportData.yes_date * 1000),
+                            dateDiff = (Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) -
+                                Date.UTC(yesDate.getFullYear(), yesDate.getMonth(), yesDate.getDate())) / 86400000,
+                            end = now,
+                            start;
 //todo material
-                    if (!this.isOwner || (dateDiff > 1 && window['confirm']('Show update?'))) {
-                        end.setDate(end.getDate() - 2);
-                        if (this.isOwner) {
-                            this.reportService.changeYesTime(this.reportId);
+                        if (!this.isOwner || (dateDiff > 1 && window['confirm']('Show update?'))) {
+                            end.setDate(end.getDate() - 2);
+                            if (this.isOwner) {
+                                this.reportService.changeYesTime(this.reportId);
+                            }
                         }
-                    }
-                    else {
-                        end = yesDate;
-                    }
-                    start = new Date(end);
-                    start.setDate(start.getDate() - 90);
+                        else {
+                            end = yesDate;
+                        }
+                        start = new Date(end);
+                        start.setDate(start.getDate() - 90);
 
-                    this.reportService.getSeoData(this.reportId, start.getTime() / 1000, end.getTime() / 1000)
+                        this.reportService.getSeoData(this.reportId, start.getTime() / 1000, end.getTime() / 1000)
+                            .then(data => {
+                                //todo code dupe
+                                this.data = data;
+                                this.dataCalculate(this.data, this.report.keywords);
+                            });
+                    }
+                }
+                else {
+                    this.reportService.getSeoData(this.reportId)
                         .then(data => {
-                            this.data = data;    // todo is this needed?
+                            //todo code dupe
+                            this.data = data;
                             this.dataCalculate(this.data, this.report.keywords);
                         });
                 }

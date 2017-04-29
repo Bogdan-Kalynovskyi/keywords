@@ -30,15 +30,24 @@ if ($s = mysql_error()) {
 
 function get () {
     $report_id = intval($_GET['id']);
-    $start = intval($_GET['start']);
-    $end = intval($_GET['end']);
 
-    $query = mysql_query('SELECT `query`, SUM(`clicks`) as `clicks`, SUM(`impressions`) as `impressions`, ROUND(AVG(`ctr`)) as `ctr`, ROUND(AVG(`position`)) as `position` FROM `seoData` WHERE report_id='.$report_id.' AND date >= '.$start.' AND date <= '.$end.' GROUP by `query`');
-    // todo security chac if the user has access to report id
+    if (isset($_GET['start'])) {
+        $start = intval($_GET['start']);
+        $end = intval($_GET['end']);
+
+        //todo code dupe
+        $query = mysql_query('SELECT `query`, SUM(`clicks`) as `clicks`, SUM(`impressions`) as `impressions`, ROUND(AVG(`ctr`)) as `ctr`, ROUND(AVG(`position`)) as `position` FROM `seoData` WHERE report_id=' . $report_id . ' AND date >= ' . $start . ' AND date <= ' . $end . ' GROUP by `query`');
+        // todo security chac if the user has access to report id
+    }
+    else {
+        //todo code dupe
+        $query = mysql_query('SELECT `query`, SUM(`clicks`) as `clicks`, SUM(`impressions`) as `impressions`, ROUND(AVG(`ctr`)) as `ctr`, ROUND(AVG(`position`)) as `position` FROM `seoData` WHERE report_id='.$report_id.' GROUP by `query`');
+        // todo security chac if the user has access to report id
+    }
 
     $result = array();
     while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
-        $result[] = [$row['query'], $row['clicks'], $row['impressions'], $row['ctr'], $row['position']];
+        $result[] = array($row['query'], $row['clicks'], $row['impressions'], $row['ctr'], $row['position']);
     }
     echo json_encode($result);
 }

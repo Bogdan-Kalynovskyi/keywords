@@ -130,10 +130,13 @@ export class NewReportDialog {
                         authuser: user.getAuthResponse().session_state.extraQueryParams.authuser
                     }).then((response) => {
                         this.reportService.setUserCode(response.code);
+                        window['hasOfflineAccess'] = true;
                     });
                 }
-            } else {
-                this.addReport(name, keywords, siteUrl);
+            }
+            else {
+                // !!!!! set siteUrl to '' !!!!!!!!
+                this.addReport(name, keywords, '');
             }
         }, 0);
     }

@@ -131,7 +131,7 @@
         function initClient() {
             gapi.client.init({
                 apiKey: apiKey,
-                //discoveryDocs: ['https://searchconsole.googleapis.com/$discovery/rest?version=v1'],
+                discoveryDocs: ['https://searchconsole.googleapis.com/$discovery/rest?version=v1'],
                 clientId: clientId,
                 scope: 'https://www.googleapis.com/auth/webmasters.readonly'
             })
