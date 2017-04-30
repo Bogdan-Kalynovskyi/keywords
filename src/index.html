@@ -10,6 +10,7 @@
   <script>
       xsrfToken = "t8gEfxESWMcdQZ42YIoYIRvnnrYA9FsPvZS3SU04/yg=";
       hasOfflineAccess = true;
+      siteList = [];
   </script>
 </head>
 <body>
@@ -26,7 +27,18 @@
               scope: 'https://www.googleapis.com/auth/webmasters.readonly'
           })
           .then(function () {
-
+              return gapi.client.request({
+                  path: 'https://www.googleapis.com/webmasters/v3/sites',
+                  method: 'GET',
+                  params: {
+                      key: 'AIzaSyD5_k-oAl-WZNaDGey4k3U9_noryurZjKo'
+                  }
+              });
+          }).then(function(response) {
+              response.result.siteEntry.forEach(function(site) {
+                  siteList.push(site.siteUrl);
+              });
+              console.log(siteList);
           }, function(reason) {
               alert('Error: ' + reason.result.error.message);
           });

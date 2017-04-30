@@ -73,6 +73,7 @@ export class NewReportDialog {
     data: InputDataRow[];
     readyToSave: ServerData;
     reportList: Report[];
+    siteList: string[];
     changeUrlPromise: Promise<any>;
 
     constructor(
@@ -80,6 +81,8 @@ export class NewReportDialog {
         //public opener: any,
         private reportService: ReportService,
         private router: Router){
+
+        this.siteList = window['siteList'];
     }
 
     onFileChange(ev){
@@ -116,6 +119,8 @@ export class NewReportDialog {
 
     saveReport(name: string, keywords: string, siteUrl: string) {
         setTimeout(() => {
+            debugger;
+
             if (siteUrl) {
                 // todo show spinner
                 this.changeUrlPromise

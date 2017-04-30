@@ -8,3 +8,9 @@ body {
 .mat-tab-body {
     overflow: hidden!important;
 }
+
+[hidden] { display: none !important;}
+
+md-select {
+    width: 100%;
+}

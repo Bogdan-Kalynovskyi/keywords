@@ -8,11 +8,11 @@
 <md-radio-group [(ngModel)]="dataSource">
     <md-radio-button value="google">Google Search Analytics</md-radio-button>
     <md-radio-button value="file">.csv file</md-radio-button>
-</md-radio-group><br><br>
+</md-radio-group><br><br><br>
 <input [hidden]="dataSource != 'file'" type="file" accept=".csv" (change)="onFileChange($event)">
-<md-input-container [hidden]="dataSource != 'google'">
-    <input mdInput #siteUrl placeholder="Site url" [hidden]="dataSource != 'google'" (change)="onUrlChange(siteUrl.value)">
-</md-input-container>
-<br><br>
-<button md-raised-button color="primary" (click)="saveReport(reportName.value, keywords.value.toLowerCase(), siteUrl.value);">Add</button>
+<md-select placeholder="Site url" [(ngModel)]="siteUrl" [hidden]="dataSource != 'google'">
+    <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
+</md-select>
+<br><br><br>
+<button md-raised-button color="primary" (click)="saveReport(reportName.value, keywords.value.toLowerCase(), siteUrl);">Add</button>
 <button md-raised-button (click)="dialogRef.close()">Close</button>
