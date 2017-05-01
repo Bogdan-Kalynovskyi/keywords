@@ -43,10 +43,11 @@ DROP TABLE IF EXISTS `seoData`;
 ';
 mysql_query($query);
 $query = '
-CREATE TABLE IF NOT EXISTS `seoData` (
+CREATE TABLE IF NOT EXISTS `seodata` (
   `report_id` MEDIUMINT UNSIGNED NOT NULL,
   `date` INT NOT NULL,
   `query` varchar(255) NOT NULL,
+  `page` varchar(255) NOT NULL,
   `clicks` MEDIUMINT UNSIGNED NOT NULL,
   `impressions` MEDIUMINT UNSIGNED NOT NULL,
   `ctr` MEDIUMINT UNSIGNED NOT NULL,

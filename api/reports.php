@@ -46,13 +46,14 @@ function add_seoData ($seoData, $report_id) {
 
     foreach ($seoData as $row) {
         $d = isset($row[5]) ? intval($row[5]) : $time;
-        $str .= $comma . '('.$report_id.','.esc($row[0]).','.intval($row[1]).','.intval($row[2]).','.intval($row[3]).','.intval($row[4]).','.$d.')';
+        $page = isset($row[6]) ? esc($row[6]) : '\'\'';
+        $str .= $comma . '('.$report_id.','.esc($row[0]).','.intval($row[1]).','.intval($row[2]).','.intval($row[3]).','.intval($row[4]).','.$d.', '.$page.')';
 
         $comma = ',';
     }
 
-    mysql_query('DELETE FROM `seoData` WHERE `report_id`='.$report_id);
-    mysql_query('INSERT INTO `seoData` (`report_id`, `query`, `clicks`, `impressions`, `ctr`, `position`, `date`) VALUES '.$str);
+    mysql_query('DELETE FROM `seodata` WHERE `report_id`='.$report_id);
+    mysql_query('INSERT INTO `seodata` (`report_id`, `query`, `clicks`, `impressions`, `ctr`, `position`, `date`, `page`) VALUES '.$str);
 }
 
 
@@ -127,6 +128,7 @@ function patch () {
 function delete () {
     $id = intval($_GET['id']);
     mysql_query('DELETE FROM `reports` WHERE id='.$id.' AND owner='.esc($_SESSION['userGoogleId']));
+    mysql_query('DELETE FROM `seodata` WHERE report_id='.$id);
 
     if (!mysql_affected_rows()) {
         report_not_found($id);

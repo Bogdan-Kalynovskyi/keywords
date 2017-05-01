@@ -108,7 +108,7 @@
 
     <?php if ($token) { ?>
     var xsrfToken = '<?php echo $_SESSION['xsrfToken'] ?>';
-    var hasOfflineAccess = <?php echo $has_offline_access ?>;
+    var hasOfflineAccess = '<?php echo $has_offline_access ?>';
     <?php } else { ?>
     // check for 3d party cookies are enabled
     window.addEventListener("message", function (evt) {
@@ -127,6 +127,7 @@
     <script>
         var apiKey = '<?php echo $api_key ?>';
         var clientId = '<?php echo $google_api_id ?>';
+        var siteList = [];
 
         function initClient() {
             gapi.client.init({
@@ -136,10 +137,20 @@
                 scope: 'https://www.googleapis.com/auth/webmasters.readonly'
             })
                 .then(function () {
-
-                }, function(reason) {
-                    alert('Error: ' + reason.result.error.message);
+                    return gapi.client.request({
+                        path: 'https://www.googleapis.com/webmasters/v3/sites',
+                        method: 'GET',
+                        params: {
+                            key: apiKey
+                        }
+                    });
+                }).then(function(response) {
+                response.result.siteEntry.forEach(function(site) {
+                    siteList.push(site.siteUrl);
                 });
+            }, function(reason) {
+                alert('Error: ' + reason.result.error.message);
+            });
         }
         gapi.load('client', initClient);
     </script>

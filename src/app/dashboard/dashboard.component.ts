@@ -158,14 +158,14 @@ export class DashboardComponent implements OnInit {
                                 this.dataCalculate(this.data, this.report.keywords);
                             });
                     }
-                }
-                else {
-                    this.reportService.getSeoData(this.reportId)
-                        .then(data => {
-                            //todo code dupe
-                            this.data = data;
-                            this.dataCalculate(this.data, this.report.keywords);
-                        });
+                    else {
+                        this.reportService.getSeoData(this.reportId)
+                            .then(data => {
+                                //todo code dupe
+                                this.data = data;
+                                this.dataCalculate(this.data, this.report.keywords);
+                            });
+                    }
                 }
             });
         }
@@ -475,7 +475,7 @@ export class DashboardComponent implements OnInit {
     }
 
 
-    onUrlChange(){debugger;
+    onUrlChange(){
         if (this.report.siteUrl) {
             this.submitDisabled = true;
             // todo show spinner

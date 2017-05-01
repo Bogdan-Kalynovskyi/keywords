@@ -37,7 +37,7 @@
                 <div class="data-table-container">
                     <table id="data" class="data-table">
                         <tr>
-                            <th (click)="setSort($event)">Queries</th>
+                            <th (click)="setSort($event, 'query')">Queries</th>
                             <th (click)="setSort($event)">Clicks</th>
                             <th (click)="setSort($event)">Impressions</th>
                             <th (click)="setSort($event)">CTR</th>
@@ -57,7 +57,7 @@
                 <div class="data-table-container">
                     <table id="filteredData" class="data-table">
                         <tr>
-                            <th (click)="setSort($event)">Queries</th>
+                            <th (click)="setSort($event, 'query')">Queries</th>
                             <th (click)="setSort($event)">Clicks</th>
                             <th (click)="setSort($event)">Impressions</th>
                             <th (click)="setSort($event)">CTR</th>
@@ -77,7 +77,8 @@
                 <div class="data-table-container">
                     <table id="allQueriesData" class="data-table">
                         <tr>
-                            <th (click)="setSort($event)">Queries</th>
+                            <th (click)="setSort($event, 'query')">Queries</th>
+                            <th (click)="setSort($event, 'page')">Pages</th>
                             <th (click)="setSort($event)">Clicks</th>
                             <th (click)="setSort($event)">Impressions</th>
                             <th (click)="setSort($event)">Position</th>
@@ -102,6 +103,7 @@
                         </tr>
                         <tr *ngFor="let dataTable of allQueriesData">
                             <td>{{ dataTable.query }}</td>
+                            <td>{{ dataTable.page }}</td>
                             <td>{{ dataTable.clicks }}</td>
                             <td>{{ dataTable.impressions }}</td>
                             <td>{{ dataTable.position }}</td>
@@ -121,7 +123,8 @@
                 <div class="data-table-container">
                     <table id="nonBrandedData" class="data-table">
                         <tr>
-                            <th (click)="setSort($event)">Queries</th>
+                            <th (click)="setSort($event, 'query')">Queries</th>
+                            <th (click)="setSort($event, 'page')">Pages</th>
                             <th (click)="setSort($event)">Clicks</th>
                             <th (click)="setSort($event)">Impressions</th>
                             <th (click)="setSort($event)">Position</th>
@@ -146,6 +149,7 @@
                         </tr>
                         <tr *ngFor="let dataTable of nonBrandedData">
                             <td>{{ dataTable.query }}</td>
+                            <td>{{ dataTable.page }}</td>
                             <td>{{ dataTable.clicks }}</td>
                             <td>{{ dataTable.impressions }}</td>
                             <td>{{ dataTable.position }}</td>

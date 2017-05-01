@@ -119,14 +119,18 @@ export class NewReportDialog {
 
     saveReport(name: string, keywords: string, siteUrl: string) {
         setTimeout(() => {
-            debugger;
 
             if (siteUrl) {
                 // todo show spinner
-                this.changeUrlPromise
-                    .then(() => {
+                this.changeUrlPromise = this.reportService.getGoogleData(siteUrl)
+                    .then(data => {
+                        [this.data, this.readyToSave] = data;
                         this.addReport(name, keywords, siteUrl);
                     });
+                //this.changeUrlPromise;
+                   // .then(() => {
+
+                //    });
                 if (!window['hasOfflineAccess']) {
                     let gapi = window['gapi'];
                     let auth = gapi.auth2.getAuthInstance();

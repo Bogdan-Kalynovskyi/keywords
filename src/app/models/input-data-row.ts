@@ -1,5 +1,6 @@
 export class InputDataRow {
     query: string;
+    page: string;
     clicks: number;
     impressions: number;
     ctr: number;

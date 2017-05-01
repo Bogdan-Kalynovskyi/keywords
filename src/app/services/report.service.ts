@@ -7,6 +7,7 @@ import {Report} from '../models/report';
 
 import any = jasmine.any;
 import {InputDataRow, ServerData} from "../models/input-data-row";
+import {by} from "protractor";
 
 @Injectable()
 export class ReportService {
@@ -105,7 +106,8 @@ export class ReportService {
                     clicks: clicks,
                     impressions: impressions,
                     ctr: ctr / 100000,
-                    position: position / 10
+                    position: position / 10,
+                    page: ''
                 });
 
                 parsedCsv[i - 1] = [query, clicks, impressions, ctr, position];
@@ -150,41 +152,49 @@ export class ReportService {
     }
 
     googleDataToInputDataRow(googleData) {
-        let byQueries = {},
+        let byKey = {},
             readyForSave = [];
 
         for (let i = 0, n = googleData.length; i < n; i++) {
             let row = googleData[i],
                 query = row.keys[0],
-                date = new Date(row.keys[1]).getTime() / 1000,
+                page = row.keys[1],
+                key = query+page,
+                date = new Date(row.keys[2]).getTime() / 1000,
                 clicks = Math.round(row.clicks),
                 impressions = Math.round(row.impressions),
                 ctr = Math.round(row.ctr * 100000),
                 position = Math.round(row.position * 10);
 
-            let avail = byQueries[query];
+            let avail = byKey[key];
             if (avail) {
                 avail.clicks += clicks;
                 avail.impressions += impressions;
                 avail.ctr += ctr / 100000;
                 avail.position += position / 10;
-                //avail.count++;  todo
+                avail.count++;  //todo
             }
             else {
-                byQueries[query] = {
+                byKey[key] = {
                     query: query,
+                    page: page,
                     clicks: clicks,
                     impressions: impressions,
                     ctr: ctr / 100000,
                     position: position / 10,
-                    // count: 1
+                    count: 1
                 };
             }
 
-            readyForSave.push([query, clicks, impressions, ctr, position, date]);
+            readyForSave.push([query, clicks, impressions, ctr, position, date, page]);
         }
 
-        return [byQueries, readyForSave];
+        for (let key in byKey) {
+            byKey[key].ctr = byKey[key].ctr / byKey[key].count;
+            byKey[key].position = byKey[key].position / byKey[key].count;
+        };
+
+        return [byKey, readyForSave];
     }
 
 
@@ -251,7 +261,7 @@ export class ReportService {
                 "endDate": endDate,
                 "rowLimit": 5000, // Max 5000 default 1000
                 "dimensions": [
-                    "query", "date"
+                    "query", "page", "date"
                 ]
             }
         })
@@ -305,10 +315,11 @@ export class ReportService {
                     let row = data[i];
                     inputData.push({
                         query: row[0],
-                        clicks: +row[1],
-                        impressions: +row[2],
-                        ctr: row[3] / 100000,
-                        position: row[4] / 10
+                        page: row[1],
+                        clicks: +row[2],
+                        impressions: +row[3],
+                        ctr: row[4] / 100000,
+                        position: row[5] / 10
                     });
                 }
                 return inputData;
