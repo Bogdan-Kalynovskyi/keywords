@@ -139,10 +139,7 @@
                 .then(function () {
                     return gapi.client.request({
                         path: 'https://www.googleapis.com/webmasters/v3/sites',
-                        method: 'GET',
-                        params: {
-                            key: apiKey
-                        }
+                        method: 'GET'
                     });
                 }).then(function(response) {
                 response.result.siteEntry.forEach(function(site) {
