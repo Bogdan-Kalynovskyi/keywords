@@ -40,6 +40,7 @@
         font-size: 1.3rem;
         font-weight: 400;
     }
+    /* TODO this can change, so check button design from time to time */
     .abcRioButton {
         box-shadow: 3px 3px 10px rgba(0,0,0,.4) !important;
     }
@@ -47,20 +48,24 @@
         font-size: 14px !important;
         margin-left: 0 !important;
     }
+    /* TODO check this regularly too :) */
+    /* TODO check this when logged in too */
+    /* TODO redo this into popup */
+    /* TODO adblock or google block */
     #test3dPartyCookies {
         position: absolute;
         width: 436px;
         left: calc(50% - 220px);
         top: 24px;
         z-index: 1000;
-        box-shadow: 0 0 50px darkred, 0 0 0 30px white;
+        box-shadow: 0 0 50px darkred, 0 0 0 30px white; /* todo modal*/
         border-radius: 4px;
         border: 2px dotted darkred;
         padding: 16px;
         display: none;
         background: #ff9;
     }
-    a[target="_blank"] {
+    /* inside popup? */ a[target="_blank"] {
         display: block;
         letter-spacing: 0.2px;
         margin-top: 10px;
@@ -73,7 +78,7 @@
 
 <body>
 <script>
-    (function() {
+    (function test4Ie() {
         var ua = navigator.userAgent,
             IEVersion = ua.indexOf("MSIE ");
 
@@ -91,71 +96,38 @@
     })();
 
 
-    function googleLogIn (g) {
+    function googleLogIn(response) {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'api/login.php?authToken=' + encodeURIComponent(g.getAuthResponse().id_token));
+        xhr.open('GET', 'api/login.php?authToken=' + encodeURIComponent(response.getAuthResponse().id_token));
         xhr.onload = function() {
             if (xhr.status === 200) {
                 location.reload();
             }
             else {
-                alert('Login error: ' + xhr.responseText); // ?
+                alert('Could not log into: ' + location.hostname + '. Error: ' + xhr.responseText); // ?
             }
         };
         xhr.send();
     }
-
-
-    <?php if ($token) { ?>
-    var xsrfToken = '<?php echo $_SESSION['xsrfToken'] ?>';
-    var hasOfflineAccess = '<?php echo $has_offline_access ?>';
-    <?php } else { ?>
-    // check for 3d party cookies are enabled
-    window.addEventListener("message", function (evt) {
-        if (evt.data === 'MM:3PCunsupported') {
-            document.getElementById('test3dPartyCookies').style.display = 'block';
-        }
-    });
-    <?php } ?>
 </script>
 
 
 
 <?php if ($token) { ?>
-
-    <script src="https://apis.google.com/js/api.js"></script>
     <script>
+        var xsrfToken = '<?php echo $_SESSION['xsrfToken'] ?>';
+        var hasOfflineAccess = '<?php echo $has_offline_access ?>';
         var apiKey = '<?php echo $api_key ?>';
         var clientId = '<?php echo $google_api_id ?>';
         var siteList = [];
-
-        function initClient() {
-            gapi.client.init({
-                apiKey: apiKey,
-                discoveryDocs: ['https://searchconsole.googleapis.com/$discovery/rest?version=v1'],
-                clientId: clientId,
-                scope: 'https://www.googleapis.com/auth/webmasters.readonly'
-            })
-                .then(function () {
-                    return gapi.client.request({
-                        path: 'https://www.googleapis.com/webmasters/v3/sites',
-                        method: 'GET'
-                    });
-                }).then(function(response) {
-                response.result.siteEntry.forEach(function(site) {
-                    siteList.push(site.siteUrl);
-                });
-            }, function(reason) {
-                alert('Error: ' + reason.result.error.message);
-            });
-        }
-        gapi.load('client', initClient);
     </script>
 
     <app-root><div id="loading">Loading...</div></app-root>
 
     <div id="chartNonBranded"></div>
     <div id="chartBranded"></div>
+
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapi.load('client:auth2', initClient);"></script>
 
 <?php } else { ?>
 
@@ -167,14 +139,9 @@
                 Sign in using Google account
                 <br>
                 <br>
-                <div class="g-signin2" data-onsuccess="googleLogIn"></div>
+                <div class="g-signin2" data-onsuccess="googleLogIn" data-onfailure="alert"></div>
             </div>
         </div>
-        <div id="test3dPartyCookies"><b style="font-size: 1.3em;">Third party cookies are disabled in your browser</b><br><br>
-            Sign in using Google won't work unless you enable this feature in browser settings<br>
-            <a target=_blank href="https://www.google.com/search?q=how+do+I+enable+3rd+party+cookies+in+my+browser" style="font-size: 20px">Find solution in the internet (search using Google)</a>
-        </div>
-        <iframe src="//mindmup.github.io/3rdpartycookiecheck/start.html" style="display:none"></iframe>
     </div>
 
 <?php } ?>
@@ -182,9 +149,10 @@
 
 <link href="dist/styles.bundle.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://www.gstatic.com/charts/loader.js"></script> <!-- async defer -->
 <script src="dist/inline.bundle.js"></script>
 <script src="dist/vendor.bundle.js"></script>
 <script src="dist/main.bundle.js"></script>
+<script src="googleApi.js"></script>
 </body>
 </html>
