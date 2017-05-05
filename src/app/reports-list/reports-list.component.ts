@@ -75,6 +75,7 @@ export class NewReportDialog {
     reportList: Report[];
     siteList: string[];
     changeUrlPromise: Promise<any>;
+    private isApiAllowed: boolean;
 
     constructor(
         public dialogRef: MdDialogRef<NewReportDialog>,
@@ -82,8 +83,20 @@ export class NewReportDialog {
         private reportService: ReportService,
         private router: Router){
 
+        this.isApiAllowed = window['isApiAllowed'];
         this.siteList = window['siteList'];
     }
+
+
+    setAllowedApi(status) {
+        this.isApiAllowed = status;
+    }
+
+
+    auth() {
+        window['auth2Login']();
+    }
+
 
     onFileChange(ev){
         let reader = new FileReader();

@@ -77,49 +77,15 @@
 </head>
 
 <body>
-<script>
-    (function test4Ie() {
-        var ua = navigator.userAgent,
-            IEVersion = ua.indexOf("MSIE ");
-
-        if (IEVersion !== -1) {
-            IEVersion = parseInt(ua.split('MSIE ')[1]);
-        } else if (ua.match(/trident.*rv\:11\./)) {
-            IEVersion = 11;
-        }
-        if (IEVersion !== -1) {
-            document.documentElement.className = 'ie' + IEVersion;
-            if (IEVersion < 10) {
-                alert('Sorry, we are not supporting Internet Explorer 9 and lower.');
-            }
-        }
-    })();
-
-
-    function googleLogIn(response) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'api/login.php?authToken=' + encodeURIComponent(response.getAuthResponse().id_token));
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                location.reload();
-            }
-            else {
-                alert('Could not log into ' + location.hostname + '. ' + xhr.responseText); // ?
-            }
-        };
-        xhr.send();
-    }
-</script>
-
-
+    <script src="googleApi.js"></script>
 
 <?php if ($token) { ?>
+
     <script>
         var xsrfToken = '<?php echo $_SESSION['xsrfToken'] ?>';
         var hasOfflineAccess = '<?php echo $has_offline_access ?>';
         var apiKey = '<?php echo $api_key ?>';
         var clientId = '<?php echo $google_api_id ?>';
-        var siteList = [];
     </script>
 
     <app-root><div id="loading">Loading...</div></app-root>
@@ -127,32 +93,63 @@
     <div id="chartNonBranded"></div>
     <div id="chartBranded"></div>
 
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapi.load('client:auth2', initClient);"></script>
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapi.load('client:auth2', initClient);" onerror="adBlockError()"></script>
 
 <?php } else { ?>
 
-    <script src="https://apis.google.com/js/platform.js" async defer onerror="alert('It seems like you have disabled Google Services via AdBlocker or Privacy Keeper. Out app depends on Google Services and shows you no ads.')"></script>
-    <div id="logged-out">
-        <div id="login-form">
-            <div style="float:left; width:160px">Company Logo</div>
-            <div style="float:left; width:300px">
-                Sign in using Google account
-                <br>
-                <br>
-                <div class="g-signin2" data-onsuccess="googleLogIn" data-onfailure="alert"></div>
-            </div>
+    <script>
+        (function test4Ie() {
+            var ua = navigator.userAgent,
+                IEVersion = ua.indexOf("MSIE ");
+
+            if (IEVersion !== -1) {
+                IEVersion = parseInt(ua.split('MSIE ')[1]);
+            } else if (ua.match(/trident.*rv\:11\./)) {
+                IEVersion = 11;
+            }
+            if (IEVersion !== -1) {
+                document.documentElement.className = 'ie' + IEVersion;
+                if (IEVersion < 10) {
+                    alert('Sorry, we are not supporting Internet Explorer 9 and lower.');
+                }
+            }
+        })();
+
+
+        function googleLogIn(response) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'api/login.php?authToken=' + encodeURIComponent(response.getAuthResponse().id_token));
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    location.reload();
+                }
+                else {
+                    alert('Could not log into ' + location.hostname + '. ' + xhr.responseText); // ?
+                }
+            };
+            xhr.send();
+        }
+    </script>
+    <script src="https://apis.google.com/js/platform.js" async defer onerror="adBlockError()"></script>
+
+    <div id="login-form">
+        <div style="float:left; width:160px">Company Logo</div>
+        <div style="float:left; width:300px">
+            Sign in using Google account
+            <br>
+            <br>
+            <div class="g-signin2" data-onsuccess="googleLogIn" data-onfailure="alert"></div>
         </div>
     </div>
 
 <?php } ?>
 
 
-<link href="dist/styles.bundle.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<script src="https://www.gstatic.com/charts/loader.js"></script> <!-- async defer -->
-<script src="dist/inline.bundle.js"></script>
-<script src="dist/vendor.bundle.js"></script>
-<script src="dist/main.bundle.js"></script>
-<script src="googleApi.js"></script>
+    <link href="dist/styles.bundle.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://www.gstatic.com/charts/loader.js"></script> <!-- async defer -->
+    <script src="dist/inline.bundle.js"></script>
+    <script src="dist/vendor.bundle.js"></script>
+    <script src="dist/main.bundle.js"></script>
 </body>
 </html>

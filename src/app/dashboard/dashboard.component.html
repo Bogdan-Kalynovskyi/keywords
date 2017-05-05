@@ -17,12 +17,22 @@
             <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" (change)="onDataChange()">
         </md-input-container>
         <md-input-container *ngIf="isOwner">
-            <span mdTooltip="You should press 'Save button' to save your changes">
-                <input mdInput placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
+            <span *ngIf="isApiAllowed" mdTooltip="You should press 'Save button' to save your changes">
+                <md-select placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
+                    <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
+                </md-select>
             </span>
+            <button *ngIf="!isApiAllowed" md-button (click)="auth()">
+                Allow Google API <md-icon class="logout-icon">exit_to_app</md-icon>
+            </button>
         </md-input-container>
         <md-input-container *ngIf="!isOwner">
-            <input mdInput placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
+            <md-select *ngIf="isApiAllowed" placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
+                <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
+            </md-select>
+            <button *ngIf="!isApiAllowed" md-button (click)="auth()">
+                Allow Google API <md-icon class="logout-icon">exit_to_app</md-icon>
+            </button>
         </md-input-container>
         <span mdTooltip="You should press 'Save button' to save your changes" *ngIf="isOwner">
             <input type="file" accept=".csv" (change)="onFileChange($event)">

@@ -26,11 +26,14 @@ export class DashboardComponent implements OnInit {
     reportId: number;
     readyToSave: ServerData;
     submitDisabled = false;
+    siteList: string[];
+
     private data: InputDataRow[];
     private filteredData: InputDataRow[];
     private allQueriesData: InputDataRow[];
     private nonBrandedData: InputDataRow[];
     private isOwner: boolean;
+    private isApiAllowed: boolean;
 
     private all_queries_traffic_loss: number;
     private all_queries_traffic_gain: number;
@@ -56,9 +59,22 @@ export class DashboardComponent implements OnInit {
         private reportService: ReportService,
         private route: ActivatedRoute
     ) {
+        this.isApiAllowed = window['isApiAllowed'];
+        this.siteList = window['siteList'];
         this.google = window['google'];
         this.google.charts.load('current', {'packages':['corechart']});
     }
+
+
+    setAllowedApi(status) {
+        this.isApiAllowed = status;
+    }
+
+
+    auth() {
+        window['auth2Login']();
+    }
+
 
     setSort(event, firstField, secondField) {
         let column = event.target;

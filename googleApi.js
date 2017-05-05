@@ -1,3 +1,6 @@
+var siteList = [];
+var isApiAllowed = false;
+
 function auth2Login() {
     gapi.auth2.getAuthInstance().signIn();
 }
@@ -13,6 +16,11 @@ function googleError(response) {
 }
 
 
+function adBlockError() {
+    alert('It seems like you have disabled Google Services via AdBlocker or Privacy Keeper. Out app depends on Google Services and shows you no ads.');
+}
+
+
 function initClient() {
     gapi.client.init({
         apiKey: apiKey,
@@ -21,21 +29,22 @@ function initClient() {
         scope: 'https://www.googleapis.com/auth/webmasters.readonly'
     }).then(function () {
         // Listen for sign-in state changes.
-        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+        gapi.auth2.getAuthInstance().isSignedIn.listen(apiStatusObserver);
 
         // Handle the initial sign-in state.
-        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        apiStatusObserver(gapi.auth2.getAuthInstance().isSignedIn.get());
     },
     googleError);
 }
 
 
-function updateSigninStatus(isSignedIn) {
-    if (isSignedIn) {
+function apiStatusObserver(isAllowed) {
+    isApiAllowed = isAllowed;
+    if (isAllowed) {
         getSitesList();
-    } else {
-        //
     }
+    window.dashboardComponent.zone.run(function() {window.dashboardComponent.setAllowedApi(isAllowed);})
+    window.newReportDialog.zone.run(function() {window.newReportDialog.setAllowedApi(isAllowed);})
 }
 
 

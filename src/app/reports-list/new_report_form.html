@@ -10,9 +10,12 @@
     <md-radio-button value="file">.csv file</md-radio-button>
 </md-radio-group><br><br><br>
 <input [hidden]="dataSource != 'file'" type="file" accept=".csv" (change)="onFileChange($event)">
-<md-select placeholder="Site url" [(ngModel)]="siteUrl" [hidden]="dataSource != 'google'">
+<md-select *ngIf="isApiAllowed" placeholder="Site url" [(ngModel)]="siteUrl" [hidden]="dataSource != 'google'">
     <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
 </md-select>
+<button *ngIf="!isApiAllowed" md-button (click)="auth()">
+    Allow Google API <md-icon class="logout-icon">exit_to_app</md-icon>
+</button>
 <br><br><br>
 <button md-raised-button color="primary" (click)="saveReport(reportName.value, keywords.value.toLowerCase(), siteUrl);">Add</button>
 <button md-raised-button (click)="dialogRef.close()">Close</button>
