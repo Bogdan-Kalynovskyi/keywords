@@ -98,13 +98,13 @@
 
     function googleLogIn(response) {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'api/login.php?authToken=' + encodeURIComponent(response.getBasicProfile().getId()));
+        xhr.open('GET', 'api/login.php?authToken=' + encodeURIComponent(response.getAuthResponse().id_token));
         xhr.onload = function() {
             if (xhr.status === 200) {
                 location.reload();
             }
             else {
-                alert('Could not log into: ' + location.hostname + '. Error: ' + xhr.responseText); // ?
+                alert('Could not log into ' + location.hostname + '. ' + xhr.responseText); // ?
             }
         };
         xhr.send();
@@ -131,7 +131,7 @@
 
 <?php } else { ?>
 
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://apis.google.com/js/platform.js" async defer onerror="alert('It seems like you have disabled Google Services via AdBlocker or Privacy Keeper. Out app depends on Google Services and shows you no ads.')"></script>
     <div id="logged-out">
         <div id="login-form">
             <div style="float:left; width:160px">Company Logo</div>
