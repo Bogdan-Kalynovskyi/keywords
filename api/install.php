@@ -66,7 +66,7 @@ $query = '
 CREATE TABLE IF NOT EXISTS `users` (
   `google_id` varchar(255) NOT NULL,
   `offline_code` varchar(255) NOT NULL,
-  `access_code` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
   PRIMARY KEY `google_id` (`google_id`),
   INDEX `offline_code` (`offline_code`),
   INDEX `access_code` (`access_code`)

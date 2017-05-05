@@ -27,13 +27,13 @@ export class DashboardComponent implements OnInit {
     readyToSave: ServerData;
     submitDisabled = false;
     siteList: string[];
+    isApiAllowed: boolean;
 
     private data: InputDataRow[];
     private filteredData: InputDataRow[];
     private allQueriesData: InputDataRow[];
     private nonBrandedData: InputDataRow[];
     private isOwner: boolean;
-    private isApiAllowed: boolean;
 
     private all_queries_traffic_loss: number;
     private all_queries_traffic_gain: number;

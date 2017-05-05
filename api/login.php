@@ -7,7 +7,6 @@
     // ask Google for verification
 
     if (isset($_GET['authToken'])) {
-        $_SESSION['authToken'] = $_GET['authToken'];
         $url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' . urlencode($_GET['authToken']);
         $json = @file_get_contents($url);
         $obj = @json_decode($json);

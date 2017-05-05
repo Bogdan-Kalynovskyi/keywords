@@ -75,7 +75,7 @@ export class NewReportDialog {
     reportList: Report[];
     siteList: string[];
     changeUrlPromise: Promise<any>;
-    private isApiAllowed: boolean;
+    isApiAllowed: boolean;
 
     constructor(
         public dialogRef: MdDialogRef<NewReportDialog>,

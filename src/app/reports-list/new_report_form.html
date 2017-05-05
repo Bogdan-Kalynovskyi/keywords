@@ -5,7 +5,7 @@
 <md-input-container>
     <input mdInput #keywords placeholder="Branded keywords">
 </md-input-container><br>
-<md-radio-group [(ngModel)]="dataSource">
+<md-radio-group #dataSource>
     <md-radio-button value="google">Google Search Analytics</md-radio-button>
     <md-radio-button value="file">.csv file</md-radio-button>
 </md-radio-group><br><br><br>
@@ -13,7 +13,7 @@
 <md-select *ngIf="isApiAllowed" placeholder="Site url" [(ngModel)]="siteUrl" [hidden]="dataSource != 'google'">
     <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
 </md-select>
-<button *ngIf="!isApiAllowed" md-button (click)="auth()">
+<button *ngIf="!isApiAllowed" md-button (click)="auth()"> <!--disabled -->
     Allow Google API <md-icon class="logout-icon">exit_to_app</md-icon>
 </button>
 <br><br><br>
