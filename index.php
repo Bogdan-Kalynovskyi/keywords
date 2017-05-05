@@ -98,7 +98,7 @@
 
     function googleLogIn(response) {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'api/login.php?authToken=' + encodeURIComponent(response.getAuthResponse().id_token));
+        xhr.open('GET', 'api/login.php?authToken=' + encodeURIComponent(response.getBasicProfile().getId()));
         xhr.onload = function() {
             if (xhr.status === 200) {
                 location.reload();
