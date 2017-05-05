@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, Pipe} from '@angular/core';
+import {Component, Input, OnInit, Pipe, NgZone} from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 
@@ -57,12 +57,14 @@ export class DashboardComponent implements OnInit {
 
     constructor(
         private reportService: ReportService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private _ngZone: NgZone
     ) {
         this.isApiAllowed = window['isApiAllowed'];
         this.siteList = window['siteList'];
         this.google = window['google'];
         this.google.charts.load('current', {'packages':['corechart']});
+        window['dashboardRef'] = {component: this, zone: _ngZone};
     }
 
 

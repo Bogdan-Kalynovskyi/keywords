@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { Component, OnInit, Inject} from '@angular/core';
+import { Component, OnInit, Inject, NgZone} from '@angular/core';
 import { MdDialog, MdDialogRef } from '@angular/material';
 import { DOCUMENT } from '@angular/platform-browser';
 
@@ -81,10 +81,12 @@ export class NewReportDialog {
         public dialogRef: MdDialogRef<NewReportDialog>,
         //public opener: any,
         private reportService: ReportService,
-        private router: Router){
+        private _ngZone: NgZone,
+        private router: Router) {
 
         this.isApiAllowed = window['isApiAllowed'];
         this.siteList = window['siteList'];
+        window['newReportRef'] = {component: this, zone: _ngZone};
     }
 
 

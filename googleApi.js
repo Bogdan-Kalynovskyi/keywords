@@ -43,8 +43,8 @@ function apiStatusObserver(isAllowed) {
     if (isAllowed) {
         getSitesList();
     }
-    window.dashboardComponent.zone.run(function() {window.dashboardComponent.setAllowedApi(isAllowed);})
-    window.newReportDialog.zone.run(function() {window.newReportDialog.setAllowedApi(isAllowed);})
+    window.dashboardRef.zone.run(function() {window.dashboardRef.component.setAllowedApi(isAllowed);});
+    window.newReportRef.zone.run(function() {window.newReportRef.component.setAllowedApi(isAllowed);});
 }
 
 
