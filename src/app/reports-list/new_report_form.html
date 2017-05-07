@@ -5,7 +5,7 @@
 <md-input-container>
     <input mdInput #keywords placeholder="Branded keywords">
 </md-input-container><br>
-<md-radio-group #dataSource>
+<md-radio-group [(ngModel)]="dataSource">
     <md-radio-button value="google">Google Search Analytics</md-radio-button>
     <md-radio-button value="file">.csv file</md-radio-button>
 </md-radio-group><br><br><br>
