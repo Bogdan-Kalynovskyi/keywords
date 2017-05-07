@@ -73,6 +73,11 @@ export class DashboardComponent implements OnInit {
     }
 
 
+    setSitesList(sitesList) {
+        this.siteList = sitesList;
+    }
+
+
     auth() {
         window['auth2Login']();
     }

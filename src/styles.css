@@ -12,5 +12,5 @@ body {
 [hidden] { display: none !important;}
 
 md-select {
-    width: 100%;
+    width: 350px;
 }

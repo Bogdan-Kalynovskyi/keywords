@@ -95,6 +95,11 @@ export class NewReportDialog {
     }
 
 
+    setSitesList(sitesList) {
+        this.siteList = sitesList;
+    }
+
+
     auth() {
         window['auth2Login']();
     }

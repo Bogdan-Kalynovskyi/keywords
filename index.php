@@ -77,7 +77,7 @@
 </head>
 
 <body>
-    <script src="googleApi.js"></script>
+    <script src="src/assets/googleApi.js"></script>
 
 <?php if ($token) { ?>
 

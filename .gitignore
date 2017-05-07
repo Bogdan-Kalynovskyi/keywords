@@ -1,9 +1,9 @@
 # PROJECT SETTINGS
 /settings
 
+
 # compiled output
 /dist
-/tmp
 /src/**/*.js
 
 # dependencies
@@ -38,4 +38,8 @@ Thumbs.db
 
 #docs
 *.csv
+*.xls
 *.xlsx
+
+
+/google_api

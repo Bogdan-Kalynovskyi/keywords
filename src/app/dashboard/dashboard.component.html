@@ -16,7 +16,7 @@
         <md-input-container *ngIf="!isOwner">
             <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" (change)="onDataChange()">
         </md-input-container>
-        <md-input-container *ngIf="isOwner">
+        <span *ngIf="isOwner">
             <span *ngIf="isApiAllowed" mdTooltip="You should press 'Save button' to save your changes">
                 <md-select placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
                     <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
@@ -25,7 +25,7 @@
             <button *ngIf="!isApiAllowed" md-button (click)="auth()">
                 Allow Google API <md-icon class="logout-icon">exit_to_app</md-icon>
             </button>
-        </md-input-container>
+        </span>
         <md-input-container *ngIf="!isOwner">
             <md-select *ngIf="isApiAllowed" placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
                 <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
