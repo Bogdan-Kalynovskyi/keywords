@@ -6,11 +6,8 @@ include 'auth.php';
 
 include_once '../google_api/vendor/autoload.php';
 
-$offline_code = '4/WxXmISKr0pd1wRNLcplqj1xe_bqyqo1TzwWD6KwGyi8';
 
 getReportsList();
-
-connect();
 
 function getReportsList() {
     global $offline_code;
@@ -23,30 +20,68 @@ function getReportsList() {
 }
 
 function getGoogleData($id, $siteUrl, $offlineCode) {
-   // echo $id.'__'.$siteUrl.'__'.$offlineCode."\n";
-
+    connect($offlineCode);
 }
 
-function connect() {
-    global $google_api_id, $client_secret, $offline_code, $api_key;
+
+function connect($offline_code) {
+    echo $offline_code;
+    global $google_api_id, $client_secret, $api_key;
 
     $client = new Google_Client();
+    $client->setApplicationName('Phraseresearch API');
     $client->setClientId($google_api_id);
+
     $client->setClientSecret($client_secret);
-    //$client->setAccessType("offline");
+
+    $client->setRedirectUri('http://oldo.hol.es/api/get_updates.php');
+
+    $client->setDeveloperKey($api_key);
+    $client->setAccessType("offline");
+    $client->setScopes('https://www.googleapis.com/auth/webmasters.readonly');
+    $client->setApprovalPrompt('force');
+
+
+    $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
+    $client->setHttpClient($guzzleClient);
+
+    echo '000'.$offline_code."\n";
+        var_dump($client->authenticate($offline_code));
+        echo '11'.$offline_code;
+        $access_token = $client->getAccessToken();
+
+
+echo $access_token;
+
+//        $client->authenticate($offline_code);
+
+//        $_SESSION['token'] = $client->getAccessToken();
+//        $client->getAccessToken("refreshToken");
+
+
+
+//        $redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+//        header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+//    if (isset($_SESSION['token'])) {
+//        $client->setAccessToken($_SESSION['token']);
+//    }
+//    if (isset($_REQUEST['logout'])) {
+//        unset($_SESSION['token']);
+//        $client->revokeToken();
+//    }
 
     //$client->setDeveloperKey($api_key);  //smells
 
     //$client->setRedirectUri($redirect_uri);
-    $client->addScope("https://www.googleapis.com/auth/webmasters.readonly");
-    $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
-    $client->setHttpClient($guzzleClient);
 
-    echo $offline_code."\n";
-        $client->authenticate($offline_code);
-    echo '2';
-        $access_token = $client->getAccessToken();
-        echo '3';
+    //$client->addScope("https://www.googleapis.com/auth/webmasters.readonly");
+//    $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
+//    $client->setHttpClient($guzzleClient);
+
+//    echo $offline_code."\n";
+//        $client->authenticate($offline_code);
+//        echo $offline_code;
+//        $access_token = $client->getAccessToken();
 
 
 //    $service = new Google_Service_Webmasters($client);

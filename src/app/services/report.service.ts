@@ -6,7 +6,7 @@ import 'rxjs/add/operator/catch';
 import {Report} from '../models/report';
 
 import any = jasmine.any;
-import {InputDataRow, ServerData} from "../models/input-data-row";
+import {InputDataRow, SeoData} from "../models/input-data-row";
 import {by} from "protractor";
 
 @Injectable()
@@ -151,6 +151,7 @@ export class ReportService {
             .catch(this.handleError);
     }
 
+
     googleDataToInputDataRow(googleData) {
         let byKey = {},
             readyForSave = [];
@@ -192,7 +193,7 @@ export class ReportService {
         for (let key in byKey) {
             byKey[key].ctr = byKey[key].ctr / byKey[key].count;
             byKey[key].position = byKey[key].position / byKey[key].count;
-        };
+        }
 
         return [byKey, readyForSave];
     }
@@ -237,12 +238,9 @@ export class ReportService {
     }
 
 
-    getGoogleData(siteUrl): Promise<any> {
-        let gapi;
-        gapi = window['gapi'];
-
-        let apiKey;
-        apiKey = window['apiKey'];
+    getDataFromGoogleApi(siteUrl): Promise<any> {
+        let gapi = window['gapi'];
+        let apiKey = window['apiKey'];
 
         let date = new Date();
         date.setDate(date.getDate() - 2);
@@ -274,7 +272,7 @@ export class ReportService {
     }
 
 
-    create(name: string, keywords: string, siteUrl: string, seoData: ServerData): Promise<any> {
+    create(name: string, keywords: string, siteUrl: string, seoData: SeoData): Promise<any> {
         return this.http
             .post(this.reportUrl, {name, keywords, siteUrl, seoData}, { headers: this.headers })
             .toPromise()
@@ -283,7 +281,11 @@ export class ReportService {
     }
 
 
-    update(id: number, name: string, siteUrl: string, keywords: string, seoData: ServerData | undefined): Promise<any> {
+    update(id: number, name: string, siteUrl: string, keywords: string, seoData: SeoData | undefined): Promise<any> {
+        // important: if CSV, set siteUrl to '' !!!!!!!!
+        if (seoData) {
+            siteUrl = '';
+        }
         return this.http
             .put(this.reportUrl + '?id=' + id, {name, siteUrl, keywords, seoData}, { headers: this.headers })
             .toPromise()
@@ -335,6 +337,7 @@ export class ReportService {
             .catch(this.handleError);
     }
 
+
     logout(): Promise<any> {
         return this.http.post(this.logoutUrl, { logout: window['xsrfToken'] })
             .toPromise()
@@ -343,9 +346,9 @@ export class ReportService {
             });
     }
 
+
     private handleError(error: any): Promise<any> {
         console.error('An error occurred', error); // TODO aler message
         return Promise.reject(error.message || error);
     }
-
 }

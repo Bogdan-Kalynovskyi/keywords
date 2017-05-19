@@ -8,6 +8,8 @@
         <md-input-container *ngIf="!isOwner">
             <input mdInput placeholder="Report name" [(ngModel)]="report.name" disabled>
         </md-input-container>
+
+
         <md-input-container *ngIf="isOwner">
             <span mdTooltip="You should press 'Save button' to save your changes">
                 <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" (change)="onDataChange()">
@@ -16,7 +18,9 @@
         <md-input-container *ngIf="!isOwner">
             <input mdInput placeholder="Branded keywords" [(ngModel)]="report.keywords" (change)="onDataChange()">
         </md-input-container>
-        <span *ngIf="isOwner">
+
+
+        <span *ngIf="report.siteUrl && isOwner">
             <span *ngIf="isApiAllowed" mdTooltip="You should press 'Save button' to save your changes">
                 <md-select placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
                     <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
@@ -26,7 +30,7 @@
                 Allow Google API <md-icon class="logout-icon">exit_to_app</md-icon>
             </button>
         </span>
-        <md-input-container *ngIf="!isOwner">
+        <md-input-container *ngIf="report.siteUrl && !isOwner">
             <md-select *ngIf="isApiAllowed" placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
                 <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
             </md-select>
@@ -34,12 +38,16 @@
                 Allow Google API <md-icon class="logout-icon">exit_to_app</md-icon>
             </button>
         </md-input-container>
-        <span mdTooltip="You should press 'Save button' to save your changes" *ngIf="isOwner">
+
+
+        <span *ngIf="!report.siteUrl && isOwner" mdTooltip="You should press 'Save button' to save your changes">
             <input type="file" accept=".csv" (change)="onFileChange($event)">
         </span>
-        <input type="file" accept=".csv" (change)="onFileChange($event)" *ngIf="!isOwner">
+        <input *ngIf="!report.siteUrl &&!isOwner" type="file" accept=".csv" (change)="onFileChange($event)">
         <button *ngIf="isOwner" md-raised-button color="primary" (click)="updateData()" [disabled]="report.submitDisabled">Save changes</button>
         <div *ngIf="!isOwner" class="warning">Your changes could not be saved</div>
+
+
     </div>
     <div class="scrolling-content">
         <md-tab-group>
@@ -113,7 +121,7 @@
                         </tr>
                         <tr *ngFor="let dataTable of allQueriesData">
                             <td>{{ dataTable.query }}</td>
-                            <td>{{ dataTable.page }}</td>
+                            <td><a href="{{ dataTable.page }}" target="_blank">{{ dataTable.page }}</a></td>
                             <td>{{ dataTable.clicks }}</td>
                             <td>{{ dataTable.impressions }}</td>
                             <td>{{ dataTable.position }}</td>
@@ -159,7 +167,7 @@
                         </tr>
                         <tr *ngFor="let dataTable of nonBrandedData">
                             <td>{{ dataTable.query }}</td>
-                            <td>{{ dataTable.page }}</td>
+                            <td><a href="{{ dataTable.page }}" target="_blank">{{ dataTable.page }}</a></td>
                             <td>{{ dataTable.clicks }}</td>
                             <td>{{ dataTable.impressions }}</td>
                             <td>{{ dataTable.position }}</td>

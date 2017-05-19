@@ -15,4 +15,4 @@ export class InputDataRow {
     nr: number[];
 }
 
-export type ServerData = Array< Array< any > >;
+export type SeoData = Array< Array< any > >;

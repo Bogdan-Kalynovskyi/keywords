@@ -9,9 +9,13 @@ import { ReportService } from './services/report.service';
 })
 
 export class AppComponent {
+    email: string;
+
     constructor(
         private reportService: ReportService
-    ) {}
+    ) {
+        this.email = window['userEmail'];
+    }
 
     logout() {
         this.reportService.logout();

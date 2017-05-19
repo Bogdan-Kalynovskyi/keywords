@@ -5,7 +5,7 @@ import 'rxjs/add/operator/switchMap';
 import { Report } from '../models/report';
 import { ReportService } from '../services/report.service';
 
-import {InputDataRow, ServerData} from '../models/input-data-row';
+import {InputDataRow, SeoData} from '../models/input-data-row';
 
 @Pipe({name: 'round'})
 export class RoundPipe {
@@ -24,7 +24,7 @@ export class DashboardComponent implements OnInit {
     @Input()
     report: Report;
     reportId: number;
-    readyToSave: ServerData;
+    csvParsedReadyToSave: SeoData;
     submitDisabled = false;
     siteList: string[];
     isApiAllowed: boolean;
@@ -113,6 +113,7 @@ export class DashboardComponent implements OnInit {
         });
     }
 
+
     drawChart() {
         let nonBrandedChartOptions =  {
             title: 'Non Branded queries',
@@ -138,14 +139,20 @@ export class DashboardComponent implements OnInit {
             chart.draw(data, brandedChartOptions);
     }
 
+    setTitle(title) {
+        document.title = title;
+    }
+
     ngOnInit() {
         if (this.route.snapshot.params['id']) {
             this.route.params.switchMap((params: Params) => {
                 this.reportId = params['id'];
+                window['showLoader']();
                 return this.reportService.getReport(+this.reportId);
             })
             .subscribe(reportData => {
                 if (reportData) {
+                    this.setTitle(reportData.name);
                     this.isOwner = reportData.isOwner === '1';
                     this.report = {
                         id: this.reportId,
@@ -174,21 +181,23 @@ export class DashboardComponent implements OnInit {
                         start = new Date(end);
                         start.setDate(start.getDate() - 90);
 
-                        this.reportService.getSeoData(this.reportId, start.getTime() / 1000, end.getTime() / 1000)
+                        this.reportService.getSeoData(this.reportId, start.getTime() / 1000, end.getTime() / 1000) // note there are start and end time arguments
                             .then(data => {
                                 //todo code dupe
                                 this.data = data;
                                 this.dataCalculate(this.data, this.report.keywords);
                             });
                     }
+
                     else {
-                        this.reportService.getSeoData(this.reportId)
+                        this.reportService.getSeoData(this.reportId)    // note there is only one argument
                             .then(data => {
                                 //todo code dupe
                                 this.data = data;
                                 this.dataCalculate(this.data, this.report.keywords);
                             });
                     }
+                    window['hideLoader']();
                 }
             });
         }
@@ -489,7 +498,7 @@ export class DashboardComponent implements OnInit {
         let reader = new FileReader();
         reader.onload = (theFile =>
                 e => {
-                    [this.data, this.readyToSave] = this.reportService.parseCsv(e.target.result);
+                    [this.data, this.csvParsedReadyToSave] = this.reportService.parseCsv(e.target.result);
                     this.onDataChange();
                 }
         )(ev.target.files[0]);
@@ -502,11 +511,11 @@ export class DashboardComponent implements OnInit {
         if (this.report.siteUrl) {
             this.submitDisabled = true;
             // todo show spinner
-            this.reportService.getGoogleData(this.report.siteUrl)
+            this.reportService.getDataFromGoogleApi(this.report.siteUrl)
                 .then(data => {
                     this.submitDisabled = false;
                     this.data = data[0] as InputDataRow[];
-                    this.readyToSave = data[1];
+                    this.csvParsedReadyToSave = data[1];
                     this.onDataChange();
                 });
         }
@@ -515,7 +524,7 @@ export class DashboardComponent implements OnInit {
 
     updateData() {
         setTimeout(() => {
-            this.reportService.update(this.report.id, this.report.name, this.report.siteUrl, this.report.keywords, this.readyToSave)
+            this.reportService.update(this.report.id, this.report.name, this.report.siteUrl, this.report.keywords, this.csvParsedReadyToSave)
                 .then(() => {
                     location.reload();
                 });

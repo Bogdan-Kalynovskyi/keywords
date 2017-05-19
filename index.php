@@ -3,6 +3,7 @@
     session_start();
     $token = isset($_SESSION['xsrfToken']) && $_SESSION['xsrfToken'];
     $has_offline_access = isset($_SESSION['offline']);
+    $email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
 ?>
 <!DOCTYPE html>
 <html>
@@ -10,7 +11,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title><?php echo $token ? '::' : ':: Log In' ?></title>
+    <title><?php echo $token ? '' : 'Log In' ?></title>
     <base href="/">
     <meta name="google-signin-client_id" content="<?php echo $google_api_id ?>">
     <style>
@@ -77,7 +78,7 @@
 </head>
 
 <body>
-    <script src="src/assets/googleApi.js"></script>
+    <script src="dist/assets/googleApi.js"></script>
 
 <?php if ($token) { ?>
 
@@ -86,6 +87,7 @@
         var hasOfflineAccess = '<?php echo $has_offline_access ?>';
         var apiKey = '<?php echo $api_key ?>';
         var clientId = '<?php echo $google_api_id ?>';
+        var userEmail = '<?php $email ?>';
     </script>
 
     <app-root><div id="loading">Loading...</div></app-root>
@@ -129,6 +131,15 @@
             };
             xhr.send();
         }
+
+        function showLoader() {
+            document.getElementById("img-preloader").style.display = "block";
+        }
+
+        function hideLoader() {
+            document.getElementById("img-preloader").style.display = "none";
+        }
+
     </script>
     <script src="https://apis.google.com/js/platform.js" async defer onerror="adBlockError()"></script>
 
@@ -151,5 +162,6 @@
     <script src="dist/inline.bundle.js"></script>
     <script src="dist/vendor.bundle.js"></script>
     <script src="dist/main.bundle.js"></script>
+    <img src="dist/assets/img/ajax.gif" id="img-preloader" alt="">
 </body>
 </html>

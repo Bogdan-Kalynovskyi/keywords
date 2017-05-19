@@ -7,7 +7,7 @@
 
 $google_api_id = '39575750767-4d3ieqoemj7kc43hi76qrp9ft2qnqo3e.apps.googleusercontent.com';
 $api_key = 'AIzaSyD5_k-oAl-WZNaDGey4k3U9_noryurZjKo';
-$client_secret = 'PLWj64InYYO9CbQ5txaipDD5';
+$client_secret = 'H-4n_ZGNKJphWXdRW3OGTPrF';
 
 
 $db_host = '127.0.0.1';

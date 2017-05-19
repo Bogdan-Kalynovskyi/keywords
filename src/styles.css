@@ -14,3 +14,15 @@ body {
 md-select {
     width: 350px;
 }
+
+
+#img-preloader {
+    position: absolute;
+    z-index: 90000;
+    top: calc(50% - 32px);
+    left: calc(50% - 32px);
+    width: 64px;
+    height: 64px;
+    opacity: 0.8;
+    display: none;
+}

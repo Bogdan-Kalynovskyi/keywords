@@ -64,7 +64,7 @@ DROP TABLE IF EXISTS `users`;
 mysql_query($query);
 $query = '
 CREATE TABLE IF NOT EXISTS `users` (
-  `google_id` varchar(255) NOT NULL,
+  `google_id` BIGINT NOT NULL,
   `offline_code` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   PRIMARY KEY `google_id` (`google_id`),

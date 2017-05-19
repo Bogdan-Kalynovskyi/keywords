@@ -12,6 +12,7 @@
         $obj = @json_decode($json);
         if ($obj && isset($obj->aud) && $obj->aud === $google_api_id) {
             $_SESSION['userGoogleId'] = $obj->sub;
+            $_SESSION['email'] = $obj->email;
             $_SESSION['xsrfToken'] = base64_encode(openssl_random_pseudo_bytes(32));
 
             $link = mysql_connect($db_host, $db_user, $db_pass);
@@ -23,7 +24,7 @@
                 die;
             }
 
-            $result = mysql_query('SELECT `offline_code` FROM `users` WHERE google_id = ' . esc($_SESSION['userGoogleId']));
+            $result = mysql_query('SELECT `offline_code` FROM `users` WHERE google_id = ' . intval($obj->sub));
             if ($result) {
                 $result = mysql_fetch_array($result);
                 if ($result) {

@@ -5,7 +5,12 @@ import { DOCUMENT } from '@angular/platform-browser';
 
 import { Report } from '../models/report';
 import { ReportService } from '../services/report.service';
-import {InputDataRow, ServerData} from "../models/input-data-row";
+import {InputDataRow, SeoData} from "../models/input-data-row";
+
+import {FormControl} from '@angular/forms';
+
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/map';
 
 @Component({
     selector: 'app-reports-list',
@@ -71,11 +76,15 @@ export class ReportsListComponent implements OnInit {
 
 export class NewReportDialog {
     data: InputDataRow[];
-    readyToSave: ServerData;
+    csvParsedReadyToSave: SeoData;
     reportList: Report[];
     siteList: string[];
     changeUrlPromise: Promise<any>;
     isApiAllowed: boolean;
+    dataSource;
+    siteUrl;
+    siteCtrl: FormControl;
+    filteredSites: any;
 
     constructor(
         public dialogRef: MdDialogRef<NewReportDialog>,
@@ -87,8 +96,18 @@ export class NewReportDialog {
         this.isApiAllowed = window['isApiAllowed'];
         this.siteList = window['siteList'];
         window['newReportRef'] = {component: this, zone: _ngZone};
+
+        this.siteCtrl = new FormControl();
+        this.filteredSites = this.siteCtrl.valueChanges
+            .startWith(null)
+            .map(name => this.filterSites(name));
+
     }
 
+    filterSites(val: string) {
+        return val ? this.siteList.filter(s => new RegExp(`^${val}`, 'gi').test(s))
+            : this.siteList;
+    }
 
     setAllowedApi(status) {
         this.isApiAllowed = status;
@@ -108,23 +127,23 @@ export class NewReportDialog {
     onFileChange(ev){
         let reader = new FileReader();
         reader.onload = (theFile => e => {
-            [this.data, this.readyToSave] = this.reportService.parseCsv(e.target.result);
+            [this.data, this.csvParsedReadyToSave] = this.reportService.parseCsv(e.target.result);
         })(ev.target.files[0]);
         reader.readAsText(ev.target.files[0]);
     }
 
 
     onUrlChange(siteUrl){
-        this.changeUrlPromise = this.reportService.getGoogleData(siteUrl)
+        this.changeUrlPromise = this.reportService.getDataFromGoogleApi(siteUrl)
             .then(data => {
-                [this.data, this.readyToSave] = data;
+                [this.data, this.csvParsedReadyToSave] = data;
             });
     }
 
 
     addReport(name: string, keywords: string, siteUrl: string) {
         this.dialogRef.close();
-        this.reportService.create(name, keywords, siteUrl, this.readyToSave)
+        this.reportService.create(name, keywords, siteUrl, this.csvParsedReadyToSave)
             .then(reportId => {
                 this.reportList.unshift({
                     id: reportId,
@@ -138,13 +157,13 @@ export class NewReportDialog {
     }
 
     saveReport(name: string, keywords: string, siteUrl: string) {
+        window['showLoader']();
         setTimeout(() => {
 
             if (siteUrl) {
-                // todo show spinner
-                this.changeUrlPromise = this.reportService.getGoogleData(siteUrl)
+                this.changeUrlPromise = this.reportService.getDataFromGoogleApi(siteUrl)
                     .then(data => {
-                        [this.data, this.readyToSave] = data;
+                        [this.data, this.csvParsedReadyToSave] = data;
                         this.addReport(name, keywords, siteUrl);
                     });
                 //this.changeUrlPromise;
@@ -152,6 +171,7 @@ export class NewReportDialog {
 
                 //    });
                 if (!window['hasOfflineAccess']) {
+                    window['hideLoader']();
                     let gapi = window['gapi'];
                     let auth = gapi.auth2.getAuthInstance();
                     let user = auth.currentUser.get();
@@ -164,7 +184,7 @@ export class NewReportDialog {
                 }
             }
             else {
-                // !!!!! set siteUrl to '' !!!!!!!!
+                // important: if CSV, set siteUrl to '' !!!!!!!!
                 this.addReport(name, keywords, '');
             }
         }, 0);

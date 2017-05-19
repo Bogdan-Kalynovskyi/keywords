@@ -36,7 +36,7 @@ function get () {
         $end = intval($_GET['end']);
 
         //todo code dupe
-        $query = mysql_query('SELECT `query`, `page`, SUM(`clicks`) as `clicks`, SUM(`impressions`) as `impressions`, ROUND(AVG(`ctr`)) as `ctr`, ROUND(AVG(`position`)) as `position` FROM `seodata` WHERE report_id=' . $report_id . ' AND date >= ' . $start . ' AND date <= ' . $end . ' GROUP by `query`, `page`');
+        $query = mysql_query('SELECT `query`, `page`, ROUND(SUM(`clicks`)/3) as `clicks`, ROUND(SUM(`impressions`)/3) as `impressions`, ROUND(AVG(`ctr`)) as `ctr`, ROUND(AVG(`position`)) as `position` FROM `seodata` WHERE report_id=' . $report_id . ' AND date >= ' . $start . ' AND date <= ' . $end . ' GROUP by `query`, `page`');
         // todo security chac if the user has access to report id
     }
     else {
