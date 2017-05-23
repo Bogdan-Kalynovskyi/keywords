@@ -81,7 +81,7 @@ export class NewReportDialog {
     siteList: string[];
     changeUrlPromise: Promise<any>;
     isApiAllowed: boolean;
-    dataSource;
+    isGoogle;
     siteUrl;
     siteCtrl: FormControl;
     filteredSites: any;
@@ -105,7 +105,7 @@ export class NewReportDialog {
     }
 
     filterSites(val: string) {
-        return val ? this.siteList.filter(s => new RegExp(`^${val}`, 'gi').test(s))
+        return val ? this.siteList.filter(s => new RegExp(`${val}`, 'gi').test(s))
             : this.siteList;
     }
 
@@ -132,23 +132,32 @@ export class NewReportDialog {
         reader.readAsText(ev.target.files[0]);
     }
 
+    testUrl(url) {
+        return url && /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(url);
+    }
 
     onUrlChange(siteUrl){
-        this.changeUrlPromise = this.reportService.getDataFromGoogleApi(siteUrl)
-            .then(data => {
-                [this.data, this.csvParsedReadyToSave] = data;
-            });
+        if (this.testUrl(siteUrl)) {
+            document.getElementById('addButton').removeAttribute('disabled');
+            this.reportService.getDataFromGoogleApi(siteUrl)
+                .then(data => {
+                    [this.data, this.csvParsedReadyToSave] = data;
+                });
+        }
+        else {
+            document.getElementById('addButton').setAttribute('disabled', '');
+        }
     }
 
 
-    addReport(name: string, keywords: string, siteUrl: string) {
-        this.dialogRef.close();
-        this.reportService.create(name, keywords, siteUrl, this.csvParsedReadyToSave)
+    addReport(name: string, keywords: string, isGoogle: boolean, siteUrl: string) {
+        this.reportService.create(name, keywords, isGoogle, siteUrl, this.csvParsedReadyToSave)
             .then(reportId => {
                 this.reportList.unshift({
                     id: reportId,
                     name: name,
                     keywords: keywords,
+                    isGoogle: isGoogle,
                     siteUrl: siteUrl
                 });
                 //todo : don't get data from db below!!!
@@ -156,22 +165,18 @@ export class NewReportDialog {
             });
     }
 
-    saveReport(name: string, keywords: string, siteUrl: string) {
+    saveReport(name: string, keywords: string, isGoogle, siteUrl: string) {
         window['showLoader']();
+        this.dialogRef.close();
         setTimeout(() => {
-
             if (siteUrl) {
-                this.changeUrlPromise = this.reportService.getDataFromGoogleApi(siteUrl)
+                this.reportService.getDataFromGoogleApi(siteUrl)
                     .then(data => {
                         [this.data, this.csvParsedReadyToSave] = data;
-                        this.addReport(name, keywords, siteUrl);
+                        this.addReport(name, keywords, isGoogle, siteUrl);
                     });
-                //this.changeUrlPromise;
-                   // .then(() => {
 
-                //    });
                 if (!window['hasOfflineAccess']) {
-                    window['hideLoader']();
                     let gapi = window['gapi'];
                     let auth = gapi.auth2.getAuthInstance();
                     let user = auth.currentUser.get();
@@ -185,7 +190,7 @@ export class NewReportDialog {
             }
             else {
                 // important: if CSV, set siteUrl to '' !!!!!!!!
-                this.addReport(name, keywords, '');
+                this.addReport(name, keywords, isGoogle, '');
             }
         }, 0);
     }

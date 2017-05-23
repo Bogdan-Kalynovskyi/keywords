@@ -79,6 +79,7 @@
 
 <body>
     <script src="dist/assets/googleApi.js"></script>
+    <img src="dist/assets/img/ajax.gif" id="img-preloader" alt="">
 
 <?php if ($token) { ?>
 
@@ -88,6 +89,14 @@
         var apiKey = '<?php echo $api_key ?>';
         var clientId = '<?php echo $google_api_id ?>';
         var userEmail = '<?php $email ?>';
+
+        function showLoader() {
+            document.getElementById("img-preloader").style.display = "block";
+        }
+
+        function hideLoader() {
+            document.getElementById("img-preloader").style.display = "none";
+        }
     </script>
 
     <app-root><div id="loading">Loading...</div></app-root>
@@ -131,15 +140,6 @@
             };
             xhr.send();
         }
-
-        function showLoader() {
-            document.getElementById("img-preloader").style.display = "block";
-        }
-
-        function hideLoader() {
-            document.getElementById("img-preloader").style.display = "none";
-        }
-
     </script>
     <script src="https://apis.google.com/js/platform.js" async defer onerror="adBlockError()"></script>
 
@@ -162,6 +162,6 @@
     <script src="dist/inline.bundle.js"></script>
     <script src="dist/vendor.bundle.js"></script>
     <script src="dist/main.bundle.js"></script>
-    <img src="dist/assets/img/ajax.gif" id="img-preloader" alt="">
+
 </body>
 </html>

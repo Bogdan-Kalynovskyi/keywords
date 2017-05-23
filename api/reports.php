@@ -62,7 +62,7 @@ function get () {
     $report_id = isset($_GET['id']) ? intval($_GET['id']) : false;
 
     if ($report_id) {
-        $query = mysql_query('SELECT `name`, `keywords`, `siteUrl`, `yes_date`, IF(`owner`='.esc($_SESSION['userGoogleId']).', 1, 0) as `isOwner`  FROM `reports` WHERE id='.$report_id);
+        $query = mysql_query('SELECT `name`, `keywords`, `is_google`, `siteUrl`, `yes_date`, IF(`owner`='.esc($_SESSION['userGoogleId']).', 1, 0) as `isOwner`  FROM `reports` WHERE id='.$report_id);
         $result = mysql_fetch_array($query, MYSQL_ASSOC);
 
         if ($result) {
@@ -88,7 +88,7 @@ function get () {
 function post () {
     $post = json_decode(file_get_contents('php://input'), true);
 
-    mysql_query('INSERT INTO `reports` (`keywords`, `name`, `siteUrl`, `owner`, `created`, `yes_date`) VALUES ('.esc($post['keywords']).', '.esc($post['name']).', '.esc($post['siteUrl']).', '.esc($_SESSION['userGoogleId']).', UNIX_TIMESTAMP(), UNIX_TIMESTAMP())');
+    mysql_query('INSERT INTO `reports` (`keywords`, `name`, `is_google`, `siteUrl`, `owner`, `created`, `yes_date`) VALUES ('.esc($post['keywords']).', '.esc($post['name']).', '.($post['isGoogle'] === 'true' ? 1 : 0).', '.esc($post['siteUrl']).', '.esc($_SESSION['userGoogleId']).', UNIX_TIMESTAMP(), UNIX_TIMESTAMP())');
 
     $report_id = mysql_insert_id();
     add_seoData($post['seoData'], $report_id);

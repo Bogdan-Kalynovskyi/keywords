@@ -1,4 +1,6 @@
-ng build --prod --output-hashing=none
+ng build --prod --output-hashing=none --sourcemaps=true
+
+!!! AUTH !!!!
 
 cpanel
 https://us2.dejanseo.com.au:2083/

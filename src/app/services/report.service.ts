@@ -143,6 +143,7 @@ export class ReportService {
                 return {
                     name: all.name,
                     keywords: all.keywords,
+                    isGoogle: (all.is_google == '1'),
                     siteUrl: all.siteUrl,
                     yes_date: all.yes_date,
                     isOwner: all.isOwner
@@ -160,7 +161,7 @@ export class ReportService {
             let row = googleData[i],
                 query = row.keys[0],
                 page = row.keys[1],
-                key = query+page,
+                key = query + page,
                 date = new Date(row.keys[2]).getTime() / 1000,
                 clicks = Math.round(row.clicks),
                 impressions = Math.round(row.impressions),
@@ -190,12 +191,15 @@ export class ReportService {
             readyForSave.push([query, clicks, impressions, ctr, position, date, page]);
         }
 
+        let response = [];
         for (let key in byKey) {
-            byKey[key].ctr = byKey[key].ctr / byKey[key].count;
-            byKey[key].position = byKey[key].position / byKey[key].count;
+            let el = byKey[key];
+            el.ctr = el.ctr / el.count;
+            el.position = el.position / el.count;
+            response.push(el);
         }
 
-        return [byKey, readyForSave];
+        return [response, readyForSave];
     }
 
 
@@ -272,9 +276,9 @@ export class ReportService {
     }
 
 
-    create(name: string, keywords: string, siteUrl: string, seoData: SeoData): Promise<any> {
+    create(name: string, keywords: string, isGoogle: boolean, siteUrl: string, seoData: SeoData): Promise<any> {
         return this.http
-            .post(this.reportUrl, {name, keywords, siteUrl, seoData}, { headers: this.headers })
+            .post(this.reportUrl, {name, keywords, isGoogle, siteUrl, seoData}, { headers: this.headers })
             .toPromise()
             .then(response => response.text())
             .catch(this.handleError);
@@ -349,6 +353,7 @@ export class ReportService {
 
     private handleError(error: any): Promise<any> {
         console.error('An error occurred', error); // TODO aler message
+        window['hideLoader']();
         return Promise.reject(error.message || error);
     }
 }

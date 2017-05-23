@@ -1,5 +1,6 @@
-import {Component, Input, OnInit, Pipe, NgZone} from '@angular/core';
+import {Component, Input, OnInit, Pipe, NgZone, ChangeDetectorRef/*, ApplicationRef*/} from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import {FormControl} from '@angular/forms';
 import 'rxjs/add/operator/switchMap';
 
 import { Report } from '../models/report';
@@ -28,6 +29,8 @@ export class DashboardComponent implements OnInit {
     submitDisabled = false;
     siteList: string[];
     isApiAllowed: boolean;
+    siteCtrl: FormControl;
+    filteredSites: any;
 
     private data: InputDataRow[];
     private filteredData: InputDataRow[];
@@ -58,30 +61,38 @@ export class DashboardComponent implements OnInit {
     constructor(
         private reportService: ReportService,
         private route: ActivatedRoute,
-        private _ngZone: NgZone
+        private _ngZone: NgZone,
+        private _changeDetectorRef: ChangeDetectorRef//,
+        // private _applicationRef: ApplicationRef
     ) {
         this.isApiAllowed = window['isApiAllowed'];
         this.siteList = window['siteList'];
         this.google = window['google'];
         this.google.charts.load('current', {'packages':['corechart']});
         window['dashboardRef'] = {component: this, zone: _ngZone};
+
+        this.siteCtrl = new FormControl();
+        this.filteredSites = this.siteCtrl.valueChanges
+            .startWith(null)
+            .map(name => this.filterSites(name));
     }
 
+    filterSites(val: string) {
+        return val ? this.siteList.filter(s => new RegExp(`${val}`, 'gi').test(s))
+            : this.siteList;
+    }
 
     setAllowedApi(status) {
         this.isApiAllowed = status;
     }
 
-
     setSitesList(sitesList) {
         this.siteList = sitesList;
     }
 
-
     auth() {
         window['auth2Login']();
     }
-
 
     setSort(event, firstField, secondField) {
         let column = event.target;
@@ -158,6 +169,7 @@ export class DashboardComponent implements OnInit {
                         id: this.reportId,
                         name: reportData.name,
                         keywords: reportData.keywords,
+                        isGoogle: reportData.isGoogle,
                         siteUrl: reportData.siteUrl
                     };
 
@@ -413,7 +425,9 @@ export class DashboardComponent implements OnInit {
                 }
                 else {
                     tmp = this.positions_stats_resulted.find(data => data.position == j);
-                    row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+                    if (tmp) {
+                        row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+                    }
                 }
             }
             if ( row.position < 2 ) {
@@ -425,7 +439,9 @@ export class DashboardComponent implements OnInit {
                 } else {
                     tmp = this.positions_stats_resulted.find(data => data.position == 10);
                 }
-                row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+                if (tmp) {
+                    row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+                }
             }
         });
 
@@ -436,7 +452,9 @@ export class DashboardComponent implements OnInit {
                 }
                 else {
                     tmp = this.positions_stats_resulted.find(data => data.position == j);
-                    row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+                    if (tmp) {
+                        row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+                    }
                 }
             }
             if (row.position < 2) {
@@ -448,7 +466,9 @@ export class DashboardComponent implements OnInit {
                 } else {
                     tmp = this.positions_stats_resulted.find(data => data.position == 10);
                 }
-                row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+                if (tmp) {
+                    row.nr.push(row.impressions * tmp.ctr_calculated + row.ctr_delta);
+                }
             }
         });
 
@@ -484,6 +504,11 @@ export class DashboardComponent implements OnInit {
             ['Traffic Gain', this.non_branded_traffic_gain]
         ];
 
+        setTimeout(() => {
+            this._changeDetectorRef.detectChanges();
+            // this._applicationRef.tick();
+        }, 100);
+
         this.google.charts.setOnLoadCallback(() => this.drawChart());
     };
 
@@ -497,37 +522,51 @@ export class DashboardComponent implements OnInit {
     onFileChange(ev){
         let reader = new FileReader();
         reader.onload = (theFile =>
-                e => {
-                    [this.data, this.csvParsedReadyToSave] = this.reportService.parseCsv(e.target.result);
-                    this.onDataChange();
-                }
+            e => {
+                [this.data, this.csvParsedReadyToSave] = this.reportService.parseCsv(e.target.result);
+                this.onDataChange();
+            }
         )(ev.target.files[0]);
 
         reader.readAsText(ev.target.files[0]);
     }
 
+    testUrl(url) {
+        return url && /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(url);
+    }
 
     onUrlChange(){
-        if (this.report.siteUrl) {
-            this.submitDisabled = true;
-            // todo show spinner
+        if (this.testUrl(this.report.siteUrl)) {
+            this.submitDisabled = false;
+            window['showLoader']();
             this.reportService.getDataFromGoogleApi(this.report.siteUrl)
                 .then(data => {
-                    this.submitDisabled = false;
-                    this.data = data[0] as InputDataRow[];
-                    this.csvParsedReadyToSave = data[1];
-                    this.onDataChange();
+                    if (data) {
+                        this.submitDisabled = false;
+                        this.data = data[0] as InputDataRow[];
+                        this.csvParsedReadyToSave = data[1];
+                        this.onDataChange();
+                    }
+                    window['hideLoader']();
                 });
+        } else {
+            this.submitDisabled = true;
+            alert('The site url is not valid');
         }
     }
 
 
     updateData() {
         setTimeout(() => {
-            this.reportService.update(this.report.id, this.report.name, this.report.siteUrl, this.report.keywords, this.csvParsedReadyToSave)
-                .then(() => {
-                    location.reload();
-                });
+            if (this.testUrl(this.report.siteUrl)) {
+                window['showLoader']();
+                this.reportService.update(this.report.id, this.report.name, this.report.siteUrl, this.report.keywords, this.csvParsedReadyToSave)
+                    .then(() => {
+                        location.reload();
+                    });
+            } else {
+                alert('The site url is not valid');
+            }
         }, 0);
     }
 }

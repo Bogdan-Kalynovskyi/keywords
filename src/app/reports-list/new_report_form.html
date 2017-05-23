@@ -5,34 +5,26 @@
 <md-input-container>
     <input mdInput #keywords placeholder="Branded keywords">
 </md-input-container><br>
-<md-radio-group [(ngModel)]="dataSource">
-    <md-radio-button value="google">Google Search Analytics</md-radio-button>
-    <md-radio-button value="file">.csv file</md-radio-button>
+<md-radio-group [(ngModel)]="isGoogle">
+    <md-radio-button value=true>Google Search Analytics</md-radio-button>
+    <md-radio-button value=false>.csv file</md-radio-button>
 </md-radio-group><br><br><br>
+<input [hidden]="isGoogle != 'false'" type="file" accept=".csv" (change)="onFileChange($event)">
+<span [hidden]="isGoogle != 'true'">
+    <span *ngIf="isApiAllowed">
+        <md-input-container class="dropdown">
+            <input mdInput placeholder="Site url" (change)="onUrlChange(siteUrl)" [mdAutocomplete]="auto" [(ngModel)]="siteUrl" [formControl]="siteCtrl">
+        </md-input-container>
 
-<input [hidden]="dataSource != 'file'" type="file" accept=".csv" (change)="onFileChange($event)">
-
-<span [hidden]="dataSource != 'google'">
-    <md-select *ngIf="isApiAllowed" placeholder="Site url" [(ngModel)]="siteUrl" [hidden]="dataSource != 'google'">
-        <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
-    </md-select>
+        <md-autocomplete #auto="mdAutocomplete" class="dropdown">
+            <md-option *ngFor="let site of filteredSites | async" [value]="site" (click)="onUrlChange(siteUrl)">{{ site }}</md-option>
+        </md-autocomplete>
+    </span>
     <button *ngIf="!isApiAllowed" md-button (click)="auth()"> <!--disabled -->
         Allow Google API <md-icon class="logout-icon">exit_to_app</md-icon>
     </button>
 </span>
 
-<md-input-container>
-    <input mdInput placeholder="Site url" [mdAutocomplete]="auto" [formControl]="siteCtrl">
-</md-input-container>
-
-<md-autocomplete #auto="mdAutocomplete">
-    <md-option *ngFor="let site of filteredSites | async" [value]="site">
-        {{ site }}
-    </md-option>
-</md-autocomplete>
-
-
-
 <br><br><br>
-<button md-raised-button color="primary" (click)="saveReport(reportName.value, keywords.value.toLowerCase(), siteUrl);">Add</button>
+<button md-raised-button color="primary" id="addButton" (click)="saveReport(reportName.value, keywords.value.toLowerCase(), isGoogle, siteUrl);">Add</button>
 <button md-raised-button (click)="dialogRef.close()">Close</button>

@@ -20,31 +20,45 @@
         </md-input-container>
 
 
-        <span *ngIf="report.siteUrl && isOwner">
+        <span *ngIf="report.isGoogle && isOwner">
             <span *ngIf="isApiAllowed" mdTooltip="You should press 'Save button' to save your changes">
-                <md-select placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
-                    <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
-                </md-select>
+
+                <md-input-container class="dropdown">
+                    <input mdInput placeholder="Site url" (change)="onUrlChange()" [mdAutocomplete]="auto" [(ngModel)]="report.siteUrl" [formControl]="siteCtrl" name="siteUrl">
+                </md-input-container>
+
+                <md-autocomplete #auto="mdAutocomplete" class="dropdown">
+                    <md-option *ngFor="let site of filteredSites | async" [value]="site" (click)="onUrlChange()">{{ site }}</md-option>
+                </md-autocomplete>
+
             </span>
             <button *ngIf="!isApiAllowed" md-button (click)="auth()">
                 Allow Google API <md-icon class="logout-icon">exit_to_app</md-icon>
             </button>
         </span>
-        <md-input-container *ngIf="report.siteUrl && !isOwner">
-            <md-select *ngIf="isApiAllowed" placeholder="Site url" (change)="onUrlChange()" [(ngModel)]="report.siteUrl">
-                <md-option *ngFor="let site of siteList" [value]="site">{{ site }}</md-option>
-            </md-select>
+
+        <span *ngIf="report.isGoogle && !isOwner">
+            <span *ngIf="isApiAllowed">
+
+                <md-input-container class="dropdown">
+                    <input mdInput placeholder="Site url" (change)="onUrlChange()" [mdAutocomplete]="auto" [(ngModel)]="report.siteUrl" [formControl]="siteCtrl" name="siteUrl">
+                </md-input-container>
+
+                <md-autocomplete #auto="mdAutocomplete" class="dropdown">
+                    <md-option *ngFor="let site of filteredSites | async" [value]="site" (click)="onUrlChange()">{{ site }}</md-option>
+                </md-autocomplete>
+
+            </span>
             <button *ngIf="!isApiAllowed" md-button (click)="auth()">
                 Allow Google API <md-icon class="logout-icon">exit_to_app</md-icon>
             </button>
-        </md-input-container>
+        </span>
 
-
-        <span *ngIf="!report.siteUrl && isOwner" mdTooltip="You should press 'Save button' to save your changes">
+        <span *ngIf="!report.isGoogle && isOwner" mdTooltip="You should press 'Save button' to save your changes">
             <input type="file" accept=".csv" (change)="onFileChange($event)">
         </span>
-        <input *ngIf="!report.siteUrl &&!isOwner" type="file" accept=".csv" (change)="onFileChange($event)">
-        <button *ngIf="isOwner" md-raised-button color="primary" (click)="updateData()" [disabled]="report.submitDisabled">Save changes</button>
+        <input *ngIf="!report.isGoogle &&!isOwner" type="file" accept=".csv" (change)="onFileChange($event)">
+        <button *ngIf="isOwner" md-raised-button color="primary" (click)="updateData()" [disabled]="submitDisabled">Save changes</button>
         <div *ngIf="!isOwner" class="warning">Your changes could not be saved</div>
 
 
