@@ -146,7 +146,9 @@ export class ReportService {
                     isGoogle: (all.is_google == '1'),
                     siteUrl: all.siteUrl,
                     yes_date: all.yes_date,
-                    isOwner: all.isOwner
+                    isOwner: all.isOwner,
+                    dateFromAvailable: all.dateFromAvailable,
+                    dateToAvailable: all.dateToAvailable
                 };
             })
             .catch(this.handleError);
@@ -161,8 +163,9 @@ export class ReportService {
             let row = googleData[i],
                 query = row.keys[0],
                 page = row.keys[1],
+                dateArr = row.keys[2].split('-'),
                 key = query + page,
-                date = new Date(row.keys[2]).getTime() / 1000,
+                date = Date.UTC(dateArr[0], dateArr[1] - 1, dateArr[2]) / 1000,
                 clicks = Math.round(row.clicks),
                 impressions = Math.round(row.impressions),
                 ctr = Math.round(row.ctr * 100000),
@@ -249,7 +252,7 @@ export class ReportService {
         let date = new Date();
         date.setDate(date.getDate() - 2);
         let endDate = this.getGoogleFormattedDate(date);
-        date.setDate(date.getDate() - 90); // note we already did -2 above
+        date.setDate(date.getDate() - 90); // note we already did -2 above (3 days more)
         let startDate = this.getGoogleFormattedDate(date);
 
         return gapi.client.request({
@@ -286,10 +289,6 @@ export class ReportService {
 
 
     update(id: number, name: string, siteUrl: string, keywords: string, seoData: SeoData | undefined): Promise<any> {
-        // important: if CSV, set siteUrl to '' !!!!!!!!
-        if (seoData) {
-            siteUrl = '';
-        }
         return this.http
             .put(this.reportUrl + '?id=' + id, {name, siteUrl, keywords, seoData}, { headers: this.headers })
             .toPromise()
@@ -305,7 +304,7 @@ export class ReportService {
     }
 
 
-    getSeoData(id: number, startTime?: Number, endTime?: Number): Promise<any> {
+    getSeoData(id: number, startTime: Number, endTime: Number): Promise<any> {
         let url = '';
         if (startTime) {
             url = '&start=' + startTime + '&end=' + endTime;

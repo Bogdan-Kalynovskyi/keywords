@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { RoutingModule } from './routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '@angular/material';
+import { MdDatepickerModule,  MdNativeDateModule} from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { ReportsListComponent, NewReportDialog } from './reports-list/reports-list.component';
@@ -27,6 +28,8 @@ import { ReportService } from './services/report.service';
         HttpModule,
         RoutingModule,
         BrowserAnimationsModule,
+        MdDatepickerModule,
+        MdNativeDateModule,
         MaterialModule
     ],
     providers: [ReportService],

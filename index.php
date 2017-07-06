@@ -11,48 +11,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title><?php echo $token ? '' : 'Log In' ?></title>
+    <title>Phrase Research <?php echo $token ? '::' : ':: Log In' ?></title>
+    <link rel="stylesheet" type="text/css" href="stajl.css">
     <base href="/">
     <meta name="google-signin-client_id" content="<?php echo $google_api_id ?>">
-    <style>
-        body {
-            margin: 0;
-        }
-        #loading {
-            position: absolute;
-            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-            color: #bfbfbf;
-            font-size: 1.75rem;
-            letter-spacing: 0.7px;
-            font-weight: 500;
-            width: 100%;
-            top: calc(50% - 28px);
-            text-align: center;
-        }
-    </style>
     <?php if (!$token) { ?>
     <style>
-    #login-form {
-        position: absolute;
-        width: 460px;
-        left: calc(50% - 230px);
-        top: calc(50% - 40px);
-        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-        font-size: 1.3rem;
-        font-weight: 400;
-    }
-    /* TODO this can change, so check button design from time to time */
-    .abcRioButton {
-        box-shadow: 3px 3px 10px rgba(0,0,0,.4) !important;
-    }
-    .abcRioButtonContents {
-        font-size: 14px !important;
-        margin-left: 0 !important;
-    }
-    /* TODO check this regularly too :) */
+
     /* TODO check this when logged in too */
     /* TODO redo this into popup */
-    /* TODO adblock or google block */
     #test3dPartyCookies {
         position: absolute;
         width: 436px;
@@ -84,7 +51,7 @@
 <?php if ($token) { ?>
 
     <script>
-        var xsrfToken = '<?php echo $_SESSION['xsrfToken'] ?>';
+        var xsrfToken = '<?php echo $token ?>';
         var hasOfflineAccess = '<?php echo $has_offline_access ?>';
         var apiKey = '<?php echo $api_key ?>';
         var clientId = '<?php echo $google_api_id ?>';
@@ -109,49 +76,35 @@
 <?php } else { ?>
 
     <script>
-        (function test4Ie() {
-            var ua = navigator.userAgent,
-                IEVersion = ua.indexOf("MSIE ");
+        test4Ie();
 
-            if (IEVersion !== -1) {
-                IEVersion = parseInt(ua.split('MSIE ')[1]);
-            } else if (ua.match(/trident.*rv\:11\./)) {
-                IEVersion = 11;
+        // check for 3d party cookies are enabled
+        window.addEventListener("message", function (evt) {
+            if (evt.data === 'MM:3PCunsupported') {
+                document.getElementById('test3dPartyCookies').style.display = 'block';
             }
-            if (IEVersion !== -1) {
-                document.documentElement.className = 'ie' + IEVersion;
-                if (IEVersion < 10) {
-                    alert('Sorry, we are not supporting Internet Explorer 9 and lower.');
-                }
-            }
-        })();
-
-
-        function googleLogIn(response) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'api/login.php?authToken=' + encodeURIComponent(response.getAuthResponse().id_token));
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    location.reload();
-                }
-                else {
-                    alert('Could not log into ' + location.hostname + '. ' + xhr.responseText); // ?
-                }
-            };
-            xhr.send();
-        }
+        });
     </script>
     <script src="https://apis.google.com/js/platform.js" async defer onerror="adBlockError()"></script>
 
     <div id="login-form">
-        <div style="float:left; width:160px">Company Logo</div>
-        <div style="float:left; width:300px">
-            Sign in using Google account
+        <div align="center" class="logincompany">PHRASE RESEACRH <span class="logincompanysmall">by Dejan</span></div>
+        <div align="center">To get started sign in with your Google account</div>
             <br>
             <br>
-            <div class="g-signin2" data-onsuccess="googleLogIn" data-onfailure="alert"></div>
-        </div>
+            <div class="g-signin2" data-onsuccess="onGLogIn" data-onfailure="onGLoginFailure"></div>
+            <br>
+            <br>
+        <div align="center">This is an open alpha. <br>
+    To access our legacy phrase potential calculator, <a href="http://legacy.phraseresearch.com/">click here.</a></div>
     </div>
+
+    <div id="test3dPartyCookies"><b style="font-size: 1.3em;">Third party cookies are disabled in your browser</b><br><br>
+    Sign in using Google won't work unless you enable this feature in browser settings<br>
+    <a target=_blank href="https://www.google.com/search?q=how+do+I+enable+3rd+party+cookies+in+my+browser" style="font-size: 20px">Find solution in the internet (search using Google)</a>
+    </div>
+    <iframe src="//mindmup.github.io/3rdpartycookiecheck/start.html" style="display:none"></iframe>
+
 
 <?php } ?>
 

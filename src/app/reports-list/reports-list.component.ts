@@ -170,11 +170,11 @@ export class NewReportDialog {
         this.dialogRef.close();
         setTimeout(() => {
             if (siteUrl) {
-                this.reportService.getDataFromGoogleApi(siteUrl)
-                    .then(data => {
-                        [this.data, this.csvParsedReadyToSave] = data;
+                //this.reportService.getDataFromGoogleApi(siteUrl)
+                  //  .then(data => {
+                    //    [this.data, this.csvParsedReadyToSave] = data;
                         this.addReport(name, keywords, isGoogle, siteUrl);
-                    });
+                    //});
 
                 if (!window['hasOfflineAccess']) {
                     let gapi = window['gapi'];

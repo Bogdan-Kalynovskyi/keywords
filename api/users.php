@@ -31,7 +31,7 @@ if ($s = mysql_error()) {
 function put () {
     $post = json_decode(file_get_contents('php://input'), true);
 
-    mysql_query('REPLACE INTO `users` SET `offline_code` = '.esc($post['code']).', google_id = ' . intval($_SESSION['userGoogleId']));
+    mysql_query('REPLACE INTO `users` SET `offline_code` = '.esc($post['code']).', google_id = ' . esc($_SESSION['userGoogleId']));
 
     $_SESSION['offline'] = $post['code'];
 

@@ -1,6 +1,8 @@
-import {Component, Input, OnInit, Pipe, NgZone, ChangeDetectorRef/*, ApplicationRef*/} from '@angular/core';
+import {Component, Input, OnInit, Pipe, NgZone, ChangeDetectorRef} from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import {FormControl} from '@angular/forms';
+import {MdDatepickerIntl} from '@angular/material';
+
 import 'rxjs/add/operator/switchMap';
 
 import { Report } from '../models/report';
@@ -19,7 +21,7 @@ export class RoundPipe {
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.css'],
-    providers: [ReportService]
+    providers: [ReportService, MdDatepickerIntl]
 })
 export class DashboardComponent implements OnInit {
     @Input()
@@ -31,6 +33,10 @@ export class DashboardComponent implements OnInit {
     isApiAllowed: boolean;
     siteCtrl: FormControl;
     filteredSites: any;
+    dateFromFilter: any;
+    dateToFilter: any;
+    dateFromAvailable: any;
+    dateToAvailable: any;
 
     private data: InputDataRow[];
     private filteredData: InputDataRow[];
@@ -94,6 +100,17 @@ export class DashboardComponent implements OnInit {
         window['auth2Login']();
     }
 
+    resetSorting() {
+        let elements = document.getElementsByClassName('asc');
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].className = '';
+        }
+        elements = document.getElementsByClassName('desc');
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].className = '';
+        }
+    }
+
     setSort(event, firstField, secondField) {
         let column = event.target;
         let row = column.parentNode;
@@ -154,14 +171,45 @@ export class DashboardComponent implements OnInit {
         document.title = title;
     }
 
+    updateFromDate(newDate) {
+        this.dateFromFilter = newDate;
+        this.getFilteredData(this.reportId, this.dateFromFilter, this.dateToFilter);
+    }
+
+    updateToDate(newDate) {
+        this.dateToFilter = newDate;
+        this.getFilteredData(this.reportId, this.dateFromFilter, this.dateToFilter);
+    }
+
+    getFilteredData(reportId: number, dateFrom?, dateTo? ){
+        if (dateFrom) {
+            dateFrom.setHours(0, 0, 0);
+            dateFrom = dateFrom.getTime() / 1000;
+        }
+        if (dateTo) {
+            dateTo.setHours(23, 59, 59);
+            dateTo = dateTo.getTime() / 1000;
+        }
+        window['showLoader']();
+        this.reportService.getSeoData(reportId, dateFrom, dateTo) // note there are start and end time arguments
+            .then(data => {
+                this.data = data;
+                this.dataCalculate(this.data, this.report.keywords);
+                this.resetSorting();
+                window['hideLoader']();
+            });
+    }
+
     ngOnInit() {
         if (this.route.snapshot.params['id']) {
             this.route.params.switchMap((params: Params) => {
                 this.reportId = params['id'];
+                this.resetSorting();
                 window['showLoader']();
                 return this.reportService.getReport(+this.reportId);
             })
             .subscribe(reportData => {
+                //debugger;
                 if (reportData) {
                     this.setTitle(reportData.name);
                     this.isOwner = reportData.isOwner === '1';
@@ -174,42 +222,34 @@ export class DashboardComponent implements OnInit {
                     };
 
                     if (reportData.siteUrl) {
+                        this.dateFromFilter = new Date(reportData.dateFromAvailable * 1000);
+                        this.dateToFilter = new Date(reportData.dateToAvailable * 1000);
+
+                        this.dateFromAvailable = this.dateFromFilter.toLocaleDateString();
+                        this.dateToAvailable = this.dateToFilter.toLocaleDateString();
+
                         let now = new Date(),
                             yesDate = new Date(reportData.yes_date * 1000),
                             dateDiff = (Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) -
-                                Date.UTC(yesDate.getFullYear(), yesDate.getMonth(), yesDate.getDate())) / 86400000,
-                            end = now,
-                            start;
+                                Date.UTC(yesDate.getFullYear(), yesDate.getMonth(), yesDate.getDate())) / 86400000;
 //todo material
+
                         if (!this.isOwner || (dateDiff > 1 && window['confirm']('Show update?'))) {
-                            end.setDate(end.getDate() - 2);
                             if (this.isOwner) {
                                 this.reportService.changeYesTime(this.reportId);
                             }
                         }
                         else {
-                            end = yesDate;
+                            this.dateToFilter = yesDate;
                         }
-                        start = new Date(end);
-                        start.setDate(start.getDate() - 90);
 
-                        this.reportService.getSeoData(this.reportId, start.getTime() / 1000, end.getTime() / 1000) // note there are start and end time arguments
-                            .then(data => {
-                                //todo code dupe
-                                this.data = data;
-                                this.dataCalculate(this.data, this.report.keywords);
-                            });
+                        this.getFilteredData(this.reportId, this.dateFromFilter, this.dateToFilter);
+
                     }
 
                     else {
-                        this.reportService.getSeoData(this.reportId)    // note there is only one argument
-                            .then(data => {
-                                //todo code dupe
-                                this.data = data;
-                                this.dataCalculate(this.data, this.report.keywords);
-                            });
+                        this.getFilteredData(this.reportId);
                     }
-                    window['hideLoader']();
                 }
             });
         }
@@ -275,11 +315,23 @@ export class DashboardComponent implements OnInit {
         let keywords = reportKeywords.split(',').map(str => str.trim());
 
         this.allQueriesData.forEach(data => {
-            if (keywords.indexOf(data.query) === -1) {
+            let contain_keyword = false;
+            if (reportKeywords != '') {
+                keywords.forEach(
+                    keyword => {
+                        if (data.query.indexOf(keyword) != -1) {
+                            contain_keyword = true;
+                        }
+                    }
+                );
+            }
+            if (!contain_keyword) {
                 this.nonBrandedData.push(Object.assign({}, data));
             }
+
         });
 
+        this.positions = [];
         for (let i = 0; i < 10; i++) {
             this.positions.push(0);
         }
@@ -515,6 +567,7 @@ export class DashboardComponent implements OnInit {
 
     onDataChange(){
         this.report.keywords = this.report.keywords.toLowerCase();
+        this.resetSorting();
         this.dataCalculate(this.data, this.report.keywords);
     }
 
@@ -535,9 +588,10 @@ export class DashboardComponent implements OnInit {
         return url && /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(url);
     }
 
-    onUrlChange(){
+    onUrlChange(site){
+        this.report.siteUrl = site;
+        this.submitDisabled = true;
         if (this.testUrl(this.report.siteUrl)) {
-            this.submitDisabled = false;
             window['showLoader']();
             this.reportService.getDataFromGoogleApi(this.report.siteUrl)
                 .then(data => {
@@ -546,27 +600,26 @@ export class DashboardComponent implements OnInit {
                         this.data = data[0] as InputDataRow[];
                         this.csvParsedReadyToSave = data[1];
                         this.onDataChange();
+                        window['hideLoader']();
                     }
-                    window['hideLoader']();
                 });
         } else {
-            this.submitDisabled = true;
             alert('The site url is not valid');
         }
     }
 
-
     updateData() {
-        setTimeout(() => {
-            if (this.testUrl(this.report.siteUrl)) {
-                window['showLoader']();
-                this.reportService.update(this.report.id, this.report.name, this.report.siteUrl, this.report.keywords, this.csvParsedReadyToSave)
-                    .then(() => {
-                        location.reload();
-                    });
-            } else {
+        if (this.report.isGoogle == true) {
+            if (this.report.siteUrl && !this.testUrl(this.report.siteUrl)) {
                 alert('The site url is not valid');
+                return 0;
             }
-        }, 0);
+        }
+        window['showLoader']();
+        this.reportService.update(this.report.id, this.report.name, this.report.siteUrl, this.report.keywords, this.csvParsedReadyToSave)
+            .then(() => {
+                location.reload();
+            });
     }
+
 }

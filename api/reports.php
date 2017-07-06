@@ -62,7 +62,7 @@ function get () {
     $report_id = isset($_GET['id']) ? intval($_GET['id']) : false;
 
     if ($report_id) {
-        $query = mysql_query('SELECT `name`, `keywords`, `is_google`, `siteUrl`, `yes_date`, IF(`owner`='.esc($_SESSION['userGoogleId']).', 1, 0) as `isOwner`  FROM `reports` WHERE id='.$report_id);
+        $query = mysql_query('SELECT `name`, `keywords`, `is_google`, `siteUrl`, `yes_date`, IF(`owner`='.esc($_SESSION['userGoogleId']).', 1, 0) as `isOwner`, MIN(`date`) as dateFromAvailable, MAX(`date`) as dateToAvailable FROM `reports` INNER JOIN `seodata` ON reports.id = seodata.report_id WHERE reports.id='.$report_id);
         $result = mysql_fetch_array($query, MYSQL_ASSOC);
 
         if ($result) {

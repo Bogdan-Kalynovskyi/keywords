@@ -24,7 +24,7 @@
                 die;
             }
 
-            $result = mysql_query('SELECT `offline_code` FROM `users` WHERE google_id = ' . intval($obj->sub));
+            $result = mysql_query('SELECT `offline_code` FROM `users` WHERE google_id = ' . esc($obj->sub));
             if ($result) {
                 $result = mysql_fetch_array($result);
                 if ($result) {

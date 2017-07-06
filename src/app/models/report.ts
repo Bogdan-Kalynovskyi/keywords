@@ -4,6 +4,8 @@ export class Report {
     keywords: string;
     isGoogle: boolean;
     siteUrl: string;
+    // dateFromAvailable: string;
+    // dateToAvailable: string;
 
     constructor (id, name, keywords, isGoogle, siteUrl) {
         this.id = id;

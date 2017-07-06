@@ -1,4 +1,5 @@
 <div *ngIf="report" class="report-content" [ngClass]="{ 'read-only': !isOwner }">
+    <div *ngIf="report.isGoogle">Available dates range: from {{ dateFromAvailable }} to {{ dateToAvailable }}</div><br>
     <div>
         <md-input-container *ngIf="isOwner">
             <span mdTooltip="You should press 'Save button' to save your changes">
@@ -24,11 +25,11 @@
             <span *ngIf="isApiAllowed" mdTooltip="You should press 'Save button' to save your changes">
 
                 <md-input-container class="dropdown">
-                    <input mdInput placeholder="Site url" (change)="onUrlChange()" [mdAutocomplete]="auto" [(ngModel)]="report.siteUrl" [formControl]="siteCtrl" name="siteUrl">
+                    <input mdInput placeholder="Site url" [mdAutocomplete]="auto" [(ngModel)]="report.siteUrl" [formControl]="siteCtrl" name="siteUrl">
                 </md-input-container>
 
                 <md-autocomplete #auto="mdAutocomplete" class="dropdown">
-                    <md-option *ngFor="let site of filteredSites | async" [value]="site" (click)="onUrlChange()">{{ site }}</md-option>
+                    <md-option *ngFor="let site of filteredSites | async" [value]="site" (onSelectionChange)="onUrlChange(site)">{{ site }}</md-option>
                 </md-autocomplete>
 
             </span>
@@ -45,7 +46,7 @@
                 </md-input-container>
 
                 <md-autocomplete #auto="mdAutocomplete" class="dropdown">
-                    <md-option *ngFor="let site of filteredSites | async" [value]="site" (click)="onUrlChange()">{{ site }}</md-option>
+                    <md-option *ngFor="let site of filteredSites | async" [value]="site" (click)="onAutocompleteClick(site)">{{ site }}</md-option>
                 </md-autocomplete>
 
             </span>
@@ -58,9 +59,24 @@
             <input type="file" accept=".csv" (change)="onFileChange($event)">
         </span>
         <input *ngIf="!report.isGoogle &&!isOwner" type="file" accept=".csv" (change)="onFileChange($event)">
-        <button *ngIf="isOwner" md-raised-button color="primary" (click)="updateData()" [disabled]="submitDisabled">Save changes</button>
-        <div *ngIf="!isOwner" class="warning">Your changes could not be saved</div>
 
+        <button *ngIf="isOwner" md-raised-button color="primary" (click)="updateData()" [disabled]="submitDisabled">Save changes</button>
+        <div *ngIf="!isOwner" class="warning">Your changes could not be saved</div><br>
+
+        <div *ngIf="report.isGoogle">
+            Filter:
+            <md-input-container>
+                <input mdInput [mdDatepicker]="datePickerFrom" placeholder="Choose from date" [(ngModel)]="dateFromFilter">
+                <button mdSuffix [mdDatepickerToggle]="datePickerFrom"></button>
+            </md-input-container>
+            <md-datepicker #datePickerFrom (selectedChanged)="getFilteredData(reportId, datePickerFrom._selected, datePickerTo._selected)"></md-datepicker>
+
+            <md-input-container>
+                <input mdInput [mdDatepicker]="datePickerTo" placeholder="Choose to date" [(ngModel)]="dateToFilter">
+                <button mdSuffix [mdDatepickerToggle]="datePickerTo"></button>
+            </md-input-container>
+            <md-datepicker #datePickerTo (selectedChanged)="getFilteredData(reportId, datePickerFrom._selected, datePickerTo._selected)"></md-datepicker>
+        </div>
 
     </div>
     <div class="scrolling-content">

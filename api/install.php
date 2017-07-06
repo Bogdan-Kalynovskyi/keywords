@@ -1,8 +1,8 @@
 <?php
 
-echo 'Your current version is '.PHP_VERSION.'<br>';
+echo 'Your PHP version is '.PHP_VERSION.'<br>';
 $php_min_version = '5.3.10';
-if (version_compare(phpversion(), $php_min_version, '<')) {
+if (version_compare(phpversion(), $php_min_version, '<=')) {
     echo 'Minimal required PHP version is '.$php_min_version;
     echo 'Please update your PHP';
     die;
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   INDEX `name` (`name`),
   INDEX `owner` (`owner`),
   INDEX `created` (`created`)
-) DEFAULT CHARSET=utf8 ENGINE = InnoDB;
+) DEFAULT CHARSET=utf8;
 ';
 mysql_query($query);
 
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `seodata` (
   `position` SMALLINT UNSIGNED NOT NULL,
   INDEX `report_id` (`report_id`),
   INDEX `date` (`date`)
-) DEFAULT CHARSET=utf8 ENGINE = InnoDB;
+) DEFAULT CHARSET=utf8;
 ';
 mysql_query($query);
 
@@ -65,12 +65,12 @@ DROP TABLE IF EXISTS `users`;
 mysql_query($query);
 $query = '
 CREATE TABLE IF NOT EXISTS `users` (
-  `google_id` BIGINT NOT NULL,
+  `google_id` varchar(255) NOT NULL,
   `offline_code` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   PRIMARY KEY `google_id` (`google_id`),
   INDEX `offline_code` (`offline_code`)
-) DEFAULT CHARSET=utf8 ENGINE = InnoDB;
+) DEFAULT CHARSET=utf8;
 ';
 mysql_query($query);
 
