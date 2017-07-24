@@ -79,7 +79,6 @@ export class NewReportDialog {
     csvParsedReadyToSave: SeoData;
     reportList: Report[];
     siteList: string[];
-    changeUrlPromise: Promise<any>;
     isApiAllowed: boolean;
     isGoogle;
     siteUrl;
@@ -139,10 +138,6 @@ export class NewReportDialog {
     onUrlChange(siteUrl){
         if (this.testUrl(siteUrl)) {
             document.getElementById('addButton').removeAttribute('disabled');
-            this.reportService.getDataFromGoogleApi(siteUrl)
-                .then(data => {
-                    [this.data, this.csvParsedReadyToSave] = data;
-                });
         }
         else {
             document.getElementById('addButton').setAttribute('disabled', '');
@@ -151,6 +146,10 @@ export class NewReportDialog {
 
 
     addReport(name: string, keywords: string, isGoogle: boolean, siteUrl: string) {
+        // this.reportService.getDataFromGoogleApi(siteUrl)
+        //     .then(data => {
+        //         [this.data, this.csvParsedReadyToSave] = data;
+        //     });
         this.reportService.create(name, keywords, isGoogle, siteUrl, this.csvParsedReadyToSave)
             .then(reportId => {
                 this.reportList.unshift({
@@ -170,23 +169,11 @@ export class NewReportDialog {
         this.dialogRef.close();
         setTimeout(() => {
             if (siteUrl) {
-                //this.reportService.getDataFromGoogleApi(siteUrl)
-                  //  .then(data => {
-                    //    [this.data, this.csvParsedReadyToSave] = data;
+                this.reportService.getDataFromGoogleApi(siteUrl)
+                   .then(data => {
+                       [this.data, this.csvParsedReadyToSave] = data;
                         this.addReport(name, keywords, isGoogle, siteUrl);
-                    //});
-
-                if (!window['hasOfflineAccess']) {
-                    let gapi = window['gapi'];
-                    let auth = gapi.auth2.getAuthInstance();
-                    let user = auth.currentUser.get();
-                    auth.grantOfflineAccess({
-                        authuser: user.getAuthResponse().session_state.extraQueryParams.authuser
-                    }).then((response) => {
-                        this.reportService.setUserCode(response.code);
-                        window['hasOfflineAccess'] = true;
                     });
-                }
             }
             else {
                 // important: if CSV, set siteUrl to '' !!!!!!!!

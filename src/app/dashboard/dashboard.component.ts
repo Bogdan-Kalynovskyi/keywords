@@ -234,14 +234,14 @@ export class DashboardComponent implements OnInit {
                                 Date.UTC(yesDate.getFullYear(), yesDate.getMonth(), yesDate.getDate())) / 86400000;
 //todo material
 
-                        if (!this.isOwner || (dateDiff > 1 && window['confirm']('Show update?'))) {
-                            if (this.isOwner) {
-                                this.reportService.changeYesTime(this.reportId);
-                            }
-                        }
-                        else {
+                        // if (!this.isOwner || (dateDiff > 1 && window['confirm']('Show update?'))) {
+                        //     if (this.isOwner) {
+                        //         this.reportService.changeYesTime(this.reportId);
+                        //     }
+                        // }
+                        // else {
                             this.dateToFilter = yesDate;
-                        }
+                        // }
 
                         this.getFilteredData(this.reportId, this.dateFromFilter, this.dateToFilter);
 

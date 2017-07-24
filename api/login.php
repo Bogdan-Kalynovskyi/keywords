@@ -24,15 +24,30 @@
                 die;
             }
 
-            $result = mysql_query('SELECT `offline_code` FROM `users` WHERE google_id = ' . esc($obj->sub));
-            if ($result) {
-                $result = mysql_fetch_array($result);
-                if ($result) {
-                    $_SESSION['offline'] = $result['offline_code'];
+            $result = mysql_query('SELECT `offline_code` FROM `users` WHERE google_id = ' . esc($_SESSION['userGoogleId']));
+            if (!$result) {
+                if (isset($_SERVER['HTTPS']) &&
+                    ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
+                    isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
+                    $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+                    $protocol = 'https://';
                 }
-            }
+                else {
+                    $protocol = 'http://';
+                }
+                require_once '../Gplus/vendor/autoload.php';
+                $client = new Google_Client();
+                $client->setApplicationName('Phraseresearch API');
+                $client->setClientId('39575750767-4d3ieqoemj7kc43hi76qrp9ft2qnqo3e.apps.googleusercontent.com');
+                $client->setClientSecret('H-4n_ZGNKJphWXdRW3OGTPrF');
+                $client->setDeveloperKey('AIzaSyD5_k-oAl-WZNaDGey4k3U9_noryurZjKo');
+                $client->setRedirectUri($protocol . $_SERVER['SERVER_NAME']); // todo does not handle subdirectories
+                $client->setScopes(['https://www.googleapis.com/auth/webmasters.readonly']);
+                $client->setAccessType('offline');
+                $client->setApprovalPrompt('force');
 
-            echo $_SESSION['xsrfToken'];
+                echo $client->createAuthUrl();
+            }
         }
         else {
             header("HTTP/1.0 401 Unauthorized", true, 401);

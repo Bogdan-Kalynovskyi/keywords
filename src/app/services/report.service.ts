@@ -18,6 +18,7 @@ export class ReportService {
     private seoDataUrl = this.urlPrefix + 'api/seoData.php';
     private logoutUrl = this.urlPrefix + 'api/login.php';
     private headers = new Headers({ Authorization: window['xsrfToken'] });
+    private queryAmount = 0;
 
     constructor(private http: Http) { }
 
@@ -235,25 +236,19 @@ export class ReportService {
     }
 
 
-    private leadingZero(number:Number) {
-        return (number < 10) ? '0' + number : number;
-    }
+    private requestToGoogle(startDate: Date, endDate: Date, siteUrl: string): Promise<any> {
+
+        function leadingZero(number:Number) {
+            return (number < 10) ? '0' + number : number;
+        }
+
+        function googleFormattedDate(date: Date) {
+            return date.getUTCFullYear() + '-' + leadingZero(date.getUTCMonth() + 1) + '-' + leadingZero(date.getUTCDate());
+        }
 
 
-    private getGoogleFormattedDate(date:Date) {
-        return date.getFullYear() + '-' + this.leadingZero(date.getMonth() + 1) + '-' + this.leadingZero(date.getDate());
-    }
-
-
-    getDataFromGoogleApi(siteUrl): Promise<any> {
         let gapi = window['gapi'];
         let apiKey = window['apiKey'];
-
-        let date = new Date();
-        date.setDate(date.getDate() - 2);
-        let endDate = this.getGoogleFormattedDate(date);
-        date.setDate(date.getDate() - 90); // note we already did -2 above (3 days more)
-        let startDate = this.getGoogleFormattedDate(date);
 
         return gapi.client.request({
             path: 'https://www.googleapis.com/webmasters/v3/sites/'+ encodeURIComponent(siteUrl) + '/searchAnalytics/query',
@@ -262,20 +257,58 @@ export class ReportService {
                 key: apiKey
             },
             body: {
-                "startDate": startDate,
-                "endDate": endDate,
-                "rowLimit": 5000, // Max 5000 default 1000
+                "startDate": googleFormattedDate(startDate),
+                "endDate": googleFormattedDate(endDate),
+                "rowLimit": 5000,
                 "dimensions": [
                     "query", "page", "date"
                 ]
             }
         })
             .then(
-                response => {
-                    return this.googleDataToInputDataRow(response.result.rows);
-                },
+                response => this.googleDataToInputDataRow(response.result.rows),
                 reason => alert('Error: ' + reason.result.error.message)
             );
+    }
+
+
+
+    getDataFromGoogleApi(siteUrl:string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let now = new Date();
+
+            function daysAgo(days): Date {
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate() - days);
+                // return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - days);
+            }
+
+
+            let getChunkFormGoogle = (startDaysAgo) => {
+                let endDaysAgo = startDaysAgo - 6;
+                if (endDaysAgo < 2) {
+                    endDaysAgo = 2;
+                }
+
+                this.requestToGoogle(daysAgo(startDaysAgo), daysAgo(endDaysAgo), siteUrl).then(result => {
+                    response = response.concat(result[0]);      // todo push
+                    readyToSave = readyToSave.concat(result[1]);
+
+                    if (endDaysAgo !== 2) {
+                        setTimeout(() => getChunkFormGoogle(endDaysAgo - 1), 200);
+                    }
+                    else {
+                        resolve([response, readyToSave]);
+                    }
+                });
+            };
+
+
+            let response = [],
+                readyToSave = [],
+                requestStartTime = Date.now();
+
+            getChunkFormGoogle(96);
+        });
     }
 
 
