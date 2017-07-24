@@ -58,7 +58,7 @@
             die;
         }
 
-        mysql_query('INSERT INTO `users` VALUES (`offline_code` = "'.mysql_real_escape_string($_GET['code']).'", google_id = "'.mysql_real_escape_string($_SESSION['userGoogleId']).'")');
+        mysql_query('REPLACE INTO `users` SET `offline_code` = "'.mysql_real_escape_string($_GET['code']).'", `google_id` = "'.mysql_real_escape_string($_SESSION['userGoogleId']).'"');
         echo '<script>
             history.replaceState({}, "", location.origin);
         </script>';

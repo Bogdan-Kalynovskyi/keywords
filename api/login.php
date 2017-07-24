@@ -24,7 +24,7 @@
                 die;
             }
 
-            $result = mysql_query('SELECT `offline_code` FROM `users` WHERE google_id = ' . esc($_SESSION['userGoogleId']));
+            $result = mysql_query('SELECT `offline_code` FROM `users` WHERE `google_id` = ' . esc($_SESSION['userGoogleId']));
             if (!$result) {
                 if (isset($_SERVER['HTTPS']) &&
                     ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
