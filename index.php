@@ -1,8 +1,7 @@
 <?php
     include 'settings/settings.php';
     session_start();
-    $token = isset($_SESSION['xsrfToken']) && $_SESSION['xsrfToken'];
-    $has_offline_access = isset($_SESSION['offline']);
+    $token = isset($_SESSION['xsrfToken']) ? $_SESSION['xsrfToken'] : '';
     $email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
 ?>
 <!DOCTYPE html>
@@ -50,15 +49,22 @@
 <?php if ($token) {
 
     if (isset($_GET['code'])) {
+        include 'settings/google_client.php';
+        $client->authenticate($_GET['code']);
+        $complex_token = $client->getAccessToken();
+        $client->getAccessToken(["refreshToken"]);
+        $refresh_token = $complex_token['refresh_token'];
+
         $link = mysql_connect($db_host, $db_user, $db_pass);
         if (!$link || !mysql_select_db($db_name)) {
             if ($error_reporting_level !== 0) {
                 echo mysql_error();
             }
+            echo 'could not connect to db';
             die;
         }
 
-        mysql_query('REPLACE INTO `users` SET `offline_code` = "'.mysql_real_escape_string($_GET['code']).'", `google_id` = "'.mysql_real_escape_string($_SESSION['userGoogleId']).'"');
+        mysql_query('REPLACE INTO `users` SET `offline_code` = "'.mysql_real_escape_string($refresh_token).'", `google_id` = "'.mysql_real_escape_string($_SESSION['userGoogleId']).'"');
         echo '<script>
             history.replaceState({}, "", location.origin);
         </script>';

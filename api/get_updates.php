@@ -1,134 +1,115 @@
 <?php
 
-define('NO_AUTH', true);
+include '../settings/settings.php';
 
-include 'auth.php';
+$link = mysql_connect($db_host, $db_user, $db_pass);
+if (!$link || !mysql_select_db($db_name)) {
+    header("HTTP/1.0 500 Internal Server Error", true, 500);
+    if ($error_reporting_level !== 0) {
+        echo mysql_error();
+    }
+    die;
+}
 
-include_once '../google_api/vendor/autoload.php';
+function esc ($str) {
+    return '"'.mysql_real_escape_string($str).'"';
+}
 
 
-getReportsList();
+
+require_once '../Gplus/vendor/autoload.php';
+
+
+error_reporting(E_ALL & ~E_NOTICE);
+ini_set('display_errors', 1);
+
+
+function print_result($id, $result) {
+    for ($i = 0; $i < count($result->rows); $i++) {
+        $query = $result->rows[$i]->keys[0];
+        $page = $result->rows[$i]->keys[1];
+        $date = $result->rows[$i]->keys[2];
+        $clicks = $result->rows[$i]->clicks;
+        $impressions = $result->rows[$i]->impressions;
+        $position = $result->rows[$i]->position;
+        $ctr = $result->rows[$i]->ctr;
+        echo "$id\t$date\t$query\t$page\t$clicks\t$impressions\t$position\t$ctr\n";
+    }
+    echo "\n\n";
+}
+
+
+function save_to_db($report_id, $date_to_save, $seoData) {
+    $str = '';
+    $comma = '';
+
+    foreach ($seoData as $row) {
+        $str .= $comma . '('.$report_id.','.esc($row->keys[0]).','.intval($row->clicks).','.intval($row->impressions).','.intval(floatval($row->ctr) * 100000).','.intval(floatval($row->position) * 10).','.intval($date_to_save).', '.esc($row->keys[1]).')';
+
+        $comma = ',';
+    }
+
+    echo 'INSERT INTO `seodata` (`report_id`, `query`, `clicks`, `impressions`, `ctr`, `position`, `date`, `page`) VALUES '.$str."\n\n";
+    //mysql_query( 'INSERT INTO `seodata` (`report_id`, `query`, `clicks`, `impressions`, `ctr`, `position`, `date`, `page`) VALUES '.$str);
+
+}
+
+
+function getGoogleData($id, $siteUrl, $accessToken, $refreshToken) {
+    $client = new Google_Client();
+    $client->setApplicationName('Phraseresearch API');
+    $client->setClientId('39575750767-4d3ieqoemj7kc43hi76qrp9ft2qnqo3e.apps.googleusercontent.com');
+    $client->setClientSecret('H-4n_ZGNKJphWXdRW3OGTPrF');
+    $client->setDeveloperKey('AIzaSyD5_k-oAl-WZNaDGey4k3U9_noryurZjKo');
+    $client->setRedirectUri('http://www.phraseresearch.com/api/1.php');
+    $client->setScopes(['https://www.googleapis.com/auth/webmasters.readonly']);
+    $client->setAccessType('offline');
+    $client->setApprovalPrompt('force');
+
+    $service = new Google_Service_Webmasters($client);
+
+    $client->setAccessToken($accessToken);
+
+    if ($client->isAccessTokenExpired()) {
+        $client->fetchAccessTokenWithRefreshToken($refreshToken);
+        $tokens = $client->getAccessToken();
+        $client->setAccessToken($tokens);
+    }
+
+    $request = new Google_Service_Webmasters_SearchAnalyticsQueryRequest();
+
+    date_default_timezone_set('UTC');
+    $date_to_save = strtotime("midnight -3 days");
+    $date = date("Y-m-d", $date_to_save);
+
+    $request->setStartDate($date);
+    $request->setEndDate($date);
+    $request->setRowLimit(5000);
+    $request->setDimensions(['query', 'page', 'date']);
+    $request->setSearchType('web');
+    try {
+        $result = $service->searchanalytics->query($siteUrl, $request);
+        //print_result($id, $result);
+        save_to_db($id, $date_to_save, $result);
+        echo date("Y-m-d", time())."---Success\n";
+
+    } catch(\Exception $e ) {
+        echo date("Y-m-d", time())."---".$e->getMessage()."\n";
+    }
+
+}
+
 
 function getReportsList() {
-    global $offline_code;
-    $query = mysql_query('SELECT id, siteUrl, offline_code FROM reports INNER JOIN users ON reports.owner = users.google_id WHERE siteUrl<>\'\'');
-    //$result = array();
+    $query = mysql_query('SELECT id, siteUrl, offline_code FROM reports INNER JOIN users ON reports.owner = users.google_id WHERE siteUrl<>\'\' limit 10');
     while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
-        getGoogleData($row['id'], $row['siteUrl'], $row['offline_code']);
-        $offline_code = $row['offline_code'];
+        $row['access_token'] = "ya29.GlyNBD_eTRzQacz1NuIRVtVZagOgKpP7wQA92Pwzku0WstcaI6O-thu92hVB4qvc0z906gRPmf0lBoe996P13TmO-YsErEc8e70QA7IuNfPk-GDDFCZjm70G6mw0mw";
+        //$row['refresh_code'] = "1/x749ZeKNWacAi_IRlVvQ04dQig6lJ0C9sk3e5z8dscI";
+        $row['refresh_code'] = "1/Ayhmrgh9wj2TSo0HhCCRyRY6ytDGkkt3kphpyPUTRS4";
+        getGoogleData($row['id'], $row['siteUrl'], $row['access_token'], $row['refresh_code']);
     }
 }
 
-function getGoogleData($id, $siteUrl, $offlineCode) {
-    connect($offlineCode);
-}
+getReportsList();
 
-
-function connect($offline_code) {
-    echo $offline_code;
-    global $google_api_id, $client_secret, $api_key;
-
-    $client = new Google_Client();
-    $client->setApplicationName('Phraseresearch API');
-    $client->setClientId($google_api_id);
-
-    $client->setClientSecret($client_secret);
-
-    $client->setRedirectUri('http://oldo.hol.es/api/get_updates.php');
-
-    $client->setDeveloperKey($api_key);
-    $client->setAccessType("offline");
-    $client->setScopes('https://www.googleapis.com/auth/webmasters.readonly');
-    $client->setApprovalPrompt('force');
-
-
-    $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
-    $client->setHttpClient($guzzleClient);
-
-    echo '000'.$offline_code."\n";
-        var_dump($client->authenticate($offline_code));
-        echo '11'.$offline_code;
-        $access_token = $client->getAccessToken();
-
-
-echo $access_token;
-
-//        $client->authenticate($offline_code);
-
-//        $_SESSION['token'] = $client->getAccessToken();
-//        $client->getAccessToken("refreshToken");
-
-
-
-//        $redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-//        header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
-//    if (isset($_SESSION['token'])) {
-//        $client->setAccessToken($_SESSION['token']);
-//    }
-//    if (isset($_REQUEST['logout'])) {
-//        unset($_SESSION['token']);
-//        $client->revokeToken();
-//    }
-
-    //$client->setDeveloperKey($api_key);  //smells
-
-    //$client->setRedirectUri($redirect_uri);
-
-    //$client->addScope("https://www.googleapis.com/auth/webmasters.readonly");
-//    $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
-//    $client->setHttpClient($guzzleClient);
-
-//    echo $offline_code."\n";
-//        $client->authenticate($offline_code);
-//        echo $offline_code;
-//        $access_token = $client->getAccessToken();
-
-
-//    $service = new Google_Service_Webmasters($client);
-//    $q = new Google_Service_Webmasters_SearchAnalyticsQueryRequest();
-//
-//        $q->setStartDate('2017-04-20');
-//        $q->setEndDate('2017-04-21');
-//        $q->setDimensions(['page']);
-//        $q->setSearchType('web');
-//        try {
-//            $u = $service->searchanalytics->query('http://dejanseo.hr', $q);
-//            echo '<table border=1>';
-//            echo '<tr>
-//          <th>#</th><th>Clicks</th><th>CTR</th><th>Imp</th><th>Page</th><th>Avg. pos</th>';
-//            for ($i = 0; $i < count($u->rows); $i++) {
-//                echo "<tr><td>$i</td>";
-//                echo "<td>{$u->rows[$i]->clicks}</td>";
-//                echo "<td>{$u->rows[$i]->ctr}</td>";
-//                echo "<td>{$u->rows[$i]->impressions}</td>";
-//                echo "<td>{$u->rows[$i]->keys[0]}</td>";
-//                echo "<td>{$u->rows[$i]->position}</td>";
-//
-//                /* foreach ($u->rows[$i] as $k => $value) {
-//                    //this loop does not work (?)
-//                } */
-//                echo "</tr>";
-//            }
-//            echo '</table>';
-//        } catch(\Exception $e ) {
-//            echo $e->getMessage();
-//        }
-
-}
-//
-//<div class="request">
-//<?php
-//    if (isset($authUrl)) {
-//        echo "<a class='login' href='" . $authUrl . "'>Connect Me!</a>";
-//    } else {
-//        echo <<<END
-//     <form id="url" method="GET" action="{$_SERVER['PHP_SELF']}">
-//       <input name="url" class="url" type="text">
-//       <input type="submit" value="Shorten">
-//     </form>
-//     <a class='logout' href='?logout'>Logout</a>
-//END;
-//    }
-//
-//<!--</div>-->
 ?>

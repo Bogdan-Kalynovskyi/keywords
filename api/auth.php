@@ -3,7 +3,7 @@
 
     session_start();
 
-    $_SESSION['userGoogleId'] = '104253245844866214670';
+   // $_SESSION['userGoogleId'] = '104253245844866214670';
     // compare Auth header with xsrf token from cookie-based session
 
 //    if (isset($_SERVER['HTTP_AUTHORIZATION']) && isset($_SESSION['xsrfToken']) && $_SERVER['HTTP_AUTHORIZATION'] === $_SESSION['xsrfToken']) {
@@ -15,14 +15,6 @@
                 echo mysql_error();
             }
             die;
-        }
-
-        $result = mysql_query('SELECT `offline_code` FROM `users` WHERE google_id = ' . esc($_SESSION['userGoogleId']));
-        if ($result) {
-            $result = mysql_fetch_array($result);
-            if ($result) {
-                $_SESSION['offline'] = $result['offline_code'];
-            }
         }
 //    }
 //    else {
