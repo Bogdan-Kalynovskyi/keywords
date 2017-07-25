@@ -24,7 +24,7 @@
                 die;
             }
 
-            $result = mysql_query('SELECT `offline_code` FROM `users` WHERE `google_id` = "' . mysql_real_escape_string($_SESSION['userGoogleId'] . '"'));
+            $result = mysql_query('SELECT `offline_code` FROM `users` WHERE `google_id` = "' . mysql_real_escape_string($_SESSION['userGoogleId']) . '"');
             if (!$result) {
                 include '../settings/google_client.php';
                 echo $client->createAuthUrl();
@@ -42,6 +42,6 @@
     else {
         $post = json_decode(file_get_contents('php://input'), true);
         if (isset($post['logout']) && $post['logout'] === $_SESSION['xsrfToken']) {
-//            session_destroy();
+            session_destroy();
         }
     }
