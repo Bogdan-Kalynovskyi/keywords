@@ -1,6 +1,6 @@
 <?php
 
-include '../settings/settings.php';
+include __DIR__.'/../settings/settings.php';
 
 $link = mysql_connect($db_host, $db_user, $db_pass);
 if (!$link || !mysql_select_db($db_name)) {
@@ -17,10 +17,10 @@ function esc ($str) {
 
 
 
-require_once '../Gplus/vendor/autoload.php';
+require_once __DIR__.'/../Gplus/vendor/autoload.php';
 
 
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 ini_set('display_errors', 1);
 
 
@@ -49,8 +49,8 @@ function save_to_db($report_id, $date_to_save, $seoData) {
         $comma = ',';
     }
 
-    echo 'INSERT INTO `seodata` (`report_id`, `query`, `clicks`, `impressions`, `ctr`, `position`, `date`, `page`) VALUES '.$str."\n\n";
-    //mysql_query( 'INSERT INTO `seodata` (`report_id`, `query`, `clicks`, `impressions`, `ctr`, `position`, `date`, `page`) VALUES '.$str);
+    //echo 'INSERT INTO `seodata` (`report_id`, `query`, `clicks`, `impressions`, `ctr`, `position`, `date`, `page`) VALUES '.$str."<br><br>";
+    mysql_query( 'INSERT INTO `seodata` (`report_id`, `query`, `clicks`, `impressions`, `ctr`, `position`, `date`, `page`) VALUES '.$str);
 
 }
 
@@ -91,22 +91,20 @@ function getGoogleData($id, $siteUrl, $accessToken, $refreshToken) {
         $result = $service->searchanalytics->query($siteUrl, $request);
         //print_result($id, $result);
         save_to_db($id, $date_to_save, $result);
-        echo date("Y-m-d", time())."---Success\n";
+        //print_r($result);
+        echo date("Y-m-d H:i:s", time())."----Success----Report id: ".$id."----".count($result->rows)." rows added--\n";
 
     } catch(\Exception $e ) {
-        echo date("Y-m-d", time())."---".$e->getMessage()."\n";
+        echo date("Y-m-d H:i:s", time())."----Failed----Report id: ".$id."---".$e->getMessage()."--\n";
     }
 
 }
 
 
 function getReportsList() {
-    $query = mysql_query('SELECT id, siteUrl, offline_code FROM reports INNER JOIN users ON reports.owner = users.google_id WHERE siteUrl<>\'\' limit 10');
+    $query = mysql_query('SELECT id, siteUrl, access_token, offline_code FROM reports INNER JOIN users ON reports.owner = users.google_id WHERE siteUrl<>\'\'');
     while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
-        $row['access_token'] = "ya29.GlyNBD_eTRzQacz1NuIRVtVZagOgKpP7wQA92Pwzku0WstcaI6O-thu92hVB4qvc0z906gRPmf0lBoe996P13TmO-YsErEc8e70QA7IuNfPk-GDDFCZjm70G6mw0mw";
-        //$row['refresh_code'] = "1/x749ZeKNWacAi_IRlVvQ04dQig6lJ0C9sk3e5z8dscI";
-        $row['refresh_code'] = "1/Ayhmrgh9wj2TSo0HhCCRyRY6ytDGkkt3kphpyPUTRS4";
-        getGoogleData($row['id'], $row['siteUrl'], $row['access_token'], $row['refresh_code']);
+        getGoogleData($row['id'], $row['siteUrl'], $row['access_token'], $row['offline_code']);
     }
 }
 

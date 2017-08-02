@@ -25,10 +25,11 @@
             }
 
             $result = mysql_query('SELECT `offline_code` FROM `users` WHERE `google_id` = "' . mysql_real_escape_string($_SESSION['userGoogleId']) . '"');
-            if (!$result) {
+           // file_put_contents("result.txt",$result);
+           // if (!$result) {
                 include '../settings/google_client.php';
                 echo $client->createAuthUrl();
-            }
+           // }
         }
         else {
             header("HTTP/1.0 401 Unauthorized", true, 401);
